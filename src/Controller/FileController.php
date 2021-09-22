@@ -2,15 +2,16 @@
 
 namespace App\Controller;
 
+use App\Exception\FileUploadException;
 use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class FileController extends AbstractController
 {
-    const MAX_UPLOADED_FILE_NUM = 10;
-
     public function upload(Request $request, FileUploader $fileUploader): Response
     {
         $uploadedFiles = $request->files->get('files');
@@ -18,17 +19,25 @@ class FileController extends AbstractController
             return new Response('No files provided!');
         }
 
-        if (count($uploadedFiles) > self::MAX_UPLOADED_FILE_NUM) {
-            return new Response('Max allowed files number is : ' . self::MAX_UPLOADED_FILE_NUM);
+        $maxFileNum = $this->getParameter('uploads_max_file_num');
+        if (count($uploadedFiles) > $maxFileNum) {
+            return new Response('Max allowed files number is : ' . $maxFileNum);
         }
 
+        $errors = [];
+        /** @var $file UploadedFile */
         foreach ($uploadedFiles as $file) {
-            $err = $fileUploader->upload($file);
-            if ($err !== "") {
-                return new Response($err);
+            try {
+                $fileUploader->upload($file);
+            } catch (FileUploadException $e) {
+                $errors[$file->getClientOriginalName()] = $e->getMessage();
             }
         }
 
-        return new Response('All files uploaded!');
+        if (empty($errors)) {
+            return new JsonResponse(["success" => true]);
+        }
+
+        return new JsonResponse($errors);
     }
 }

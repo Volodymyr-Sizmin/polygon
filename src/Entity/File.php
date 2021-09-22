@@ -31,7 +31,7 @@ class File
     /**
      * @ORM\Column(type="integer")
      */
-    private $type_id;
+    private $typeId;
 
     public function getId(): ?int
     {
@@ -40,12 +40,12 @@ class File
 
     public function getTypeId(): ?int
     {
-        return $this->type_id;
+        return $this->typeId;
     }
 
-    public function setTypeId(int $type_id): self
+    public function setTypeId(int $typeId): self
     {
-        $this->type_id = $type_id;
+        $this->typeId = $typeId;
 
         return $this;
     }
