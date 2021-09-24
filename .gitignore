@@ -7,13 +7,10 @@
 /public/bundles/
 /var/
 /vendor/
-/apidocs/
-###< symfony/framework-bundle ###
 
-###> symfony/phpunit-bridge ###
-.phpunit.result.cache
-/phpunit.xml
-###< symfony/phpunit-bridge ###
+###< symfony/framework-bundle ###
+.idea/
+/public/uploads
 
 ###> phpunit/phpunit ###
 /phpunit.xml
