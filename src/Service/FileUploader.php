@@ -39,9 +39,9 @@ class FileUploader
     // 10 mb
     const MAX_FILE_SIZE = 10000000;
 
-    private $targetDirectory;
-    private $slugger;
-    private $em;
+    private string $targetDirectory;
+    private SluggerInterface $slugger;
+    private EntityManagerInterface $em;
 
     public function __construct($targetDirectory, SluggerInterface $slugger, EntityManagerInterface $em)
     {
@@ -53,12 +53,12 @@ class FileUploader
     public function upload(UploadedFile $file)
     {
         if ($file->getSize() > self::MAX_FILE_SIZE) {
-            throw new FileUploadException(Response::HTTP_REQUEST_ENTITY_TOO_LARGE, 'max allowed file size is: ' . self::MAX_FILE_SIZE);
+            throw new FileUploadException('max allowed file size is: ' . self::MAX_FILE_SIZE);
         }
 
         $ext = $file->guessExtension();
         if (is_null($ext) || !isset(self::ALLOWED_TYPES[$ext])) {
-            throw new FileUploadException(Response::HTTP_UNSUPPORTED_MEDIA_TYPE,  $ext . ' extension is not allowed');
+            throw new FileUploadException($ext . ' extension is not allowed');
         }
 
         $fileType = self::ALLOWED_TYPES[$ext];
@@ -70,7 +70,7 @@ class FileUploader
         try {
             $file->move($dir, $fileName);
         } catch (FileException $e) {
-            throw new FileUploadException(Response::HTTP_CONFLICT, 'error moving file from tmp folder');
+            throw new FileUploadException('error moving file from tmp folder');
         }
 
         $file = new File();

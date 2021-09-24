@@ -16,12 +16,12 @@ class FileController extends AbstractController
     {
         $uploadedFiles = $request->files->get('files');
         if (is_null($uploadedFiles)) {
-            return new Response('No files provided!');
+            return new JsonResponse('No files provided!', Response::HTTP_CONFLICT );
         }
 
         $maxFileNum = $this->getParameter('uploads_max_file_num');
         if (count($uploadedFiles) > $maxFileNum) {
-            return new Response('Max allowed files number is : ' . $maxFileNum);
+            return new JsonResponse('Max allowed files number is : ' . $maxFileNum, Response::HTTP_CONFLICT);
         }
 
         $errors = [];
@@ -38,6 +38,6 @@ class FileController extends AbstractController
             return new JsonResponse(["success" => true]);
         }
 
-        return new JsonResponse($errors);
+        return new JsonResponse($errors, Response::HTTP_CONFLICT);
     }
 }

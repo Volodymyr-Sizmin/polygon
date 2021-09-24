@@ -1,5 +1,5 @@
 file_upload:
-  path: file/upload
+  path: api/file/upload
   controller: App\Controller\FileController::upload
   methods: POST
 
