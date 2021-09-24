@@ -11,3 +11,8 @@
 ###< symfony/framework-bundle ###
 .idea/
 /public/uploads
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###

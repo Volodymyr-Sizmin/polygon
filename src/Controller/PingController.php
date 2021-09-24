@@ -11,6 +11,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class PingController extends AbstractController
 {
     /**
+    * @api {get} /api/ping Request User information
+    * @apiName GetApiPing
+    * @apiGroup Test
+    *
+    * @apiSuccess (200) {String} success Should say pong
+    * 
+    */
+    /**
      * @Route("/api/ping", methods={"GET"})
      */
     public function ping(): Response
