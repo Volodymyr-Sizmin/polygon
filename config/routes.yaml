@@ -1,5 +1,24 @@
+create_playlist:
+  path: /api/playlists
+  controller: App\Controller\PlaylistController::createPlaylist
+  methods: POST
+
+show_playlist:
+  path: /api/playlists/{id}
+  controller: App\Controller\PlaylistController::showPlaylist
+  methods: GET
+
+modify_playlist:
+  path: /api/playlists/{id}
+  controller: App\Controller\PlaylistController::modifyPlaylist
+  methods: PUT
+
+delete_playlist:
+  path: /api/playlists/{id}
+  controller: App\Controller\PlaylistController::deletePlaylist
+  methods: DELETE
+
 file_upload:
   path: api/file/upload
   controller: App\Controller\FileController::upload
   methods: POST
-
