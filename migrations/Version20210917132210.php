@@ -46,13 +46,13 @@ final class Version20210917132210 extends AbstractMigration
         );
 
         $this->addSql(<<<END
-            INSERT INTO api.file_types (name, created_at, updated_at)
+            INSERT INTO file_types (name, created_at, updated_at)
             VALUES ('audio', DEFAULT, DEFAULT);
             
-            INSERT INTO api.file_types (name, created_at, updated_at)
+            INSERT INTO file_types (name, created_at, updated_at)
             VALUES ('image', DEFAULT, DEFAULT);
             
-            INSERT INTO api.file_types (name, created_at, updated_at)
+            INSERT INTO file_types (name, created_at, updated_at)
             VALUES ('document', DEFAULT, DEFAULT);
         END
         );
@@ -71,6 +71,5 @@ final class Version20210917132210 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('DROP TABLE file_types');
         $this->addSql('DROP TABLE files');
-
     }
 }

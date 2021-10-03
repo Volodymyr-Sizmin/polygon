@@ -15,8 +15,8 @@ class FileController extends AbstractController
     public function upload(Request $request, FileUploader $fileUploader): Response
     {
         $uploadedFiles = $request->files->get('files');
-        if (is_null($uploadedFiles)) {
-            return new JsonResponse('No files provided!', Response::HTTP_CONFLICT );
+        if (empty($uploadedFiles)) {
+            return new JsonResponse('No files provided!', Response::HTTP_CONFLICT);
         }
 
         $maxFileNum = $this->getParameter('uploads_max_file_num');

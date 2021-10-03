@@ -7,7 +7,6 @@ use App\Exception\FileUploadException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FileUploader
@@ -77,6 +76,8 @@ class FileUploader
         $file->setFilename($originalFilename);
         $file->setTypeId(self::FILE_TYPES[$fileType]);
         $file->setUrl(self::ALLOWED_TYPES[$ext] . '/' . $fileName);
+        $file->setCreatedAt(new \DateTime('NOW'));
+        $file->setUpdatedAt(new \DateTime('NOW'));
 
         $this->em->persist($file);
         $this->em->flush($file);
