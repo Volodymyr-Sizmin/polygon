@@ -22,3 +22,62 @@ file_upload:
   path: api/file/upload
   controller: App\Controller\FileController::upload
   methods: POST
+
+api_account:
+  path: /api/account
+  controller: App\Controller\AccountController::accountApi
+  methods: GET
+
+### AUTHENTICATION ENDPOINTS ###
+
+email_login:
+  path: /api/login/email
+  controller: App\Controller\LoginController::emailLogin
+  methods: POST
+
+phone_login:
+  path: /api/login/phone
+  controller: App\Controller\LoginController::phoneLogin
+  methods: POST
+  
+logout:
+  path: /api/logout
+  controller: App\Controller\LoginController::logout
+  methods: GET
+
+email_registration:
+  path: /api/registration/email
+  controller: App\Controller\RegistrationController::emailRegistration
+  methods: POST
+
+phone_registration:
+  path: /api/registration/phone
+  controller: App\Controller\RegistrationController::phoneRegistration
+  methods: POST
+
+send_email_verification:
+  path: /api/verify/email/send
+  controller: App\Controller\VerificationController::emailVerification
+  methods: POST
+
+verify_email:
+  path: /verify/email/{url}
+  controller: App\Controller\VerificationController::verifyEmail
+  methods: GET
+
+send_email_reset:
+  path: /api/reset/email/send
+  controller: App\Controller\ResetController::emailRequestCreation
+  methods: POST
+
+activate_reset_email:
+  path: /reset/email/{url}
+  controller: App\Controller\ResetController::activateResetEmail
+  methods: GET
+
+reset_password_email:
+  path: /api/reset/email/update
+  controller: App\Controller\ResetController::resetPasswordEmail
+  methods: POST
+
+### END AUTHENTICATION ENDPOINTS ###
