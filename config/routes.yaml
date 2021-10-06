@@ -28,6 +28,21 @@ api_account:
   controller: App\Controller\AccountController::accountApi
   methods: GET
 
+list_account:
+  path: /api/accounts
+  controller: App\Controller\AccountController::list
+  methods: GET
+
+update_account:
+  path: /api/account/{id}
+  controller: App\Controller\AccountController::update
+  methods: PUT
+
+delete_account:
+  path: /api/account/{id}
+  controller: App\Controller\AccountController::delete
+  methods: DELETE
+
 ### AUTHENTICATION ENDPOINTS ###
 
 email_login:

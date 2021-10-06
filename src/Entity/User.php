@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @UniqueEntity("email")
  * @UniqueEntity("phone")
+ * @ORM\HasLifecycleCallbacks()
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -78,10 +79,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $verified;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $is_deleted;
+
     public function __construct()
     {
         $this->apiTokens = new ArrayCollection();
         $this->verified = false;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setDefaults(): void
+    {
+        $this->is_deleted = false;
+    }
+
+    public function getPublicData(): array
+    {
+        return [
+            "id" => $this->getId(),
+            "username" => $this->getUsername()
+        ];
     }
 
     public function getId(): ?int
@@ -108,7 +130,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -245,6 +267,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVerified(bool $verified): self
     {
         $this->verified = $verified;
+
+        return $this;
+    }
+
+    public function getIsDeleted(): ?bool
+    {
+        return $this->is_deleted;
+    }
+
+    public function setIsDeleted(bool $is_deleted): self
+    {
+        $this->is_deleted = $is_deleted;
 
         return $this;
     }
