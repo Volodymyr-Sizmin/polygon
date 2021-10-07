@@ -23,7 +23,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function findAll()
     {
-        return $this->findBy(['is_deleted' => false]);
+        return $this->findBy(['isDeleted' => false]);
     }
 
     /**

@@ -80,9 +80,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $verified;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", name="is_deleted")
      */
-    private $is_deleted;
+    private $isDeleted;
 
     public function __construct()
     {
@@ -95,7 +95,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function setDefaults(): void
     {
-        $this->is_deleted = false;
+        $this->isDeleted = false;
     }
 
     public function getPublicData(): array
@@ -130,7 +130,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string)$this->email;
+        return (string) $this->email;
     }
 
     /**
@@ -273,12 +273,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getIsDeleted(): ?bool
     {
-        return $this->is_deleted;
+        return $this->isDeleted;
     }
 
-    public function setIsDeleted(bool $is_deleted): self
+    public function setIsDeleted(bool $isDeleted): self
     {
-        $this->is_deleted = $is_deleted;
+        $this->isDeleted = $isDeleted;
 
         return $this;
     }
