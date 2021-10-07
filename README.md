@@ -38,6 +38,30 @@ Example
  *     }
  */
 ```
+### Errors
+
+If you expirience error simular to this 
+> The annotation &quot;@apiName&quot; in method App\Controller\LoginController::emailLogin() was never imported.
+
+use @IgnoreAnnotation("apiName")
+
+Example
+```
+/**
+ * @IgnoreAnnotation("apiName")
+ * @IgnoreAnnotation("apiGroup")
+ * @IgnoreAnnotation("apiParam")
+ * @IgnoreAnnotation("apiBody")
+ * @IgnoreAnnotation("apiSuccess")
+ * @IgnoreAnnotation("apiSuccessExample")
+ * @IgnoreAnnotation("apiError")
+ * @IgnoreAnnotation("apiErrorExample")
+ * @IgnoreAnnotation("apiHeader")
+ * @IgnoreAnnotation("apiHeaderExample")
+ */
+ class LoginController extends AbstractController
+
+```
 
 ## Inherit
 
