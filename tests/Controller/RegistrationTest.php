@@ -7,7 +7,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class RegistrationTest extends WebTestCase
 {
-
     public function testEmptyEmailRegistratio(): void
     {
         $client = static::createClient();
@@ -53,23 +52,11 @@ class RegistrationTest extends WebTestCase
     public function testUsedEmailRegistratio(): void
     {
         $client = static::createClient();
-        $entityManager = $client->getContainer()->get('doctrine')->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'b.astapau@anderonlab.com']);
-        if(!$user){
-            $user = new User();
-            $user->setFirstName('Boris');
-            $user->setLastName('Astapau');
-            $user->setUserName('b.astapau');
-            $user->setEmail('b.astapau@anderonlab.com');
-            $user->setPassword('$2y$13$2Fh6tHiRuo6stBS.pC0zlu8RqK8tLQ3rM3jHZz5uZZKohcifpstjS');
-            $entityManager->persist($user);
-            $entityManager->flush();
-        }
         $client->jsonRequest('POST', '/api/registration/email', [
             "firstName" => "",
             "lastName" => "",
             "userName" => "",
-            "email" => "b.astapau@anderonlab.com",
+            "email" => "b.astapau@andersenlab.com",
             "password" => "",
             "confirmPassword" => ""
         ]);
@@ -83,18 +70,6 @@ class RegistrationTest extends WebTestCase
     public function testUsedPhoneRegistratio(): void
     {
         $client = static::createClient();
-        $entityManager = $client->getContainer()->get('doctrine')->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['phone' => '+375291235566']);
-        if(!$user){
-            $user = new User();
-            $user->setFirstName('Boris');
-            $user->setLastName('Astapau');
-            $user->setUserName('b.astapau');
-            $user->setPhone('+375291235566');
-            $user->setPassword('$2y$13$2Fh6tHiRuo6stBS.pC0zlu8RqK8tLQ3rM3jHZz5uZZKohcifpstjS');
-            $entityManager->persist($user);
-            $entityManager->flush();
-        }
         $client->jsonRequest('POST', '/api/registration/phone', [
             "firstName" => "",
             "lastName" => "",
@@ -113,17 +88,11 @@ class RegistrationTest extends WebTestCase
     public function testEmailRegistration(): void
     {
         $client = static::createClient();
-        $entityManager = $client->getContainer()->get('doctrine')->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'b.astapau@andersenlab.com']);
-        if($user){
-            $entityManager->remove($user);
-            $entityManager->flush();
-        }
         $client->jsonRequest('POST', '/api/registration/email', [
-            "firstName" => "Boris",
-            "lastName" => "Astapau",
-            "userName" => "b.astapau",
-            "email" => "b.astapau@andersenlab.com",
+            "firstName" => "Boris1",
+            "lastName" => "Astapau1",
+            "userName" => "b.astapau1",
+            "email" => "b.astapau@andersenlab1.com",
             "password" => "password",
             "confirmPassword" => "password"
         ]);
@@ -131,23 +100,19 @@ class RegistrationTest extends WebTestCase
         $this->assertSame(201,$response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame($responseData->success, true);
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'b.astapau@andersenlab.com']);
+        $this->assertNotNull($user);
     }
 
     public function testPhoneRegistration(): void
     {
         $client = static::createClient();
-        $entityManager = $client->getContainer()->get('doctrine')->getManager();
-        $user = $entityManager->getRepository(User::class)
-        ->findOneBy(['phone' => '+375291235566']);
-        if($user){
-            $entityManager->remove($user);
-            $entityManager->flush();
-        }
         $client->jsonRequest('POST', '/api/registration/phone', [
-            "firstName" => "Boris",
-            "lastName" => "Astapau",
-            "userName" => "b.astapau",
-            "phone" => "+375291235566",
+            "firstName" => "Boris2",
+            "lastName" => "Astapau2",
+            "userName" => "b.astapau2",
+            "phone" => "+375291235562",
             "password" => "password",
             "confirmPassword" => "password"
         ]);
@@ -155,5 +120,8 @@ class RegistrationTest extends WebTestCase
         $this->assertSame(201,$response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame($responseData->success, true);
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['phone' => '+375291235562']);
+        $this->assertNotNull($user);
     }
 }
