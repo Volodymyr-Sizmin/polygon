@@ -126,15 +126,16 @@ To access testing functionality you should enter symthony-api(app/enter symfony-
 ## Running tests
 To run all tests use 
 ```
-php bin/phpunit
+make tests
 ```
+This command will rebuild test database and reload fixtures
 You can also run all test from specific directory
 ```
-php bin/phpunit tests/Form
+make tests FILE=tests/Entity
 ```
 or class 
 ```
-php bin/phpunit tests/Form/UserTypeTest.php
+make tests FILE=tests/Entity/ApiTokenTest.php
 ```
 ## Creating tests
 To create test run
@@ -167,5 +168,7 @@ class PingTest extends WebTestCase
     }
 }
 ```
+## Populating test database
+When you need to load a "fake" set of data into a database for testing or to help give you some interesting data while you're developing your application, use [Fixtures](https://symfony.com/bundles/DoctrineFixturesBundle/current/index.html). Fixtures will be automaticly loaded on `make tests`.
 
 For more in depth info read [symfony docs](https://symfony.com/doc/current/testing.html) and [phpunit docs](https://phpunit.de/documentation.html).

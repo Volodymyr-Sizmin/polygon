@@ -11,19 +11,6 @@ class LoginTest extends WebTestCase
     public function testEmailLogin(): void
     {
         $client = static::createClient();
-        $entityManager = $client->getContainer()->get('doctrine')->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'b.astapau@andersenlab.com']);
-        if(!$user){
-            $user = new User();
-            $user->setFirstName('Boris');
-            $user->setLastName('Astapau');
-            $user->setUserName('b.astapau');
-            $user->setEmail('b.astapau@andersenlab.com');
-            $user->setPassword('$2y$13$2Fh6tHiRuo6stBS.pC0zlu8RqK8tLQ3rM3jHZz5uZZKohcifpstjS');
-        }
-        $user->setVerified(true);
-        $entityManager->persist($user);
-        $entityManager->flush();
         $client->jsonRequest('POST', '/api/login/email', [
             "email"=>"b.astapau@andersenlab.com", 
             "password"=>"password"
@@ -38,19 +25,6 @@ class LoginTest extends WebTestCase
     public function testPhoneLogin(): void
     {
         $client = static::createClient();
-        $entityManager = $client->getContainer()->get('doctrine')->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['phone' => '+375291235566']);
-        if(!$user){
-            $user = new User();
-            $user->setFirstName('Boris');
-            $user->setLastName('Astapau');
-            $user->setUserName('b.astapau');
-            $user->setPhone('+375291235566');
-            $user->setPassword('$2y$13$2Fh6tHiRuo6stBS.pC0zlu8RqK8tLQ3rM3jHZz5uZZKohcifpstjS');
-        }
-        $user->setVerified(true);
-        $entityManager->persist($user);
-        $entityManager->flush();
         $client->jsonRequest('POST', '/api/login/phone', [
             "phone"=>"+375291235566", 
             "password"=>"password"
@@ -65,8 +39,6 @@ class LoginTest extends WebTestCase
     public function testAccess(): void
     {
         $client = static::createClient();
-        $entityManager = $client->getContainer()->get('doctrine')->getManager();
-        $user = $entityManager->getRepository(User::class);
         $client->jsonRequest('GET', '/api/account');
         $response = $client->getResponse();
         $this->assertSame(401,$response->getStatusCode());

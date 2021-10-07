@@ -10,22 +10,8 @@ class VerificationTest extends WebTestCase
     public function testVerificationRequest(): void
     {
         $client = static::createClient();
-        $entityManager = $client->getContainer()->get('doctrine')->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'b.astapau@anderonlab.com']);
-        if(!$user){
-            $user = new User();
-            $user->setFirstName('Boris');
-            $user->setLastName('Astapau');
-            $user->setUserName('b.astapau');
-            $user->setEmail('b.astapau@anderonlab.com');
-            $user->setPassword('$2y$13$2Fh6tHiRuo6stBS.pC0zlu8RqK8tLQ3rM3jHZz5uZZKohcifpstjS');
-        }
-        $user->setVerified(false);
-        $entityManager->persist($user);
-        $entityManager->flush();
-        $this->assertFalse($user->getVerified(),'1');
         $client->jsonRequest('POST', '/api/verify/email/send', [
-            "email"=>"b.astapau@anderonlab.com", 
+            "email"=>"verification@notandersenlab.com", 
         ]);
         $response = $client->getResponse();
         $this->assertSame(201,$response->getStatusCode());
@@ -35,8 +21,8 @@ class VerificationTest extends WebTestCase
         $client->Request('GET', $url);
         $response = $client->getResponse();
         $this->assertSame(200,$response->getStatusCode());
-        $user = $entityManager->getRepository(User::class)
-        ->findOneBy(['email' => 'b.astapau@anderonlab.com']);
-        $this->assertTrue($user->getVerified(),'2');
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'verification@notandersenlab.com']);
+        $this->assertTrue($user->getVerified());
     }
 }
