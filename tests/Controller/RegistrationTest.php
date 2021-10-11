@@ -21,11 +21,11 @@ class RegistrationTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertSame(400,$response->getStatusCode());
         $responseData = json_decode($response->getContent());
-        $this->assertSame(false,$responseData->success);
-        $this->assertSame('email can\'t be blank',$responseData->body->message->email);
-        $this->assertSame('first name can\'t be blank',$responseData->body->message->firstName);
-        $this->assertSame('last name can\'t be blank',$responseData->body->message->lastName);
-        $this->assertSame('username can\'t be blank',$responseData->body->message->userName);
+        $this->assertSame(false, $responseData->success);
+        $this->assertSame('email can\'t be blank', $responseData->body->message->email);
+        $this->assertSame('first name can\'t be blank', $responseData->body->message->firstName);
+        $this->assertSame('last name can\'t be blank', $responseData->body->message->lastName);
+        $this->assertSame('username can\'t be blank', $responseData->body->message->userName);
     }
 
     public function testEmptyPhoneRegistratio(): void
@@ -43,10 +43,10 @@ class RegistrationTest extends WebTestCase
         $this->assertSame(400,$response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame(false,$responseData->success);
-        $this->assertSame('phone can\'t be blank',$responseData->body->message->phone);
-        $this->assertSame('first name can\'t be blank',$responseData->body->message->firstName);
-        $this->assertSame('last name can\'t be blank',$responseData->body->message->lastName);
-        $this->assertSame('username can\'t be blank',$responseData->body->message->userName);
+        $this->assertSame('phone can\'t be blank', $responseData->body->message->phone);
+        $this->assertSame('first name can\'t be blank', $responseData->body->message->firstName);
+        $this->assertSame('last name can\'t be blank', $responseData->body->message->lastName);
+        $this->assertSame('username can\'t be blank', $responseData->body->message->userName);
     }
 
     public function testUsedEmailRegistratio(): void
@@ -61,10 +61,10 @@ class RegistrationTest extends WebTestCase
             "confirmPassword" => ""
         ]);
         $response = $client->getResponse();
-        $this->assertSame(400,$response->getStatusCode());
+        $this->assertSame(400, $response->getStatusCode());
         $responseData = json_decode($response->getContent());
-        $this->assertSame(false,$responseData->success);
-        $this->assertSame('This value is already used.',$responseData->body->message->email);
+        $this->assertSame(false, $responseData->success);
+        $this->assertSame('This value is already used.', $responseData->body->message->email);
     }
 
     public function testUsedPhoneRegistratio(): void
@@ -79,10 +79,10 @@ class RegistrationTest extends WebTestCase
             "confirmPassword" => ""
         ]);
         $response = $client->getResponse();
-        $this->assertSame(400,$response->getStatusCode());
+        $this->assertSame(400, $response->getStatusCode());
         $responseData = json_decode($response->getContent());
-        $this->assertSame(false,$responseData->success);
-        $this->assertSame('This value is already used.',$responseData->body->message->phone);
+        $this->assertSame(false, $responseData->success);
+        $this->assertSame('This value is already used.', $responseData->body->message->phone);
     }
 
     public function testEmailRegistration(): void
@@ -117,7 +117,7 @@ class RegistrationTest extends WebTestCase
             "confirmPassword" => "password"
         ]);
         $response = $client->getResponse();
-        $this->assertSame(201,$response->getStatusCode());
+        $this->assertSame(201, $response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame($responseData->success, true);
         $entityManager = $client->getContainer()->get('doctrine')->getManager();

@@ -19,7 +19,7 @@ class LoginTest extends WebTestCase
         $this->assertSame(200,$response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame($responseData->success, true);
-        $this->assertMatchesRegularExpression('/(\S){60}/',$responseData->body->token);
+        $this->assertMatchesRegularExpression('/(\S){60}/', $responseData->body->token);
     }
 
     public function testPhoneLogin(): void
@@ -33,7 +33,7 @@ class LoginTest extends WebTestCase
         $this->assertSame(200,$response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame($responseData->success, true);
-        $this->assertMatchesRegularExpression('/(\S){60}/',$responseData->body->token);
+        $this->assertMatchesRegularExpression('/(\S){60}/', $responseData->body->token);
     }
 
     public function testAccess(): void
@@ -44,6 +44,6 @@ class LoginTest extends WebTestCase
         $this->assertSame(401,$response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame(false, $responseData->success);
-        $this->assertSame('No API token provided',$responseData->body->message);
+        $this->assertSame('No API token provided', $responseData->body->message);
     }
 }

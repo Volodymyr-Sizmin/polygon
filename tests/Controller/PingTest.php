@@ -11,7 +11,7 @@ class PingTest extends WebTestCase
         $client = static::createClient();
         $client->request('GET', '/api/ping');
         $response = $client->getResponse();
-        $this->assertSame(200,$response->getStatusCode());
+        $this->assertSame(200,$response->getStatusCode(), 'ping failed');
         $responseData = json_decode($response->getContent());
         $this->assertSame($responseData->success, 'pong');
     }
