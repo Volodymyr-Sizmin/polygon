@@ -53,6 +53,7 @@ class ResetController extends AbstractController
             ->from('poligon@mail.com')
             ->to($to)
             ->subject('Reset POLIGON account password')
+            ->text("If you want to reset password go to this url: $url")
             ->html("<p>Click url if you want to reset password</p><a href='$url'>$url</a>");
 
         $mailer->send($email);
@@ -92,7 +93,7 @@ class ResetController extends AbstractController
      */
     public function emailRequestCreation(Request $request, MailerInterface $mailer): Response
     {
-        $data = json_decode($request->getContent(),true);
+        $data = json_decode($request->getContent(), true);
         if (!$data){
             $response = [
                 'success' => false,
@@ -113,10 +114,10 @@ class ResetController extends AbstractController
 
         $entityManager = $this->getDoctrine()->getManager();
         $resetRequest = new ResetRequest($user);
-        $this->sendEmail($resetRequest,$mailer);
+        $this->sendEmail($resetRequest, $mailer);
         $entityManager->persist($resetRequest);
         $entityManager->flush();
-        $response = ['success' => true,'body' => ['url' => $resetRequest->getUrl()]];
+        $response = ['success' => true, 'body' => ['url' => $resetRequest->getUrl()]];
         return new JsonResponse($response, Response::HTTP_CREATED); 
     }
 
@@ -169,7 +170,7 @@ class ResetController extends AbstractController
             return new JsonResponse($response, Response::HTTP_GONE);//410
         }
         $this->activateRequest($resetRequest);
-        $response = ['success' => true,'body' => []];
+        $response = ['success' => true, 'body' => []];
         return new JsonResponse($response, Response::HTTP_OK); 
     }
 
@@ -207,7 +208,7 @@ class ResetController extends AbstractController
      */
     public function resetPasswordEmail(Request $request, UserPasswordHasherInterface $encoder): Response
     {
-        $data = json_decode($request->getContent(),true);
+        $data = json_decode($request->getContent(), true);
         if (!$data){
             $response = [
                 'success' => false,
@@ -259,7 +260,7 @@ class ResetController extends AbstractController
         $this->deleteRequest($resetRequest);
         $entityManager->persist($user);
         $entityManager->flush();
-        $response = ['success' => true,'body' => []];
+        $response = ['success' => true, 'body' => []];
         return new JsonResponse($response, Response::HTTP_OK); 
     }
 }

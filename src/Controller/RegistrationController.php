@@ -34,13 +34,13 @@ class RegistrationController extends AbstractController
         $this->encoder = $encoder;
     }
 
-    private function validate($user,$data,$type = 'email')
+    private function validate($user, $data, $type = 'email')
     {
         $errorsString =  [];
         if ($data['password'] !== $data['confirmPassword']){
             $errorsString['password'] = 'passsword and confirm password don\'t match';
         }
-        $errors = $this->validator->validate($user, null, ['Default',$type]);
+        $errors = $this->validator->validate($user, null, ['Default', $type]);
         foreach($errors as $error){
             $errorsString[$error->getPropertyPath()] = $error->getMessage();
         }
@@ -84,7 +84,7 @@ class RegistrationController extends AbstractController
      */
     public function emailRegistration(Request $request): Response
     {
-        $data = json_decode($request->getContent(),true);
+        $data = json_decode($request->getContent(), true);
         if (!$data){
             $response = [
                 'success' => false,
@@ -100,7 +100,7 @@ class RegistrationController extends AbstractController
         $user->setLastName($data['lastName']);
         $user->setUserName($data['userName']);
         $user->setEmail($data['email']);
-        $errorsString = $this->validate($user,$data,'email');
+        $errorsString = $this->validate($user, $data, 'email');
         if (!empty($errorsString)){
             $response = [
                 'success' => false,
@@ -116,7 +116,7 @@ class RegistrationController extends AbstractController
 
         $entetyManager->persist($user);
         $entetyManager->flush();
-        $response = ['success' => true,'body' => []];
+        $response = ['success' => true, 'body' => []];
         return new JsonResponse($response, Response::HTTP_CREATED); 
     }
 
@@ -157,7 +157,7 @@ class RegistrationController extends AbstractController
 
     public function phoneRegistration(Request $request): Response
     {
-        $data = json_decode($request->getContent(),true);
+        $data = json_decode($request->getContent(), true);
         if (!$data){
             $response = [
                 'success' => false,
@@ -173,7 +173,7 @@ class RegistrationController extends AbstractController
         $user->setLastName($data['lastName']);
         $user->setUserName($data['userName']);
         $user->setPhone($data['phone']);
-        $errorsString = $this->validate($user,$data,'phone');
+        $errorsString = $this->validate($user, $data, 'phone');
         if (!empty($errorsString)){
             $response = [
                 'success' => false,
@@ -189,7 +189,7 @@ class RegistrationController extends AbstractController
 
         $entetyManager->persist($user);
         $entetyManager->flush();
-        $response = ['success' => true,'body' => []];
+        $response = ['success' => true, 'body' => []];
         return new JsonResponse($response, Response::HTTP_CREATED); 
     }
 }

@@ -26,14 +26,14 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  */
 class LoginController extends AbstractController
 {
-    private function generateTokin($user,$data): Response 
+    private function generateTokin($user, $data): Response 
     {
         $entityManager = $this->getDoctrine()->getManager();
         $remember = array_key_exists('rememberMe',$data)?:false;
-        $apiToken = new ApiToken($user,$remember);
+        $apiToken = new ApiToken($user, $remember);
         $entityManager->persist($apiToken);
         $entityManager->flush();
-        $response = ['success' => true,'body' => ['token' => $apiToken->getToken()]];
+        $response = ['success' => true, 'body' => ['token' => $apiToken->getToken()]];
         return new JsonResponse($response, Response::HTTP_OK); 
     }
 
@@ -71,9 +71,9 @@ class LoginController extends AbstractController
      *     }
      * 
      */
-    public function emailLogin(Request $request,UserPasswordHasherInterface $encoder): Response
+    public function emailLogin(Request $request, UserPasswordHasherInterface $encoder): Response
     {
-        $data = json_decode($request->getContent(),true);
+        $data = json_decode($request->getContent(), true);
         if (!$data){
             $response = [
                 'success' => false,
@@ -89,7 +89,7 @@ class LoginController extends AbstractController
             ];
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
         }
-        $verified = $encoder->isPasswordValid($user,$data['password']);
+        $verified = $encoder->isPasswordValid($user, $data['password']);
         if(!$verified){
             $response = [
                 'success' => false,
@@ -104,7 +104,7 @@ class LoginController extends AbstractController
             ];
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
         }
-        return $this->generateTokin($user,$data);
+        return $this->generateTokin($user, $data);
     }
 
     /**
@@ -141,9 +141,9 @@ class LoginController extends AbstractController
      *     }
      * 
      */
-    public function phoneLogin(Request $request,UserPasswordHasherInterface $encoder): Response
+    public function phoneLogin(Request $request, UserPasswordHasherInterface $encoder): Response
     {
-        $data = json_decode($request->getContent(),true);
+        $data = json_decode($request->getContent(), true);
         if (!$data){
             $response = [
                 'success' => false,
@@ -160,7 +160,7 @@ class LoginController extends AbstractController
             ];
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
         }
-        $verified = $encoder->isPasswordValid($user,$data['password']);
+        $verified = $encoder->isPasswordValid($user, $data['password']);
         if(!$verified){
             $response = [
                 'success' => false,
@@ -168,7 +168,7 @@ class LoginController extends AbstractController
             ];
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
         }
-        return $this->generateTokin($user,$data);
+        return $this->generateTokin($user, $data);
     }
 
     /**
@@ -214,7 +214,7 @@ class LoginController extends AbstractController
         $user->removeApiToken($apiToken);
         $entityManager->remove($apiToken);
         $entityManager->flush();
-        $response = ['success' => true,'body' => []];
+        $response = ['success' => true, 'body' => []];
         return new JsonResponse($response, Response::HTTP_OK); 
     }
 }

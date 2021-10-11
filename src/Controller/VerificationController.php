@@ -52,6 +52,7 @@ class VerificationController extends AbstractController
             ->from('poligon@mail.com')
             ->to($to)
             ->subject('Verify POLIGON account')
+            ->text("To activate your account go to this url: $url")
             ->html("<p>Click url to activate account</p><a href='$url'>$url</a>");
 
         $mailer->send($email);
@@ -91,7 +92,7 @@ class VerificationController extends AbstractController
      */
     public function emailVerification(Request $request, MailerInterface $mailer): Response
     {
-        $data = json_decode($request->getContent(),true);
+        $data = json_decode($request->getContent(), true);
         if (!$data){
             $response = [
                 'success' => false,
@@ -110,16 +111,16 @@ class VerificationController extends AbstractController
         }
 
         if($user->getVerified()){
-            $response = ['success' => true,'body' => ['message' => 'already verified']];
+            $response = ['success' => true, 'body' => ['message' => 'already verified']];
             return new JsonResponse($response, Response::HTTP_OK); 
         }
 
         $entityManager = $this->getDoctrine()->getManager();
         $verificationRequest = new VerificationRequest($user);
-        $this->sendEmail($verificationRequest,$mailer);
+        $this->sendEmail($verificationRequest, $mailer);
         $entityManager->persist($verificationRequest);
         $entityManager->flush();
-        $response = ['success' => true,'body' => ['url' => $verificationRequest->getUrl()]];
+        $response = ['success' => true, 'body' => ['url' => $verificationRequest->getUrl()]];
         return new JsonResponse($response, Response::HTTP_CREATED); 
     }
 
@@ -172,7 +173,7 @@ class VerificationController extends AbstractController
         }
         $this->verifyUser($verificationRequest);
         $this->deleteRequest($verificationRequest);
-        $response = ['success' => true,'body' => []];
+        $response = ['success' => true, 'body' => []];
         return new JsonResponse($response, Response::HTTP_OK); 
     }
 }
