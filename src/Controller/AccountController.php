@@ -8,7 +8,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @IgnoreAnnotation("apiName")
@@ -21,9 +20,39 @@ use Symfony\Component\Routing\Annotation\Route;
  * @IgnoreAnnotation("apiErrorExample")
  * @IgnoreAnnotation("apiHeader")
  * @IgnoreAnnotation("apiHeaderExample")
+ * @IgnoreAnnotation("apiParamExample")
  */
+
 class AccountController extends AbstractController
 {
+    /**
+     * @api {get} /backend/api/accounts/logged-in-user View
+     * @apiName GetApiAccountsView
+     * @apiGroup User
+     *
+     * @apiSuccess (200) {String} success Should show user
+     * @apiSuccessExample {json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *
+     *        {
+     *           "firstName": "firstName",
+     *           "lastName": "lastName",
+     *           "userName": "userName",
+     *        }
+     *
+     * @apiError {Boolean} success Should be false
+     * @apiError {JSON} body Error parameters
+     * @apiError {String} body.message Error message
+     * @apiErrorExample {json} Error-Response:
+     *  HTTP/1.1 403
+     *     {
+     *          "success": false,
+     *          "body": {
+     *              "message": "Access denied"
+     *          }
+     *      }
+     *
+     **/
     public function accountApi()
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -36,7 +65,7 @@ class AccountController extends AbstractController
     }
 
     /**
-     * @api {get} /api/accounts/list List
+     * @api {get} /backend/api/accounts List
      * @apiName GetApiAccountsList
      * @apiGroup User
      *
@@ -65,7 +94,6 @@ class AccountController extends AbstractController
      *          }
      *      }
      *
-     * @Route("/api/accounts/list", methods={"GET"})
      **/
     public function list()
     {
@@ -86,7 +114,7 @@ class AccountController extends AbstractController
     }
 
     /**
-     * @api {put} /api/accounts Update
+     * @api {put} /backend/api/accounts Update
      * @apiName PutApiAccountsUpdate
      * @apiGroup User
      *
@@ -127,7 +155,6 @@ class AccountController extends AbstractController
      *          }
      *      }
      *
-     * @Route("/api/accounts", methods={"PUT"})
      **/
     public function update(User $user, Request $request): JsonResponse
     {
@@ -164,7 +191,7 @@ class AccountController extends AbstractController
     }
 
     /**
-     * @api {delete} /api/accounts Delete
+     * @api {delete} /backend/api/accounts Delete
      * @apiName DeleteApiAccountsDelete
      * @apiGroup User
      *
@@ -183,7 +210,6 @@ class AccountController extends AbstractController
      *          }
      *      }
      *
-     * @Route("/api/accounts", methods={"DELETE"})
      **/
     public function delete(User $user): JsonResponse
     {

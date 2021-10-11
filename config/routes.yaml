@@ -24,12 +24,12 @@ file_upload:
   methods: POST
 
 api_account:
-  path: /api/accounts
+  path: /api/accounts/logged-in-user
   controller: App\Controller\AccountController::accountApi
   methods: GET
 
 list_account:
-  path: /api/accounts/list
+  path: /api/accounts
   controller: App\Controller\AccountController::list
   methods: GET
 

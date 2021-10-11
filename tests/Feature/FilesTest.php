@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Feature;
+namespace App\Tests\Feature\Feature;
 
 use App\Service\FileUploader;
 use Faker\Factory;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Entity;
+namespace App\Tests\Feature\Entity;
 
 use App\Entity\User;
 use App\Entity\ApiToken;
