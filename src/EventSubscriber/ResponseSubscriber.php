@@ -16,7 +16,7 @@ class ResponseSubscriber implements EventSubscriberInterface
 
     private $methods = ['POST', 'PUT', 'PATCH', 'DELETE'];
 
-    private $allowedCodes = [200, 201];
+    private $allowedCodes = [200, 201, 204];
 
     public function __construct(
         EntityManagerInterface $entityManager

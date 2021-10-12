@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Service;
+namespace App\Tests\Feature\Service;
 
 use App\Entity\File;
 use App\Service\FileUploader;

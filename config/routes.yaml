@@ -24,9 +24,24 @@ file_upload:
   methods: POST
 
 api_account:
-  path: /api/account
+  path: /api/accounts/logged-in-user
   controller: App\Controller\AccountController::accountApi
   methods: GET
+
+list_account:
+  path: /api/accounts
+  controller: App\Controller\AccountController::list
+  methods: GET
+
+update_account:
+  path: /api/accounts/{id}
+  controller: App\Controller\AccountController::update
+  methods: PUT
+
+delete_account:
+  path: /api/accounts/{id}
+  controller: App\Controller\AccountController::delete
+  methods: DELETE
 
 ### AUTHENTICATION ENDPOINTS ###
 
