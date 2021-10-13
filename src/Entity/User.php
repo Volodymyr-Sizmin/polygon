@@ -28,8 +28,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
-     * @Assert\NotBlank(groups = {"email"}, message = "email can't be blank")
-     * @Assert\Email(groups = {"email"}, message = "{{ value }} is not a valid email")
+     * @Assert\NotBlank(groups = {"email"}, message = "Invalid e-mail Address")
+     * @Assert\Regex(
+     *      groups = {"email"}, 
+     *      pattern = "/^([a-zа-я0-9!#$%&`*\-=+'?{}\|~]+\.{0,1}[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+){3,32}@([a-zа-я0-9!#$%&`*\-=+'?{}\|~.]+[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+){3,32}$/iu", 
+     *      message = "Invalid e-mail Address"
+     * )     
      */
     private $email;
 
@@ -46,26 +50,71 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank(message = "first name can't be blank")
+     * @Assert\Sequentially({
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 60,
+     *      minMessage = "Must be {{ limit }} characters or more",
+     *      maxMessage = "Must be {{ limit }} characters or less"
+     * ),
+     * @Assert\Regex(
+     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu", 
+     *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'\x22?,<>[]{}\|/№!~' symbols, and one dot not first or last"
+     * )
+     * })
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank(message = "last name can't be blank")
+     * @Assert\Sequentially({
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 60,
+     *      minMessage = "Must be {{ limit }} characters or more",
+     *      maxMessage = "Must be {{ limit }} characters or less"
+     * ),
+     * @Assert\Regex(
+     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu", 
+     *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'\x22?,<>[]{}\|/№!~' symbols, and one dot not first or last"
+     * )
+     * })
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string")
-     * @Assert\NotBlank(message = "username can't be blank")
+     * @Assert\Sequentially({
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 32,
+     *      minMessage = "Must be {{ limit }} characters or more",
+     *      maxMessage = "Must be {{ limit }} characters or less"
+     * ),
+     * @Assert\Regex(
+     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu", 
+     *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'\x22?,<>[]{}\|/№!~' symbols, and one dot not first or last"
+     * )
+     * })
      */
     private $userName;
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
-     * @Assert\NotBlank(groups = {"phone"}, message = "phone can't be blank")
-     * @Assert\Regex(groups = {"phone"}, pattern = "/^[\+]?[0-9]{6,20}$/", message = "incorrect phone format")
+     * @Assert\Sequentially({
+     * @Assert\Length(
+     *      groups = {"phone"},
+     *      min = 7,
+     *      max = 13,
+     *      minMessage = "Must be {{ limit }} characters or more",
+     *      maxMessage = "Must be {{ limit }} characters or less"
+     * ),
+     * @Assert\Regex(
+     *      groups = {"phone"}, 
+     *      pattern = "/^\+[0-9]{6,12}$/", 
+     *      message = "incorrect phone format"
+     * )
+     * })
      */
     private $phone;
 
@@ -187,6 +236,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
+    private function removeSpaces(string $str) :string
+    {
+        $str = preg_replace('/\s\s+/', ' ', $str);
+        $str = preg_replace('/^ /', '', $str);
+        $str = preg_replace('/ $/', '', $str);
+        return $str;
+    }
+
     public function getFirstName(): ?string
     {
         return $this->firstName;
@@ -194,7 +251,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setFirstName(string $firstName): self
     {
-        $this->firstName = $firstName;
+        $this->firstName = $this->removeSpaces($firstName);
 
         return $this;
     }
@@ -206,14 +263,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setLastName(string $lastName): self
     {
-        $this->lastName = $lastName;
+        $this->lastName = $this->removeSpaces($lastName);
 
         return $this;
     }
 
     public function setUserName(string $userName): self
     {
-        $this->userName = $userName;
+        $this->userName = $this->removeSpaces($userName);
 
         return $this;
     }

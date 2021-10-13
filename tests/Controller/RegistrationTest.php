@@ -22,10 +22,10 @@ class RegistrationTest extends WebTestCase
         $this->assertSame(400,$response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame(false, $responseData->success);
-        $this->assertSame('email can\'t be blank', $responseData->body->message->email);
-        $this->assertSame('first name can\'t be blank', $responseData->body->message->firstName);
-        $this->assertSame('last name can\'t be blank', $responseData->body->message->lastName);
-        $this->assertSame('username can\'t be blank', $responseData->body->message->userName);
+        $this->assertSame('Invalid e-mail Address', $responseData->body->message->email);
+        $this->assertSame('Must be 2 characters or more', $responseData->body->message->firstName);
+        $this->assertSame('Must be 2 characters or more', $responseData->body->message->lastName);
+        $this->assertSame('Must be 2 characters or more', $responseData->body->message->userName);
     }
 
     public function testEmptyPhoneRegistratio(): void
@@ -43,10 +43,10 @@ class RegistrationTest extends WebTestCase
         $this->assertSame(400,$response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame(false,$responseData->success);
-        $this->assertSame('phone can\'t be blank', $responseData->body->message->phone);
-        $this->assertSame('first name can\'t be blank', $responseData->body->message->firstName);
-        $this->assertSame('last name can\'t be blank', $responseData->body->message->lastName);
-        $this->assertSame('username can\'t be blank', $responseData->body->message->userName);
+        $this->assertSame('Must be 7 characters or more', $responseData->body->message->phone);
+        $this->assertSame('Must be 2 characters or more', $responseData->body->message->firstName);
+        $this->assertSame('Must be 2 characters or more', $responseData->body->message->lastName);
+        $this->assertSame('Must be 2 characters or more', $responseData->body->message->userName);
     }
 
     public function testUsedEmailRegistratio(): void

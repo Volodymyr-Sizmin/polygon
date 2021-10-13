@@ -34,17 +34,31 @@ class RegistrationController extends AbstractController
         $this->encoder = $encoder;
     }
 
+    private function validatePassword($data){
+        $length = mb_strlen($data['password']);
+        if ($length < 3){
+            return ['password' => 'Must be 3 characters or more'];
+        }
+        if ($length > 32){
+            return ['password' => 'Must be 32 characters or less'];
+        }
+        $pattern = "/^[a-zа-я0-9!@#$%^&`*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+$/u";
+        if (!preg_match($pattern, $data['password'])){
+            return ['password' => 'Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last'];
+        }
+        if ($data['password'] !== $data['confirmPassword']){
+            return ['password' => 'Passsword and confirm password don\'t match'];
+        }
+        return [];
+    }
+
     private function validate($user, $data, $type = 'email')
     {
-        $errorsString =  [];
-        if ($data['password'] !== $data['confirmPassword']){
-            $errorsString['password'] = 'passsword and confirm password don\'t match';
-        }
+        $errorsString =  $this->validatePassword($data);
         $errors = $this->validator->validate($user, null, ['Default', $type]);
         foreach($errors as $error){
             $errorsString[$error->getPropertyPath()] = $error->getMessage();
         }
-
         return $errorsString;
     }
 
