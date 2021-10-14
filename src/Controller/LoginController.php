@@ -38,7 +38,7 @@ class LoginController extends AbstractController
     }
 
     /**
-     * @api {post} /api/login/email Email login
+     * @api {post} /backend/api/login/email Email login
      * @apiName PostApiLoginEmail
      * @apiGroup Authentication
      *
@@ -61,7 +61,7 @@ class LoginController extends AbstractController
      * @apiError {Boolean} success Should be false
      * @apiError {JSON} body Error parametrs
      * @apiError {String} body.message Error message
-     * @apiErrorExample {json} Error-Response:
+     * @apiErrorExample {json}  Empty json request 
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
@@ -69,7 +69,30 @@ class LoginController extends AbstractController
      *           "message": "Empty input"
      *       }
      *     }
-     * 
+     * @apiErrorExample {json} User doesn't exist
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "bad login"
+     *       }
+     *     }
+     * @apiErrorExample {json} Incorrect password 
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "bad login"
+     *       }
+     *     }
+     * @apiErrorExample {json} User wasn't verified
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "not verified"
+     *       }
+     *     }
      */
     public function emailLogin(Request $request, UserPasswordHasherInterface $encoder): Response
     {
@@ -108,13 +131,13 @@ class LoginController extends AbstractController
     }
 
     /**
-     * @api {post} /api/login/phone Phone login
+     * @api {post} /backend/api/login/phone Phone login
      * @apiName PostApiLPhoneEmail
      * @apiGroup Authentication
      *
      * @apiBody {String} phone
      * @apiBody {String} password
-     *  @apiBody {Boolean} rememberMe
+     * @apiBody {Boolean} rememberMe
      *
      * @apiSuccess (200) {Boolean} success Should be true
      * @apiSuccess (200) {JSON} body Response body
@@ -131,12 +154,36 @@ class LoginController extends AbstractController
      * @apiError {Boolean} success Should be false
      * @apiError {JSON} body Error parametrs
      * @apiError {String} body.message Error message
-     * @apiErrorExample {json} Error-Response:
+     * @apiErrorExample {json}  Empty json request 
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
      *       "body": {
      *           "message": "Empty input"
+     *       }
+     *     }
+     * @apiErrorExample {json} User doesn't exist
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "bad login"
+     *       }
+     *     }
+     * @apiErrorExample {json} Incorrect password 
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "bad login"
+     *       }
+     *     }
+     * @apiErrorExample {json} User wasn't verified
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "not verified"
      *       }
      *     }
      * 
@@ -172,14 +219,14 @@ class LoginController extends AbstractController
     }
 
     /**
-     * @api {get} /api/logout Logout
+     * @api {get} /backend/api/logout Logout
      * @apiName GetApiLogout
      * @apiGroup Authentication
      *
      * @apiHeader {String} X-AUTH-TOKEN API-Token.
      * @apiHeaderExample {json} Header-Example:
      *     {
-     *       "X-AUTH-TOKEN": "8b9e16a42e33a25ecbc0e9d7c75127f2"
+     *       "X-AUTH-TOKEN": "152133606dc58da26d4d775ae93624c844b6826bdaa9fefa4f05f009500b2f7f5686633434cc6d03de533d06568fc363311579f6e9ef6f18a70277c1"
      *     }
      *
      * @apiSuccess (200) {Boolean} success Should be true
@@ -194,7 +241,7 @@ class LoginController extends AbstractController
      * @apiError {Boolean} success Should be false
      * @apiError {JSON} body Error parametrs
      * @apiError {String} body.message Error message    
-     * @apiErrorExample {json} Error-Response:
+     * @apiErrorExample {json} Not loged in
      *     HTTP/1.1 401
      *     {
      *       "success": "false",
