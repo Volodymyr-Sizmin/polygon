@@ -96,3 +96,10 @@ reset_password_email:
   methods: POST
 
 ### END AUTHENTICATION ENDPOINTS ###
+
+### TEST ENDPOINTS ###
+ping:
+  path: /api/ping
+  controller: App\Controller\PingController::ping
+  methods: GET
+### END TEST ENDPOINTS ###

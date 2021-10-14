@@ -59,7 +59,7 @@ class VerificationController extends AbstractController
     }
 
     /**
-     * @api {post} /api/verify/email/send Send verification email
+     * @api {post} /backend/api/verify/email/send Send verification email
      * @apiName PostApiSendVerificationEmail
      * @apiGroup Authentication
      *
@@ -76,11 +76,19 @@ class VerificationController extends AbstractController
      *           "url":"525a4dc0a3a5c198bbc05a61d3b25979"
      *       }
      *     }
+     * @apiSuccessExample {json} User already verified:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "success": "true",
+     *       "body": { 
+     *           "message":"already verified"
+     *       }
+     *     }
      *
      * @apiError {Boolean} success Should be false
      * @apiError {JSON} body Error parametrs
      * @apiError {String} body.message Error message
-     * @apiErrorExample {json} Error-Response:
+     * @apiErrorExample {json}  Empty json request 
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
@@ -88,7 +96,14 @@ class VerificationController extends AbstractController
      *           "message": "Empty input"
      *       }
      *     }
-     * 
+     * @apiErrorExample {json} No user with such email 
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "bad email"
+     *       }
+     *     }
      */
     public function emailVerification(Request $request, MailerInterface $mailer): Response
     {
@@ -125,7 +140,7 @@ class VerificationController extends AbstractController
     }
 
     /**
-     * @api {GET} /verify/email/:url Verification url
+     * @api {GET} /backend/verify/email/:url Verification url
      * @apiName GetVerificationUrl
      * @apiGroup Authentication
      *
@@ -143,7 +158,15 @@ class VerificationController extends AbstractController
      * @apiError {Boolean} success Should be false
      * @apiError {JSON} body Error parametrs
      * @apiError {String} body.message Error message
-     * @apiErrorExample {json} Error-Response:
+     * @apiErrorExample {json} Url doesn't exist:
+     *     HTTP/1.1 404
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "not found"
+     *       }
+     *     }
+     * @apiErrorExample {json} Request expired:
      *     HTTP/1.1 410
      *     {
      *       "success": "false",

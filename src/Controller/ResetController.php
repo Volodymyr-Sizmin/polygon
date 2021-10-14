@@ -60,7 +60,7 @@ class ResetController extends AbstractController
     }
 
     /**
-     * @api {post} /api/reset/email/send Send email to reset password
+     * @api {post} /backend/api/reset/email/send Send email to reset password
      * @apiName PostApiResetEmailSend
      * @apiGroup Authentication
      *
@@ -81,7 +81,7 @@ class ResetController extends AbstractController
      * @apiError {Boolean} success Should be false
      * @apiError {JSON} body Error parametrs
      * @apiError {String} body.message Error message
-     * @apiErrorExample {json} Error-Response:
+     * @apiErrorExample {json}  Empty json request 
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
@@ -89,7 +89,14 @@ class ResetController extends AbstractController
      *           "message": "Empty input"
      *       }
      *     }
-     * 
+     * @apiErrorExample {json} No user with such email 
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "bad email"
+     *       }
+     *     }
      */
     public function emailRequestCreation(Request $request, MailerInterface $mailer): Response
     {
@@ -102,8 +109,7 @@ class ResetController extends AbstractController
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
         }
 
-        $user = $this->getDoctrine()->getRepository(User::class)
-        ->findOneBy(['email' => $data['email']]);
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $data['email']]);
         if(!$user){
             $response = [
                 'success' => false,
@@ -122,7 +128,7 @@ class ResetController extends AbstractController
     }
 
     /**
-     * @api {GET} /reset/email/:url Reset Email Activation
+     * @api {GET} /backend/reset/email/:url Reset Email Activation
      * @apiName GetResetEmailActivation
      * @apiGroup Authentication
      *
@@ -140,7 +146,15 @@ class ResetController extends AbstractController
      * @apiError {Boolean} success Should be false
      * @apiError {JSON} body Error parametrs
      * @apiError {String} body.message Error message
-     * @apiErrorExample {json} Error-Response:
+     * @apiErrorExample {json} Url doesn't exist:
+     *     HTTP/1.1 404
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "not found"
+     *       }
+     *     }
+     * @apiErrorExample {json} Request expired:
      *     HTTP/1.1 410
      *     {
      *       "success": "false",
@@ -152,8 +166,7 @@ class ResetController extends AbstractController
      */
     public function activateResetEmail(string $url): Response
     {
-        $resetRequest = $this->getDoctrine()->getRepository(ResetRequest::class)
-        ->findOneBy(['url' => $url]);
+        $resetRequest = $this->getDoctrine()->getRepository(ResetRequest::class)->findOneBy(['url' => $url]);
         if(!$resetRequest){
             $response = [
                 'success' => false,
@@ -175,13 +188,13 @@ class ResetController extends AbstractController
     }
 
     /**
-     * @api {post} /api/reset/email/update Update user(email) password
+     * @api {post} /backend/api/reset/email/update Update user(email) password
      * @apiName PostApiResetEmailUpdate
      * @apiGroup Authentication
      *
      * @apiBody {String} email
      * @apiBody {String} password
-     * @apiBody {String} confirmPasswords
+     * @apiBody {String} confirmPassword
      * 
      * @apiSuccess (200) {Boolean} success Should be true
      * @apiSuccess (200) {JSON} body Response body
@@ -196,7 +209,7 @@ class ResetController extends AbstractController
      * @apiError {Boolean} success Should be false
      * @apiError {JSON} body Error parametrs
      * @apiError {String} body.message Error message
-     * @apiErrorExample {json} Error-Response:
+     * @apiErrorExample {json}  Empty json request 
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
@@ -204,7 +217,38 @@ class ResetController extends AbstractController
      *           "message": "Empty input"
      *       }
      *     }
-     * 
+     * @apiErrorExample {json} Passwords don't match:
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "passsword and confirm password don\'t match"
+     *       }
+     *     }
+     * @apiErrorExample {json} Request wasn't created:
+     *     HTTP/1.1 404
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "not found"
+     *       }
+     *     }
+     * @apiErrorExample {json} Request expired:
+     *     HTTP/1.1 410
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "expired"
+     *       }
+     *     }
+     * @apiErrorExample {json} Request wasn't activaded:
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "needs to be activated"
+     *       }
+     *     }
      */
     public function resetPasswordEmail(Request $request, UserPasswordHasherInterface $encoder): Response
     {

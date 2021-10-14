@@ -1,4 +1,5 @@
 {
     "name": "Poligon",
-    "description": "description of project"
+    "version": "0.0.1",
+    "description": "The project is a web application for streaming music, podcasts, custom playlists, audio-media content."
 }

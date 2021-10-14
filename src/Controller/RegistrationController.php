@@ -12,6 +12,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
+ * @IgnoreAnnotation("apiVersion")
  * @IgnoreAnnotation("apiName")
  * @IgnoreAnnotation("apiGroup")
  * @IgnoreAnnotation("apiParam")
@@ -23,6 +24,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * @IgnoreAnnotation("apiHeader")
  * @IgnoreAnnotation("apiHeaderExample")
  */
+
 class RegistrationController extends AbstractController
 {
     private $validator;
@@ -63,7 +65,8 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @api {post} /api/registration/email Email registarion
+     * @api {post} /backend/api/registration/email Email registarion
+     * @apiVersion 0.0.1
      * @apiName PostApiRegistationEmail
      * @apiGroup Authentication
      *
@@ -72,7 +75,7 @@ class RegistrationController extends AbstractController
      * @apiBody {String} userName
      * @apiBody {String} email
      * @apiBody {String} password
-     * @apiBody {String} confirmPasswords
+     * @apiBody {String} confirmPassword
      *
      * @apiSuccess (201) {Boolean} success Should be true
      * @apiSuccess (201) {JSON} body Response body
@@ -83,18 +86,59 @@ class RegistrationController extends AbstractController
      *       "body": {}
      *     }
      *
-     * @apiError {Boolean} success Should be false
-     * @apiError {JSON} body Error parametrs
-     * @apiError {String} body.message Error message
-     * @apiErrorExample {json} Error-Response:
+     * @apiError (Empty Request) {Boolean} success Should be false
+     * @apiError (Empty Request) {JSON} body Error parametrs
+     * @apiError (Empty Request) {String} body.message Error message
+     * @apiErrorExample {json}  Empty json request 
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
      *       "body": {
-     *           "message": "Empty input"
+     *          "message": "Empty input"
      *       }
      *     }
      * 
+     * @apiError (Invalid Request) {Boolean} success Should be false
+     * @apiError (Invalid Request) {JSON} body Error parametrs
+     * @apiError (Invalid Request) {String} body.message Array of errors
+     * @apiErrorExample {json} Empty input
+     *     HTTP/1.1 400
+     *     {
+     *       "success": false,
+     *       "body": {
+     *          "message": {
+     *              "password": "Must be 3 characters or more",
+     *              "email": "Invalid e-mail Address"
+     *              "firstName": "Must be 2 characters or more",
+     *              "lastName": "Must be 2 characters or more",
+     *              "userName": "Must be 2 characters or more"
+     *           }
+     *       }
+     *     }
+     * @apiErrorExample {json} Invalid input
+     *     HTTP/1.1 400
+     *     {
+     *       "success": false,
+     *       "body": {
+     *           "message": {
+     *              "password": "Passsword and confirm password don't match",
+     *              "email": "Invalid e-mail Address"
+     *              "firstName": "Can contain letters, numbers, !@#$%^&*()_-=+;:'\x22?,<>[]{}\|/№!~' symbols, and one dot not first or last",
+     *              "lastName": "Must be 60 characters or less",
+     *              "userName": "Must be 60 characters or more"
+     *           }
+     *       }
+     *     }
+     * @apiErrorExample {json} Email already used
+     *     HTTP/1.1 400
+     *     {
+     *       "success": false,
+     *       "body": {
+     *           "message": {
+     *               "email": "This value is already used."
+     *           }
+     *       }
+     *     }
      */
     public function emailRegistration(Request $request): Response
     {
@@ -135,7 +179,8 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @api {post} /api/registration/phone Phone registarion
+     * @api {post} /backend/api/registration/phone Phone registarion
+     * @apiVersion 0.0.1
      * @apiName PostApiRegistationPhone
      * @apiGroup Authentication
      *
@@ -144,7 +189,7 @@ class RegistrationController extends AbstractController
      * @apiBody {String} userName
      * @apiBody {String} phone
      * @apiBody {String} password
-     * @apiBody {String} confirmPasswords
+     * @apiBody {String} confirmPassword
      *
      * @apiSuccess (201) {Boolean} success Should be true
      * @apiSuccess (201) {JSON} body Response body
@@ -155,15 +200,57 @@ class RegistrationController extends AbstractController
      *       "body": {}
      *     }
      *
-     * @apiError {Boolean} success Should be false
-     * @apiError {JSON} body Error parametrs
-     * @apiError {String} body.message Error message
-     * @apiErrorExample {json} Error-Response:
+     * @apiError (Empty Request) {Boolean} success Should be false
+     * @apiError (Empty Request) {JSON} body Error parametrs
+     * @apiError (Empty Request) {String} body.message Error message
+     * @apiErrorExample {json} Empty json request 
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
      *       "body": {
      *           "message": "Empty input"
+     *       }
+     *     }
+     * 
+     * @apiError (Invalid Request) {Boolean} success Should be false
+     * @apiError (Invalid Request) {JSON} body Error parametrs
+     * @apiError (Invalid Request) {String} body.message Array of errors
+     * @apiErrorExample {json} Empty input
+     *     HTTP/1.1 400
+     *     {
+     *       "success": false,
+     *       "body": {
+     *          "message": {
+     *              "password": "Must be 3 characters or more",
+     *              "phone": "Must be 7 characters or more"
+     *              "firstName": "Must be 2 characters or more",
+     *              "lastName": "Must be 2 characters or more",
+     *              "userName": "Must be 2 characters or more"
+     *           }
+     *       }
+     *     }
+     * @apiErrorExample {json} Invalid input
+     *     HTTP/1.1 400
+     *     {
+     *       "success": false,
+     *       "body": {
+     *           "message": {
+     *              "password": "Passsword and confirm password don't match",
+     *              "phone": "incorrect phone format"
+     *              "firstName": "Can contain letters, numbers, !@#$%^&*()_-=+;:'\x22?,<>[]{}\|/№!~' symbols, and one dot not first or last",
+     *              "lastName": "Must be 60 characters or less",
+     *              "userName": "Must be 60 characters or more"
+     *           }
+     *       }
+     *     }
+     * @apiErrorExample {json} Phone already used
+     *     HTTP/1.1 400
+     *     {
+     *       "success": false,
+     *       "body": {
+     *           "message": {
+     *               "phone": "This value is already used."
+     *           }
      *       }
      *     }
      * 
