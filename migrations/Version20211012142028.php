@@ -19,13 +19,11 @@ final class Version20211012142028 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE playlist ADD description LONGTEXT DEFAULT NULL AFTER updated_at');
     }
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE playlist DROP description');
     }
 }
