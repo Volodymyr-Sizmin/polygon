@@ -40,7 +40,7 @@ class AccountControllerTest extends WebTestCase
 
     public function testAccountApi(): void
     {
-        $this->client->request('GET', '/api/account', [], [], [
+        $this->client->request('GET', '/api/accounts/logged-in-user', [], [], [
             'HTTP_X-AUTH-TOKEN' => $this->token,
         ]);
 
@@ -64,7 +64,7 @@ class AccountControllerTest extends WebTestCase
 
         $responseArr = json_decode($response->getContent(), true);
         $this->assertEquals(true, $responseArr["success"]);
-        $this->assertCount(4, $responseArr ["users"]);
+        $this->assertCount(3, $responseArr ["users"]);
     }
 
     public function testUpdate(): void

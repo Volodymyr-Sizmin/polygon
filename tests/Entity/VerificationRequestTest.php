@@ -17,16 +17,16 @@ class VerificationRequestTest extends KernelTestCase
 
     public function testVerificationRequestCreation(): void
     {
-        $user = new User();
-        $request = new VerificationRequest($user);
-        $this->assertSame($user,$request->getUser());
+        $email = 'p.test@andersenlab.com';
+        $request = new VerificationRequest($email);
+        $this->assertSame($email,$request->getEmail());
         $this->assertNotEmpty($request->getUrl());
     }
 
     public function testVerificationRequesTimeout(): void
     {
-        $user = new User();
-        $request = new VerificationRequest($user);
+        $email = 'p.test@andersenlab.com';
+        $request = new VerificationRequest($email);
         $this->assertFalse($request->checkExpired());
         $request->setExpiresAt(new \DateTime('-2 hour'));
         $this->assertTrue($request->checkExpired());

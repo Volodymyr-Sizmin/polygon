@@ -31,7 +31,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\NotBlank(groups = {"email"}, message = "Invalid e-mail Address")
      * @Assert\Regex(
      *      groups = {"email"}, 
-     *      pattern = "/^([a-zа-я0-9!#$%&`*\-=+'?{}\|~]+\.{0,1}[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+){3,32}@([a-zа-я0-9!#$%&`*\-=+'?{}\|~.]+[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+){3,32}$/iu", 
+     *      pattern = "/^[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+\.{0,1}[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+@[a-zа-я0-9!#$%&`*\-=+'?{}\|~.]+[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+$/iu", 
      *      message = "Invalid e-mail Address"
      * )     
      */
@@ -124,11 +124,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $apiTokens;
 
     /**
-     * @ORM\Column(type="boolean", options={"default" : 0})
-     */
-    private $verified;
-
-    /**
      * @ORM\Column(type="boolean", name="is_deleted")
      */
     private $isDeleted;
@@ -136,7 +131,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->apiTokens = new ArrayCollection();
-        $this->verified = false;
     }
 
     /**
@@ -313,18 +307,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeApiToken(ApiToken $apiToken): self
     {
         $this->apiTokens->removeElement($apiToken);
-        return $this;
-    }
-
-    public function getVerified(): ?bool
-    {
-        return $this->verified;
-    }
-
-    public function setVerified(bool $verified): self
-    {
-        $this->verified = $verified;
-
         return $this;
     }
 
