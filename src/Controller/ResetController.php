@@ -56,7 +56,11 @@ class ResetController extends AbstractController
             ->text("If you want to reset password go to this url: $url")
             ->html("<p>Click url if you want to reset password</p><a href='$url'>$url</a>");
 
-        $mailer->send($email);
+        try {
+            $mailer->send($email);
+        } catch (\Exception $e) {
+            return $e;
+        }
     }
 
     /**
@@ -118,9 +122,18 @@ class ResetController extends AbstractController
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
         }
 
-        $entityManager = $this->getDoctrine()->getManager();
         $resetRequest = new ResetRequest($user);
-        $this->sendEmail($resetRequest, $mailer);
+
+        $error = $this->sendEmail($resetRequest, $mailer);
+        if ($error){
+            $response = [
+                'success' => false,
+                'body' => ['message'=>$error->getMessage()]
+            ];
+            return new JsonResponse($response, Response::HTTP_FAILED_DEPENDENCY); 
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($resetRequest);
         $entityManager->flush();
         $response = ['success' => true, 'body' => ['url' => $resetRequest->getUrl()]];
@@ -128,8 +141,8 @@ class ResetController extends AbstractController
     }
 
     /**
-     * @api {GET} /backend/reset/email/:url Reset Email Activation
-     * @apiName GetResetEmailActivation
+     * @api {GET} /backend/reset/email/:url Reset Email Url
+     * @apiName GetResetEmailUrl
      * @apiGroup Authentication
      *
      * @apiParam {String} url request identifier
@@ -188,7 +201,7 @@ class ResetController extends AbstractController
     }
 
     /**
-     * @api {post} /backend/api/reset/email/update Update user(email) password
+     * @api {post} /backend/api/reset/email/update Update user password using email
      * @apiName PostApiResetEmailUpdate
      * @apiGroup Authentication
      *

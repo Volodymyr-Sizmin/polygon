@@ -101,7 +101,7 @@ class RegistrationTest extends WebTestCase
         $responseData = json_decode($response->getContent());
         $this->assertSame($responseData->success, true);
         $entityManager = $client->getContainer()->get('doctrine')->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'b.astapau@andersenlab.com']);
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'b.astapau@andersenlab1.com']);
         $this->assertNotNull($user);
     }
 

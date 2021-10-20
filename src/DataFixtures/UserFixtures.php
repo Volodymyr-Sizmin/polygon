@@ -31,7 +31,6 @@ class UserFixtures extends Fixture
         $user->setPhone('+375291235566');
         $password = $this->encoder->hashPassword($user, 'password');
         $user->setPassword($password);
-        $user->setVerified(true);
         $manager->persist($user);
         $manager->flush();
     }
@@ -57,7 +56,6 @@ class UserFixtures extends Fixture
         $user->setLastName('password');
         $user->setUserName('reset.password');
         $user->setEmail('password@notandersenlab.com');
-        $user->setVerified(true);
         $password = $this->encoder->hashPassword($user, 'password');
         $user->setPassword($password);
 
@@ -72,7 +70,7 @@ class UserFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $this->loadMainTestUser($manager);
-        $this->loadVerificationTestUser($manager);
+        //$this->loadVerificationTestUser($manager);
         $this->loadResetTestUser($manager);
     }
 }
