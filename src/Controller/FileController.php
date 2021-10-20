@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\File;
 use App\Exception\FileUploadException;
 use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,13 +16,22 @@ class FileController extends AbstractController
     public function upload(Request $request, FileUploader $fileUploader): Response
     {
         $uploadedFiles = $request->files->get('files');
+
         if (empty($uploadedFiles)) {
             return new JsonResponse('No files provided!', Response::HTTP_CONFLICT);
         }
 
         $maxFileNum = $this->getParameter('uploads_max_file_num');
+
         if (count($uploadedFiles) > $maxFileNum) {
             return new JsonResponse('Max allowed files number is : ' . $maxFileNum, Response::HTTP_CONFLICT);
+        }
+
+        foreach ($uploadedFiles as $uploadedFile) {
+                if (!$uploadedFile->getSize() || $uploadedFile->getSize() > File::MAX_FILE_SIZE)
+                {
+                   return new JsonResponse('Max allowed file size is : ' . File::MAX_FILE_SIZE . ' byte', Response::HTTP_CONFLICT);
+                }
         }
 
         $errors = [];
