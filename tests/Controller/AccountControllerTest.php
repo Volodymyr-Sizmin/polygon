@@ -22,11 +22,11 @@ class AccountControllerTest extends WebTestCase
         $this->entityManager = $this->client->getContainer()->get('doctrine')->getManager();
 
         $user = new User();
-        $user->setFirstName("test");
-        $user->setLastName("test");
-        $user->setUserName("test");
-        $user->setEmail("test1@test.com");
-        $user->setPassword("test");
+        $user->setFirstName('test');
+        $user->setLastName('test');
+        $user->setUserName('test');
+        $user->setEmail('test1@test.com');
+        $user->setPassword('$2y$13$GvLkVb116kk1qDi.o4rpiuPzQtflX7pmXXhKXuk5CI9koJkA.9uQO');//hash of test
         $this->entityManager->persist($user);
 
         $apiToken = new ApiToken($user, true);
@@ -91,6 +91,73 @@ class AccountControllerTest extends WebTestCase
         $this->assertEquals("1", $actualUser->getFirstName());
         $this->assertEquals("2", $actualUser->getLastName());
         $this->assertEquals("3", $actualUser->getUserName());
+    }
+
+    //part of testPasswordChange()
+    private function incorrectUser(): void
+    {
+        $otherUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'b.astapau@andersenlab.com' ])->getId();
+
+        $this->client->jsonRequest('POST', '/api/accounts/change_pass/' . $otherUser, [
+            "oldPassword" => "test",
+            "newPassword" => "newtest",
+            "confirmPassword" => "newtest"
+        ], [
+            'HTTP_X-AUTH-TOKEN' => $this->token,
+        ]);
+
+        $response = $this->client->getResponse();
+        $this->assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode(), 'failed in incorrectUser()');
+    }
+
+    //part of testPasswordChange()
+    private function incorrectPassword(): void
+    {
+        $this->client->jsonRequest('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
+            "oldPassword" => "not test",
+            "newPassword" => "newtest",
+            "confirmPassword" => "newtest"
+        ], [
+            'HTTP_X-AUTH-TOKEN' => $this->token,
+        ]);
+
+        $response = $this->client->getResponse();
+
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode(), 'failed in incorrectPassword()');
+    }
+
+    //part of testPasswordChange()
+    private function invalidNewPassword(): void
+    {
+        $this->client->jsonRequest('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
+            "oldPassword" => "test",
+            "newPassword" => "n1",
+            "confirmPassword" => "newtest"
+        ], [
+            'HTTP_X-AUTH-TOKEN' => $this->token,
+        ]);
+
+        $response = $this->client->getResponse();
+
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode(),  'failed in invalidNewPassword()');
+    }
+
+    public function testPasswordChange(): void
+    {
+        $this->incorrectUser();
+        $this->incorrectPassword();
+        $this->invalidNewPassword();
+
+        $this->client->jsonRequest('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
+            "oldPassword" => "test",
+            "newPassword" => "newtest",
+            "confirmPassword" => "newtest"
+        ], [
+            'HTTP_X-AUTH-TOKEN' => $this->token,
+        ]);
+
+        $response = $this->client->getResponse();
+        $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
     }
 
     public function testDelete(): void
