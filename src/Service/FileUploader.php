@@ -36,7 +36,7 @@ class FileUploader
     ];
 
     // 10 mb
-    const MAX_FILE_SIZE = 10000000;
+    const MAX_FILE_SIZE = 10485760;
 
     private string $targetDirectory;
     private SluggerInterface $slugger;
@@ -51,8 +51,8 @@ class FileUploader
 
     public function upload(UploadedFile $file)
     {
-        if ($file->getSize() > self::MAX_FILE_SIZE) {
-            throw new FileUploadException('max allowed file size is: ' . self::MAX_FILE_SIZE);
+        if ($file->getSize() > self::MAX_FILE_SIZE || !$file->getSize()) {
+            throw new FileUploadException('max allowed file size is: ' . self::MAX_FILE_SIZE . ' byte.');
         }
 
         $ext = $file->guessExtension();

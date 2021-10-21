@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\VerificationRequest;
+use App\Repository\VerificationRequestRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,27 +38,44 @@ class RegistrationController extends AbstractController
         $this->encoder = $encoder;
     }
 
-    private function validatePassword($data){
+    private function validateEmail($errorsString, $email){
+        $verificationRequest = $this->getDoctrine()->getRepository(VerificationRequest::class)->findOneBy(['email' => $email]);
+        if(!$verificationRequest || !$verificationRequest->getVerified()){
+            $errorsString['email'] = 'Invalid email';
+            return $errorsString;
+        }
+        return $errorsString;
+    }
+
+    private function validatePassword($errorsString, $data){
         $length = mb_strlen($data['password']);
-        if ($length < 3){
-            return ['password' => 'Must be 3 characters or more'];
+        if ($length < 3){  
+            $errorsString['password'] = 'Must be 3 characters or more';     
+            return $errorsString;
         }
         if ($length > 32){
-            return ['password' => 'Must be 32 characters or less'];
+            $errorsString['password'] = 'Must be 32 characters or less';
+            return $errorsString;
         }
         $pattern = "/^[a-zа-я0-9!@#$%^&`*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+$/u";
         if (!preg_match($pattern, $data['password'])){
-            return ['password' => 'Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last'];
+            $errorsString['password'] = 'Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last';
+            return $errorsString;
         }
         if ($data['password'] !== $data['confirmPassword']){
-            return ['password' => 'Passsword and confirm password don\'t match'];
+            $errorsString['password'] = 'Passsword and confirm password don\'t match';
+            return $errorsString;
         }
-        return [];
+        return $errorsString;
     }
 
     private function validate($user, $data, $type = 'email')
     {
-        $errorsString =  $this->validatePassword($data);
+        $errorsString = [];
+        if ($type == 'email'){
+            $errorsString =  $this->validateEmail($errorsString, $data['email']);
+        }
+        $errorsString = $this->validatePassword($errorsString, $data);
         $errors = $this->validator->validate($user, null, ['Default', $type]);
         foreach($errors as $error){
             $errorsString[$error->getPropertyPath()] = $error->getMessage();
@@ -65,9 +84,9 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @api {post} /backend/api/registration/email Email registarion
+     * @api {post} /backend/api/registration/email Email registration
      * @apiVersion 0.0.1
-     * @apiName PostApiRegistationEmail
+     * @apiName PostApiRegistrationEmail
      * @apiGroup Authentication
      *
      * @apiBody {String} firstName
@@ -139,6 +158,14 @@ class RegistrationController extends AbstractController
      *           }
      *       }
      *     }
+     * @apiErrorExample {json} Email wasn't verified
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Invalid email"
+     *       }
+     *     }
      */
     public function emailRegistration(Request $request): Response
     {
@@ -179,9 +206,9 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @api {post} /backend/api/registration/phone Phone registarion
+     * @api {post} /backend/api/registration/phone Phone registration
      * @apiVersion 0.0.1
-     * @apiName PostApiRegistationPhone
+     * @apiName PostApiRegistrationPhone
      * @apiGroup Authentication
      *
      * @apiBody {String} firstName

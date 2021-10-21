@@ -39,7 +39,7 @@ class LoginTest extends WebTestCase
     public function testAccess(): void
     {
         $client = static::createClient();
-        $client->jsonRequest('GET', '/api/account');
+        $client->jsonRequest('GET', '/api/logout');
         $response = $client->getResponse();
         $this->assertSame(401,$response->getStatusCode());
         $responseData = json_decode($response->getContent());

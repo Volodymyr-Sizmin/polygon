@@ -12,8 +12,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
+ * @IgnoreAnnotation("apiVersion")
  * @IgnoreAnnotation("apiName")
  * @IgnoreAnnotation("apiGroup")
  * @IgnoreAnnotation("apiParam")
@@ -27,6 +29,13 @@ use Symfony\Component\Mime\Email;
  */
 class VerificationController extends AbstractController
 {
+    private $validator;
+
+    public function __construct(ValidatorInterface $validator)
+    {
+        $this->validator = $validator;
+    }
+
     private function deleteRequest(VerificationRequest $verificationRequest)
     {
         $entityManager = $this->getDoctrine()->getManager();
@@ -34,20 +43,11 @@ class VerificationController extends AbstractController
         $entityManager->flush();
     }
 
-    private function verifyUser(VerificationRequest $verificationRequest)
-    {
-        $user = $verificationRequest->getUser();
-        $user->setVerified(true);
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($user);
-        $entityManager->flush();
-    }
-
     private function sendEmail(VerificationRequest $verificationRequest, MailerInterface $mailer)
     {
-        $url = 'http://localhost:1100/backend/verify/email/';
+        $url = 'http://localhost:1100/verify/email/';
         $url .= $verificationRequest->getUrl();
-        $to = $verificationRequest->getUser()->getEmail();
+        $to = $verificationRequest->getEmail();
         $email = (new Email())
             ->from('poligon@mail.com')
             ->to($to)
@@ -55,7 +55,21 @@ class VerificationController extends AbstractController
             ->text("To activate your account go to this url: $url")
             ->html("<p>Click url to activate account</p><a href='$url'>$url</a>");
 
-        $mailer->send($email);
+        try {
+            $mailer->send($email);
+        } catch (\Exception $e) {
+            return $e;
+        }
+    }
+
+    private function validate(VerificationRequest $verificationRequest)
+    {
+        $errorsString = [];
+        $errors = $this->validator->validate($verificationRequest);
+        foreach($errors as $error){
+            $errorsString[$error->getPropertyPath()] = $error->getMessage();
+        }
+        return $errorsString;
     }
 
     /**
@@ -76,7 +90,7 @@ class VerificationController extends AbstractController
      *           "url":"525a4dc0a3a5c198bbc05a61d3b25979"
      *       }
      *     }
-     * @apiSuccessExample {json} User already verified:
+     * @apiSuccessExample {json} Email already verified:
      *     HTTP/1.1 200 OK
      *     {
      *       "success": "true",
@@ -96,43 +110,45 @@ class VerificationController extends AbstractController
      *           "message": "Empty input"
      *       }
      *     }
-     * @apiErrorExample {json} No user with such email 
-     *     HTTP/1.1 400
+     * @apiErrorExample {json} SMTP error 
+     *     HTTP/1.1 424
      *     {
      *       "success": "false",
      *       "body": {
-     *           "message": "bad email"
+     *           "message": "Connection could not be established with host"
      *       }
      *     }
      */
     public function emailVerification(Request $request, MailerInterface $mailer): Response
     {
         $data = json_decode($request->getContent(), true);
-        if (!$data){
+        if (!$data || !$data['email']){
             $response = [
                 'success' => false,
                 'body' => ['message'=>'empty input']
             ];
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
         }
-
-        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-        if(!$user){
+        $verificationRequest = new VerificationRequest($data['email']);
+        $errorsString = $this->validate($verificationRequest);
+        if (!empty($errorsString)){
             $response = [
                 'success' => false,
-                'body' => ['message'=>'bad email']
+                'body' => ['message'=>$errorsString ]
             ];
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
         }
 
-        if($user->getVerified()){
-            $response = ['success' => true, 'body' => ['message' => 'already verified']];
-            return new JsonResponse($response, Response::HTTP_OK); 
+        $error = $this->sendEmail($verificationRequest, $mailer);
+        if ($error){
+            $response = [
+                'success' => false,
+                'body' => ['message'=>$error->getMessage()]
+            ];
+            return new JsonResponse($response, Response::HTTP_FAILED_DEPENDENCY); 
         }
 
         $entityManager = $this->getDoctrine()->getManager();
-        $verificationRequest = new VerificationRequest($user);
-        $this->sendEmail($verificationRequest, $mailer);
         $entityManager->persist($verificationRequest);
         $entityManager->flush();
         $response = ['success' => true, 'body' => ['url' => $verificationRequest->getUrl()]];
@@ -140,19 +156,23 @@ class VerificationController extends AbstractController
     }
 
     /**
-     * @api {GET} /backend/verify/email/:url Verification url
+     * @api {GET} /backend/verify/email/:url Email verification url
+     * @apiVersion 0.0.1
      * @apiName GetVerificationUrl
      * @apiGroup Authentication
      *
-     * @apiParam {String} url request identifier
+     * @apiParam {String} url request token(part of url)
      *
      * @apiSuccess (200) {Boolean} success Should be true
      * @apiSuccess (200) {JSON} body Response body
+     * @apiSuccess {String} body.email Email that was connected to this verification request
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
      *     {
      *       "success": "true",
-     *       "body": {}
+     *       "body": { 
+     *           "email": "b.astapau@andersenlab.com"
+     *       }
      *     }
      *
      * @apiError {Boolean} success Should be false
@@ -194,9 +214,11 @@ class VerificationController extends AbstractController
             ];
             return new JsonResponse($response, Response::HTTP_GONE);//410
         }
-        $this->verifyUser($verificationRequest);
-        $this->deleteRequest($verificationRequest);
-        $response = ['success' => true, 'body' => []];
+        $verificationRequest->setVerified(true);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($verificationRequest);
+        $entityManager->flush();
+        $response = ['success' => true, 'body' => ['email' => $verificationRequest->getEmail()]];
         return new JsonResponse($response, Response::HTTP_OK); 
     }
 }

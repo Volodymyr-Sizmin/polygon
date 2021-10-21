@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use App\Entity\User;
+use App\Entity\VerificationRequest;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class VerificationTest extends WebTestCase
@@ -32,7 +32,7 @@ class VerificationTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
         $entityManager = $client->getContainer()->get('doctrine')->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'verification@notandersenlab.com']);
-        $this->assertTrue($user->getVerified());
+        $request = $entityManager->getRepository(VerificationRequest::class)->findOneBy(['email' => 'verification@notandersenlab.com']);
+        $this->assertTrue($request->getVerified());
     }
 }

@@ -85,14 +85,6 @@ class LoginController extends AbstractController
      *           "message": "bad login"
      *       }
      *     }
-     * @apiErrorExample {json} User wasn't verified
-     *     HTTP/1.1 400
-     *     {
-     *       "success": "false",
-     *       "body": {
-     *           "message": "not verified"
-     *       }
-     *     }
      */
     public function emailLogin(Request $request, UserPasswordHasherInterface $encoder): Response
     {
@@ -117,13 +109,6 @@ class LoginController extends AbstractController
             $response = [
                 'success' => false,
                 'body' => ['message'=>'bad login']
-            ];
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
-        }
-        if (!$user->getVerified()){
-            $response = [
-                'success' => false,
-                'body' => ['message'=>'not verified']
             ];
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
         }
