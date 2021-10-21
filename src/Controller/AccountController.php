@@ -116,7 +116,7 @@ class AccountController extends AbstractController
     }
 
     /**
-     * @api {put} /backend/api/accounts:id Update
+     * @api {put} /backend/api/accounts/:id Update
      * @apiName PutApiAccountsUpdate
      * @apiGroup User
      * 
