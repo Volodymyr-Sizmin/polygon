@@ -27,13 +27,6 @@ class FileController extends AbstractController
             return new JsonResponse('Max allowed files number is : ' . $maxFileNum, Response::HTTP_CONFLICT);
         }
 
-        foreach ($uploadedFiles as $uploadedFile) {
-                if (!$uploadedFile->getSize() || $uploadedFile->getSize() > File::MAX_FILE_SIZE)
-                {
-                   return new JsonResponse('Max allowed file size is : ' . File::MAX_FILE_SIZE . ' byte', Response::HTTP_CONFLICT);
-                }
-        }
-
         $errors = [];
         /** @var $file UploadedFile */
         foreach ($uploadedFiles as $file) {

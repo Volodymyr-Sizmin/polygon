@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class File
 {
-    const MAX_FILE_SIZE = 10485760;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
