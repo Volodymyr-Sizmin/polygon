@@ -39,8 +39,8 @@ class RegistrationController extends AbstractController
     }
 
     private function validateEmail($errorsString, $email){
-        $verificationRequest = $this->getDoctrine()->getRepository(VerificationRequest::class)->findOneBy(['email' => $email]);
-        if(!$verificationRequest || !$verificationRequest->getVerified()){
+        $verificationRequest = $this->getDoctrine()->getRepository(VerificationRequest::class)->findValidByEmail($email);
+        if(!$verificationRequest){
             $errorsString['email'] = 'Invalid email';
             return $errorsString;
         }
