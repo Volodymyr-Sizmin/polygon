@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\File;
 use App\Exception\FileUploadException;
 use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,10 +36,6 @@ class FileController extends AbstractController
             }
         }
 
-        if (empty($errors)) {
-            return new JsonResponse(["success" => true]);
-        }
-
-        return new JsonResponse($errors, Response::HTTP_CONFLICT);
+        return new JsonResponse(["success" => true, "errors" => $errors]);
     }
 }
