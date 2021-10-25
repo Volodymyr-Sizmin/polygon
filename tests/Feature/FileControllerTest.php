@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Feature\Feature;
+namespace App\Tests\Feature;
 
 use App\Service\FileUploader;
 use Faker\Factory;
@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
 
-class FilesTest extends WebTestCase
+class FileControllerTest extends WebTestCase
 {
     const IMAGE_NAME = 'testImage';
 
