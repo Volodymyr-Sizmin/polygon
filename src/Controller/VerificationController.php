@@ -165,7 +165,7 @@ class VerificationController extends AbstractController
      *
      * @apiSuccess (200) {Boolean} success Should be true
      * @apiSuccess (200) {JSON} body Response body
-     * @apiSuccess {String} body.email Email that was connected to this verification request
+     * @apiSuccess (200) {String} body.email Email that was connected to this verification request
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
      *     {

@@ -38,6 +38,11 @@ update_account:
   controller: App\Controller\AccountController::update
   methods: PUT
 
+change_account_password:
+  path: /api/accounts/change_pass/{id}
+  controller: App\Controller\AccountController::changePassword
+  methods: POST
+
 delete_account:
   path: /api/accounts/{id}
   controller: App\Controller\AccountController::delete
