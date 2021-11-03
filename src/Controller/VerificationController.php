@@ -66,17 +66,21 @@ class VerificationController extends AbstractController
     {
         $email = strtolower($verificationRequest->getEmail());
 
+        $sepEmail = explode('@', $email);
+
         $errorsString = [];
 
-        if (strlen($email) < 3) {
-            $errorsString[] = 'Invalid email address';
+        foreach ($sepEmail as $elem) {
+            if (strlen($elem) < 3) {
+                $errorsString[] = 'Invalid 3 email address';
+            }
+
+            if (strlen($elem) > 32) {
+                $errorsString[] = 'Invalid 32 email address';
+            }
         }
 
-        if (strlen($email) > 60) {
-            $errorsString[] = 'Invalid email address';
-        }
-
-        $pattern = "/^[a-z0-9!#$%&‘*+\/^_`{|}~.\=?-]+@[a-z0-9!#$%&‘*+\/\=?^_`{|}~.-]+\.[a-z]{2,3}$/";
+        $pattern = "/^[a-z0-9!#$%&‘*+\/^_`{|}~.\=?-]+@[a-z0-9]+\.[a-z]{2,3}$/";
 
         if (!preg_match($pattern, $email)) {
 
@@ -149,6 +153,7 @@ class VerificationController extends AbstractController
         }
         $verificationRequest = new VerificationRequest($data['email']);
         $errorsString = $this->validate($verificationRequest);
+        //dd($errorsString);
         if (!empty($errorsString)){
             $response = [
                 'success' => false,
