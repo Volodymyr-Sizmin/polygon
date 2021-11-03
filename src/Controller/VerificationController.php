@@ -64,7 +64,25 @@ class VerificationController extends AbstractController
 
     private function validate(VerificationRequest $verificationRequest)
     {
+        $email = strtolower($verificationRequest->getEmail());
+
         $errorsString = [];
+
+        if (strlen($email) < 3) {
+            $errorsString[] = 'Invalid email address';
+        }
+
+        if (strlen($email) > 60) {
+            $errorsString[] = 'Invalid email address';
+        }
+
+        $pattern = "/^[a-z0-9!#$%&‘*+\/^_`{|}~.\=?-]+@[a-z0-9!#$%&‘*+\/\=?^_`{|}~.-]+\.[a-z]{2,3}$/";
+
+        if (!preg_match($pattern, $email)) {
+
+            $errorsString[] = 'Invalid email address';
+        }
+
         $errors = $this->validator->validate($verificationRequest);
         foreach($errors as $error){
             $errorsString[$error->getPropertyPath()] = $error->getMessage();
