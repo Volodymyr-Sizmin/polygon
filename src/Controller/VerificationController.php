@@ -72,11 +72,11 @@ class VerificationController extends AbstractController
 
         foreach ($sepEmail as $elem) {
             if (strlen($elem) < 3) {
-                $errorsString[] = 'Invalid 3 email address';
+                $errorsString[] = 'Invalid email address';
             }
 
             if (strlen($elem) > 32) {
-                $errorsString[] = 'Invalid 32 email address';
+                $errorsString[] = 'Invalid email address';
             }
         }
 

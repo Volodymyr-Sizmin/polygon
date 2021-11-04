@@ -48,16 +48,16 @@ class RegistrationController extends AbstractController
     }
 
     private function validatePassword($errorsString, $data){
-        $length = mb_strlen($data['password']);
-        if ($length < 3){  
-            $errorsString['password'] = 'Must be 3 characters or more';     
+        $length = strlen($data['password']);
+        if ($length < 8){
+            $errorsString['password'] = 'Must be 8 characters or more';
             return $errorsString;
         }
         if ($length > 32){
             $errorsString['password'] = 'Must be 32 characters or less';
             return $errorsString;
         }
-        $pattern = "/^[a-zа-я0-9!@#$%^&`*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+$/u";
+        $pattern = "/^[a-zA-Z0-9!@#$%^&`*()_=+;:'\x22?,<>\[\]{}\\|\/№!~-]+\.?[a-zA-Z0-9!@#$%^&*()_=+;:'\x22?,<>\[\]{}\\|\/№!~-]+$/u";
         if (!preg_match($pattern, $data['password'])){
             $errorsString['password'] = 'Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last';
             return $errorsString;
@@ -170,7 +170,8 @@ class RegistrationController extends AbstractController
     public function emailRegistration(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
-        if (!$data){
+
+        if (!$data) {
             $response = [
                 'success' => false,
                 'body' => ['message'=>'Empty input']
@@ -185,8 +186,10 @@ class RegistrationController extends AbstractController
         $user->setLastName($data['lastName']);
         $user->setUserName($data['userName']);
         $user->setEmail($data['email']);
+
         $errorsString = $this->validate($user, $data, 'email');
-        if (!empty($errorsString)){
+
+        if (!empty($errorsString)) {
             $response = [
                 'success' => false,
                 'body' => ['message'=>$errorsString ]
