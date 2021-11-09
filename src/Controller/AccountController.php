@@ -202,18 +202,18 @@ class AccountController extends AbstractController
     private function validatePassword($password, $confirm): ?string
     {
         $length = mb_strlen($password);
-        if ($length < 3){  
-            return 'Must be 3 characters or more';
+        if ($length < 8) {
+            return 'Must be 8 characters or more';
         }
-        if ($length > 32){
+        if ($length > 32) {
             return 'Must be 32 characters or less';
         }
         $pattern = "/^[a-zа-я0-9!@#$%^&`*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+$/u";
-        if (!preg_match($pattern, $password)){
+        if (!preg_match($pattern, $password)) {
             return 'Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last';            ;
         }
-        if ($password !== $confirm){
-            return 'Passsword and confirm password don\'t match';
+        if ($password !== $confirm) {
+            return 'Password and confirm password don\'t match';
         }
         return null;
     }
