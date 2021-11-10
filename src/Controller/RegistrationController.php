@@ -80,33 +80,6 @@ class RegistrationController extends AbstractController
 
         $errors = $this->validator->validate($user, null, ['Default', $type]);
 
-//        $fieldLasFirUsName = [];
-//
-//        foreach ($data as $key => $value) {
-//            if ($key == 'email' || $key == 'password' || $key == 'confirmPassword') {
-//                continue;
-//            }
-//            $fieldLasFirUsName[] = $value;
-//        }
-//
-//        foreach ($fieldLasFirUsName as $field) {
-//            $length = strlen(strtolower(trim($field)));
-//
-//            if ($length < 2){
-//                $errorsString[] = 'Must be 2 characters or more';
-//            }
-//
-//            if ($length > 60){
-//                $errorsString[] = 'Must be 60 characters or less';
-//            }
-//            $pattern = "/^[a-zа-яёА-ЯЁA-Z0-9!@#$%^&`*()_=+;:'\x22?,<>\[\]{}\\|\/№!~-]+\.?[a-zа-яА-ЯЁA-Z0-9!@#$%^&*()_=+;:'\x22?,<>\[\]{}\\|\/№!~-]+$/u";
-//
-//            if (!preg_match($pattern, $data['password'])){
-//                $errorsString['password'] = 'Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last';
-//            }
-//        }
-//        //dd($errorsString);
-//dd($errors);
         foreach ($errors as $error) {
             $errorsString[$error->getPropertyPath()] = $error->getMessage();
         }
