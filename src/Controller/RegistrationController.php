@@ -63,7 +63,7 @@ class RegistrationController extends AbstractController
             return $errorsString;
         }
         if ($data['password'] !== $data['confirmPassword']){
-            $errorsString['password'] = 'Passsword and confirm password don\'t match';
+            $errorsString['password'] = 'Password and confirm password don\'t match';
             return $errorsString;
         }
         return $errorsString;
@@ -72,12 +72,15 @@ class RegistrationController extends AbstractController
     private function validate($user, $data, $type = 'email')
     {
         $errorsString = [];
-        if ($type == 'email'){
+        if ($type == 'email') {
             $errorsString =  $this->validateEmail($errorsString, $data['email']);
         }
+
         $errorsString = $this->validatePassword($errorsString, $data);
+
         $errors = $this->validator->validate($user, null, ['Default', $type]);
-        foreach($errors as $error){
+
+        foreach ($errors as $error) {
             $errorsString[$error->getPropertyPath()] = $error->getMessage();
         }
         return $errorsString;
@@ -126,7 +129,7 @@ class RegistrationController extends AbstractController
      *       "success": false,
      *       "body": {
      *          "message": {
-     *              "password": "Must be 3 characters or more",
+     *              "password": "Must be 8 characters or more",
      *              "email": "Invalid e-mail Address"
      *              "firstName": "Must be 2 characters or more",
      *              "lastName": "Must be 2 characters or more",
@@ -251,7 +254,7 @@ class RegistrationController extends AbstractController
      *       "success": false,
      *       "body": {
      *          "message": {
-     *              "password": "Must be 3 characters or more",
+     *              "password": "Must be 8 characters or more",
      *              "phone": "Must be 7 characters or more"
      *              "firstName": "Must be 2 characters or more",
      *              "lastName": "Must be 2 characters or more",

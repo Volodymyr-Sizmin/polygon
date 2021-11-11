@@ -87,7 +87,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\Sequentially({
      * @Assert\Length(
      *      min = 2,
-     *      max = 32,
+     *      max = 60,
      *      minMessage = "Must be {{ limit }} characters or more",
      *      maxMessage = "Must be {{ limit }} characters or less"
      * ),
