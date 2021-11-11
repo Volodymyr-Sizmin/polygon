@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class RegistrationTest extends WebTestCase
 {
-    public function testEmptyEmailRegistratio(): void
+    public function testEmptyEmailRegistration(): void
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/registration/email', [
@@ -19,6 +19,7 @@ class RegistrationTest extends WebTestCase
             "confirmPassword" => ""
         ]);
         $response = $client->getResponse();
+        //dd($response);
         $this->assertSame(400,$response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame(false, $responseData->success);
@@ -28,7 +29,7 @@ class RegistrationTest extends WebTestCase
         $this->assertSame('Must be 2 characters or more', $responseData->body->message->userName);
     }
 
-    public function testEmptyPhoneRegistratio(): void
+    public function testEmptyPhoneRegistration(): void
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/registration/phone', [
@@ -49,7 +50,7 @@ class RegistrationTest extends WebTestCase
         $this->assertSame('Must be 2 characters or more', $responseData->body->message->userName);
     }
 
-    public function testUsedEmailRegistratio(): void
+    public function testUsedEmailRegistration(): void
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/registration/email', [
@@ -67,7 +68,7 @@ class RegistrationTest extends WebTestCase
         $this->assertSame('This value is already used.', $responseData->body->message->email);
     }
 
-    public function testUsedPhoneRegistratio(): void
+    public function testUsedPhoneRegistration(): void
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/registration/phone', [
