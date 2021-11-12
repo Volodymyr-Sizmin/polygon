@@ -59,7 +59,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * ),
      * @Assert\Regex(
      *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu", 
-     *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'\x22?,<>[]{}\|/№!~' symbols, and one dot not first or last"
+     *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'"?,<>[]{}\|/№!~' symbols, and one dot not first or last"
      * )
      * })
      */
@@ -76,7 +76,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * ),
      * @Assert\Regex(
      *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu", 
-     *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'\x22?,<>[]{}\|/№!~' symbols, and one dot not first or last"
+     *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'"?,<>[]{}\|/№!~' symbols, and one dot not first or last"
      * )
      * })
      */
@@ -93,7 +93,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * ),
      * @Assert\Regex(
      *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu", 
-     *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'\x22?,<>[]{}\|/№!~' symbols, and one dot not first or last"
+     *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'"?,<>[]{}\|/№!~' symbols, and one dot not first or last"
      * )
      * })
      */
