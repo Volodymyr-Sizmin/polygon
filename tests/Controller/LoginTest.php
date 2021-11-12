@@ -12,13 +12,16 @@ class LoginTest extends WebTestCase
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/login/email', [
-            "email"=>"b.astapau@andersenlab.com", 
-            "password"=>"password"
+            "email" => "b.astapau@andersenlab.com",
+            "password" => "password"
         ]);
+
         $response = $client->getResponse();
-        $this->assertSame(200,$response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
+
         $responseData = json_decode($response->getContent());
         $this->assertSame($responseData->success, true);
+        $this->assertIsInt($responseData->body->user_id);
         $this->assertMatchesRegularExpression('/(\S){60}/', $responseData->body->token);
     }
 
@@ -26,13 +29,16 @@ class LoginTest extends WebTestCase
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/login/phone', [
-            "phone"=>"+375291235566", 
-            "password"=>"password"
+            "phone" => "+375291235566",
+            "password" => "password"
         ]);
+
         $response = $client->getResponse();
-        $this->assertSame(200,$response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
+
         $responseData = json_decode($response->getContent());
         $this->assertSame($responseData->success, true);
+        $this->assertIsInt($responseData->body->user_id);
         $this->assertMatchesRegularExpression('/(\S){60}/', $responseData->body->token);
     }
 
@@ -41,7 +47,7 @@ class LoginTest extends WebTestCase
         $client = static::createClient();
         $client->jsonRequest('GET', '/api/logout');
         $response = $client->getResponse();
-        $this->assertSame(401,$response->getStatusCode());
+        $this->assertSame(401, $response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame(false, $responseData->success);
         $this->assertSame('No API token provided', $responseData->body->message);
