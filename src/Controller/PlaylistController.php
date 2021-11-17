@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Playlist;
-use App\Interfaces\Playlist\PlaylistInterface;
+use App\Interfaces\Playlist\PlaylistServiceInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,9 +26,9 @@ class PlaylistController extends SerializeController
 
     private $playlist;
 
-    public function __construct(PlaylistInterface $playlistInterface)
+    public function __construct(PlaylistServiceInterface $playlistServiceInterface)
     {
-        $this->playlist = $playlistInterface;
+        $this->playlist = $playlistServiceInterface;
     }
 
     /**
@@ -339,7 +339,11 @@ class PlaylistController extends SerializeController
         $entityManager->persist($playlist);
         $entityManager->flush();
 
-        return new JsonResponse(['success' => true, 'body' => 'Playlist successfully modified']);
+        return new JsonResponse(['success' => true, 'playlist' => [
+            'name' => $playlist->getName(),
+            'description' => $playlist->getDescription(),
+            'updatedAt' => $playlist->getCreatedAt()
+        ]]);
     }
 
     /**

@@ -3,10 +3,10 @@
 namespace App\Service\Playlist;
 
 use App\Entity\Playlist;
-use App\Interfaces\Playlist\PlaylistInterface;
+use App\Interfaces\Playlist\PlaylistServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class PlaylistService implements PlaylistInterface
+class PlaylistService implements PlaylistServiceInterface
 {
 
     private $enityManager;
@@ -17,7 +17,7 @@ class PlaylistService implements PlaylistInterface
         $this->playlist     = $this->enityManager->getRepository(Playlist::class);
     }
 
-    public function indexService()
+    public function indexService(): array
     {
         return  $this->playlist->findAll();
     }
