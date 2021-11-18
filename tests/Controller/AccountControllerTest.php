@@ -48,6 +48,8 @@ class AccountControllerTest extends WebTestCase
         $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
 
         $responseArr = json_decode($response->getContent(), true);
+
+        $this->assertIsInt($responseArr["id"]);
         $this->assertEquals("test", $responseArr["firstName"]);
         $this->assertEquals("test", $responseArr["lastName"]);
         $this->assertEquals("test", $responseArr["userName"]);
