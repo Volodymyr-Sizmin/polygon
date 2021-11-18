@@ -56,7 +56,7 @@ class ProfileController extends AbstractController
      *     {
      *       "success": "true",
      *       "body": {
-     *           "message":"Profile photo was successfully downloaded."
+     *           "message":"Profile photo was successfully uploaded."
      *       }
      *     }
      *
