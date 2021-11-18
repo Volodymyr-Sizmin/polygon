@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Exception\FileUploadException;
 use App\Service\FileUploader;
+use App\Service\ProfileService;
 use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,17 +29,13 @@ use Symfony\Component\Security\Core\Security;
  */
 class ProfileController extends AbstractController
 {
-    private const PROFILE_PHOTO = [
-        'size' => 39936,
-        'height' => 100,
-        'width' => 100,
-    ];
-
     private $security;
+    private $profileService;
 
-    public function __construct(Security $security)
+    public function __construct(Security $security, ProfileService $profileService)
     {
         $this->security = $security;
+        $this->profileService = $profileService;
     }
 
     /**
@@ -76,56 +73,27 @@ class ProfileController extends AbstractController
     {
         $profilePhoto = $request->files->get('photo');
 
-        if (empty($profilePhoto)) {
+        $validateProfilePhoto = $this->profileService->validateProfilePhoto($profilePhoto);
+        if (isset($validateProfilePhoto['error'])) {
             return new JsonResponse([
                 'success' => false,
                 'body' => [
-                    'error' => 'No file provided.'
+                    'error' => $validateProfilePhoto['error']
                 ]
             ], Response::HTTP_CONFLICT);
         }
 
-        if ($profilePhoto->getSize() > self::PROFILE_PHOTO['size']) {
-            return new JsonResponse([
-                'success' => false,
-                'body' => [
-                    'error' => 'Image size must be 39kb or less.'
-                ]
-            ], Response::HTTP_CONFLICT);
-        }
-
-        $profilePhotoSize = getimagesize($profilePhoto->getPathname());
-        if ($profilePhotoSize[1] > self::PROFILE_PHOTO['height'] || $profilePhotoSize[0] > self::PROFILE_PHOTO['width']) {
-            return new JsonResponse([
-                'success' => false,
-                'body' => [
-                    'error' => 'Image resolution must be 100x100.'
-                ]
-            ], Response::HTTP_CONFLICT);
-        }
-
-        try {
-            $file = $fileUploader->upload($profilePhoto);
-        } catch (FileUploadException $e) {
-            return new JsonResponse([
-                'success' => false,
-                'body' => [
-                    'error' => 'An error occured during upload.'
-                ]
-            ], Response::HTTP_CONFLICT);
-        }
-
-        $entityManager = $this->getDoctrine()->getManager();
-
-//        $user = $this->security->getUser();
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => 'b.astapau@andersenlab.com']);
 
-        $user->setProfilePhoto($file->getId());
-        $file->setUser($user);
-
-        $entityManager->persist($file);
-        $entityManager->persist($user);
-        $entityManager->flush();
+        $uploadProfilePhoto = $this->profileService->uploadProfilePhoto($user, $profilePhoto);
+        if (isset($uploadProfilePhoto['error'])) {
+            return new JsonResponse([
+                'success' => false,
+                'body' => [
+                    'error' => $uploadProfilePhoto['error']
+                ]
+            ], Response::HTTP_CONFLICT);
+        }
 
         return new JsonResponse([
             'success' => true,
