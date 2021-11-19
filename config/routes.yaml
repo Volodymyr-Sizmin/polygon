@@ -108,6 +108,20 @@ reset_password_email:
 
 ### END AUTHENTICATION ENDPOINTS ###
 
+### MYTRACKLIST ENDPOINTS ###
+
+index_mytracklist:
+  path: /api/mytracklist
+  controller: App\Controller\MyTracklist\MyTracklistController::index
+  methods: GET
+
+create_mytracklist:
+  path: /api/mytracklist/create
+  controller: App\Controller\MyTracklist\MyTracklistController::create
+  methods: GET
+
+### END MYTRACKLIST ENDPOINTS ###
+
 ### TEST ENDPOINTS ###
 ping:
   path: /api/ping
