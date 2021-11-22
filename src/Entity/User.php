@@ -128,9 +128,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $isDeleted;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Playlist::class, mappedBy="user", orphanRemoval=true)
+     * @ORM\Column(type="json")
+     */
+    private $playlists;
+
     public function __construct()
     {
         $this->apiTokens = new ArrayCollection();
+        $this->playlists = new ArrayCollection();
     }
 
     /**
@@ -222,6 +229,44 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $tmp = $this->roles;
         unset($tmp[strtoupper($role)]);
         $this->roles = $tmp;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Playlist[]
+     */
+    public function getPlaylists(): Collection
+    {
+        return $this->playlists;
+    }
+
+    /**
+     * @param Playlist $playlist
+     * @return $this
+     */
+    public function addPlaylist(Playlist $playlist): self
+    {
+        if (!$this->playlists->contains($playlist)) {
+            $this->playlists[] = $playlist;
+            $playlist->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Playlist $playlist
+     * @return $this
+     */
+    public function removePlaylist(Playlist $playlist): self
+    {
+        if ($this->playlists->contains($playlist)) {
+            $this->playlists->removeElement($playlist);
+            if ($playlist->getAuthor() === $this) {
+                $playlist->setAuthor(null);
+            }
+        }
 
         return $this;
     }
