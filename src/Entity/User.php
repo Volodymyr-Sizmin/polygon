@@ -30,10 +30,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", unique=true, nullable=true)
      * @Assert\NotBlank(groups = {"email"}, message = "Invalid e-mail Address")
      * @Assert\Regex(
-     *      groups = {"email"}, 
-     *      pattern = "/^[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+\.{0,1}[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+@[a-zа-я0-9!#$%&`*\-=+'?{}\|~.]+[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+$/iu", 
+     *      groups = {"email"},
+     *      pattern = "/^[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+\.{0,1}[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+@[a-zа-я0-9!#$%&`*\-=+'?{}\|~.]+[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+$/iu",
      *      message = "Invalid e-mail Address"
-     * )     
+     * )
      */
     private $email;
 
@@ -58,7 +58,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *      maxMessage = "Must be {{ limit }} characters or less"
      * ),
      * @Assert\Regex(
-     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu", 
+     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu",
      *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'""?,<>[]{}\|/№!~' symbols, and one dot not first or last"
      * )
      * })
@@ -75,7 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *      maxMessage = "Must be {{ limit }} characters or less"
      * ),
      * @Assert\Regex(
-     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu", 
+     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu",
      *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'""?,<>[]{}\|/№!~' symbols, and one dot not first or last"
      * )
      * })
@@ -92,7 +92,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *      maxMessage = "Must be {{ limit }} characters or less"
      * ),
      * @Assert\Regex(
-     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu", 
+     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu",
      *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'""?,<>[]{}\|/№!~' symbols, and one dot not first or last"
      * )
      * })
@@ -110,8 +110,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *      maxMessage = "Must be {{ limit }} characters or less"
      * ),
      * @Assert\Regex(
-     *      groups = {"phone"}, 
-     *      pattern = "/^\+[0-9]{6,12}$/", 
+     *      groups = {"phone"},
+     *      pattern = "/^\+[0-9]{6,12}$/",
      *      message = "incorrect phone format"
      * )
      * })
@@ -188,9 +188,40 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
+    /**
+     * @param array $roles
+     * @return $this
+     */
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @param string $role
+     * @return $this
+     * @throws \Exception
+     */
+    public function setRole(string $role): self
+    {
+        $tmp = $this->roles;
+        $this->roles = array_push($tmp, strtoupper($role));
+
+        return $this;
+    }
+
+    /**
+     * @param string $role
+     * @return $this
+     * @throws \Exception
+     */
+    public function removeRole(string $role): self
+    {
+        $tmp = $this->roles;
+        unset($tmp[strtoupper($role)]);
+        $this->roles = $tmp;
 
         return $this;
     }
@@ -230,7 +261,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    private function removeSpaces(string $str) :string
+    private function removeSpaces(string $str): string
     {
         $str = preg_replace('/\s\s+/', ' ', $str);
         $str = preg_replace('/^ /', '', $str);
