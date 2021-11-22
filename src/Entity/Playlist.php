@@ -38,6 +38,11 @@ class Playlist
      */
     private $description;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="playlists")
+     */
+    private $author;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -87,6 +92,18 @@ class Playlist
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(User $user): self
+    {
+        $this->author = $user;
 
         return $this;
     }
