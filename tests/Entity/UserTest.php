@@ -35,11 +35,11 @@ class UserTest extends KernelTestCase
         $this->assertContains('ROLE_TESTUSER', $roles);
         $this->assertContains('ROLE_TESTADMIN', $roles);
 
-        $this->user->setRole('ROLE_TESTMODERATOR');
+        $this->user->addRole('ROLE_TESTMODERATOR');
         $this->assertContains('ROLE_TESTMODERATOR', $this->user->getRoles());
 
         $this->user->removeRole('ROLE_TESTUSER');
-        $this->assertNotContains('ROLE_TESTUSER', $roles);
+        $this->assertNotContains('ROLE_TESTUSER', $this->user->getRoles());
     }
 
     public function testActionsWithPlaylist()
