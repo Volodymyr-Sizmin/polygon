@@ -208,13 +208,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @param string $role
-     * @return $this
-     * @throws \Exception
+     * @return bool
      */
-    public function setRole(string $role): self
+    public function hasRole(string $role): bool
     {
-        $tmp = $this->roles;
-        $this->roles = array_push($tmp, strtoupper($role));
+        if (in_array($role, $this->roles)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $role
+     * @return $this
+     */
+    public function addRole(string $role): self
+    {
+        if (!$this->hasRole($role)) {
+            array_push($this->roles, strtoupper($role));
+        }
 
         return $this;
     }
@@ -222,13 +235,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @param string $role
      * @return $this
-     * @throws \Exception
      */
-    public function removeRole(string $role): self
+    public function removeRole(string $role)
     {
-        $tmp = $this->roles;
-        unset($tmp[strtoupper($role)]);
-        $this->roles = $tmp;
+        if ($this->hasRole($role)) {
+            unset($this->roles[array_search(strtoupper($role), $this->roles)]);
+            $this->roles = array_values($this->roles);
+        }
 
         return $this;
     }
