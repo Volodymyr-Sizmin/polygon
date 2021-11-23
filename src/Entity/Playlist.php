@@ -101,7 +101,7 @@ class Playlist
         return $this->author;
     }
 
-    public function setAuthor(User $user): self
+    public function setAuthor(?User $user): self
     {
         $this->author = $user;
 
