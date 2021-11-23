@@ -2,14 +2,16 @@
 
 namespace App\Interfaces\MyTracklist;
 
+use App\DTO\TracklistDTO;
+use App\Entity\Track;
 
 interface MyTracklistInterface 
 {
     public function indexService();
 
-    public function createService();
+    public function createService():array;
 
-    public function storeService();
+    public function storeService(TracklistDTO $tracklistDTO);
 
     public function showService();
 
@@ -17,5 +19,5 @@ interface MyTracklistInterface
 
     public function updateService();
 
-    public function destroyService();
+    public function deleteService($id);
 }

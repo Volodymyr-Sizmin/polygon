@@ -230,7 +230,7 @@ class PlaylistController extends SerializeController
 
         $entityManager->persist($playlist);
         $entityManager->flush();
-
+        
         return JsonResponse::fromJsonString($this->serializeJson($playlist), Response::HTTP_CREATED);
     }
 
