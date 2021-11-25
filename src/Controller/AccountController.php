@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-
 /**
  * @IgnoreAnnotation("apiName")
  * @IgnoreAnnotation("apiGroup")
@@ -37,6 +36,7 @@ class AccountController extends AbstractController
      *     HTTP/1.1 200 OK
      *
      *        {
+     *           "id": 1,
      *           "firstName": "firstName",
      *           "lastName": "lastName",
      *           "userName": "userName",
@@ -60,6 +60,7 @@ class AccountController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_USER');
         $user = $this->getUser();
         return $this->json([
+            'id' => $user->getId(),
             'firstName' => $user->getFirstName(),
             'lastName' => $user->getLastName(),
             'userName' => $user->getUserName(),
@@ -119,13 +120,13 @@ class AccountController extends AbstractController
      * @api {put} /backend/api/accounts/:id Update
      * @apiName PutApiAccountsUpdate
      * @apiGroup User
-     * 
+     *
      * @apiHeader {String} X-AUTH-TOKEN API-Token.
      * @apiHeaderExample {json} Header-Example:
      *     {
      *       "X-AUTH-TOKEN": "152133606dc58da26d4d775ae93624c844b6826bdaa9fefa4f05f009500b2f7f5686633434cc6d03de533d06568fc363311579f6e9ef6f18a70277c1"
      *     }
-     * 
+     *
      * @apiParam {Number} id Id of user that we change(part of url)
      * @apiBody {String} [firstName]      Optional firstName of the User.
      * @apiBody {String} [lastName]       Optional lastName of the User.
@@ -199,6 +200,12 @@ class AccountController extends AbstractController
         ]]);
     }
 
+    /** Validate password
+     *
+     * @param string $password password
+     * @param string $confirm password confirmation
+     * @return string|null
+     */
     private function validatePassword($password, $confirm): ?string
     {
         $length = mb_strlen($password);
@@ -210,7 +217,7 @@ class AccountController extends AbstractController
         }
         $pattern = "/^[a-zа-я0-9!@#$%^&`*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+$/u";
         if (!preg_match($pattern, $password)) {
-            return 'Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last';            ;
+            return 'Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last';
         }
         if ($password !== $confirm) {
             return 'Password and confirm password don\'t match';
@@ -228,7 +235,7 @@ class AccountController extends AbstractController
      *     {
      *       "X-AUTH-TOKEN": "152133606dc58da26d4d775ae93624c844b6826bdaa9fefa4f05f009500b2f7f5686633434cc6d03de533d06568fc363311579f6e9ef6f18a70277c1"
      *     }
-     * 
+     *
      * @apiParam {Number} id Id of user that we change(part of url)
      * @apiBody {String} oldPassword      current user password
      * @apiBody {String} newPassword      new user password
@@ -240,7 +247,7 @@ class AccountController extends AbstractController
      *       "newPassword": "newPassword",
      *       "confirmPassword": "newPassword"
      *     }
-     * 
+     *
      * @apiSuccess (200) {Boolean} body Response body
      * @apiSuccess (200) {Array} users Should return array of users if exists
      *
@@ -250,7 +257,7 @@ class AccountController extends AbstractController
      *       "success": true,
      *       "body": {}
      *     }
-     * 
+     *
      * @apiError {Boolean} success false
      * @apiError {JSON} body Error parameters
      * @apiError {String} body.message Error message
@@ -262,7 +269,7 @@ class AccountController extends AbstractController
      *              "message": "You are not allowed to change this user`s data"
      *          }
      *      }
-     * @apiErrorExample {json} Empty json request 
+     * @apiErrorExample {json} Empty json request
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
@@ -270,20 +277,20 @@ class AccountController extends AbstractController
      *           "message": "Empty input"
      *       }
      *     }
-     * @apiErrorExample {json} incorrect old password 
+     * @apiErrorExample {json} incorrect old password
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
      *       "body": {
-     *           "message": "Bad password"
+     *           "message": "Invalid password"
      *       }
      *     }
-     * @apiErrorExample {json} invalid new password 
+     * @apiErrorExample {json} invalid new password
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
      *       "body": {
-     *           "message": "Must be 3 characters or mores"
+     *           "message": "Must be 3 characters or more"
      *       }
      *     }
      **/
@@ -303,34 +310,34 @@ class AccountController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        if (!$data){
+        if (!$data) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>'Empty input']
+                'body' => ['message' => 'Empty input']
             ];
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
         $verified = $encoder->isPasswordValid($user, $data['oldPassword']);
-        if(!$verified){
+        if (!$verified) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>'Bad password']
+                'body' => ['message' => 'Invalid password']
             ];
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
-        
+
         $password = isset($data["newPassword"]) ? $data["newPassword"] : "";
         $confirm = isset($data["confirmPassword"]) ? $data["confirmPassword"] : "";
         $errorsString = $this->validatePassword($password, $confirm);
-        if (!empty($errorsString)){
+        if (!empty($errorsString)) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>$errorsString ]
+                'body' => ['message' => $errorsString]
             ];
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
-        
+
         $user->setPassword($encoder->hashPassword(
             $user,
             $password
@@ -339,7 +346,7 @@ class AccountController extends AbstractController
         $entityManager->flush();
 
         $response = ['success' => true, 'body' => []];
-        return new JsonResponse($response, Response::HTTP_OK); 
+        return new JsonResponse($response, Response::HTTP_OK);
     }
 
     /**
@@ -352,9 +359,9 @@ class AccountController extends AbstractController
      *     {
      *       "X-AUTH-TOKEN": "152133606dc58da26d4d775ae93624c844b6826bdaa9fefa4f05f009500b2f7f5686633434cc6d03de533d06568fc363311579f6e9ef6f18a70277c1"
      *     }
-     * 
+     *
      * @apiParam {Number} id Id of user that we change(part of url)
-     * 
+     *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 204 No Content
      *

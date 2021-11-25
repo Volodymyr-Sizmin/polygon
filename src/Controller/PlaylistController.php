@@ -216,7 +216,11 @@ class PlaylistController extends SerializeController
         $entityManager->persist($playlist);
         $entityManager->flush();
 
-        return new JsonResponse(['success' => true, 'body' => 'Playlist successfully modified']);
+        return new JsonResponse(['success' => true, 'playlist' => [
+            'name' => $playlist->getName(),
+            'description' => $playlist->getDescription(),
+            'updatedAt' => $playlist->getCreatedAt()
+        ]]);
     }
 
     /**
