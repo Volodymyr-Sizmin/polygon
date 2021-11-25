@@ -13,9 +13,11 @@ use DateTime;
 
 class SerializeController extends AbstractController
 {
+
     public function serializeJson($serializable): String
     {
-        $dateCallback = function ($innerObject) {
+        $dateCallback = function ($innerObject) 
+        {
             return $innerObject instanceof DateTimeImmutable ? $innerObject->format(DateTime::ISO8601) : '';
         };
         $defaultContext = [

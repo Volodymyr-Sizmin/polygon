@@ -48,7 +48,9 @@ class FileUploader
         $this->slugger = $slugger;
         $this->em = $em;
     }
-
+    /**
+     * return url address of file
+     */
     public function upload(UploadedFile $file)
     {
         if ($file->getSize() > self::MAX_FILE_SIZE || !$file->getSize()) {
@@ -80,7 +82,9 @@ class FileUploader
         $file->setUpdatedAt(new \DateTime('NOW'));
 
         $this->em->persist($file);
-        $this->em->flush($file);
+        $this->em->flush();
+
+        return self::ALLOWED_TYPES[$ext] . '/' . $fileName;
     }
 
     public function getTargetDirectory()

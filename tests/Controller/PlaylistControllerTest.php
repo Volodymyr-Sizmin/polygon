@@ -2,18 +2,26 @@
 
 namespace App\Tests\Controller;
 
+use App\Controller\PlaylistController;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Entity\Playlist;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Response;
-
+use App\Interfaces\Playlist\PlaylistServiceInterface;
+use App\Controller\SerializeController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use function PHPUnit\Framework\assertSame;
 
 class PlaylistControllerTest extends WebTestCase
 {
     protected Playlist $playlist;
     protected EntityManager $entityManager;
     protected KernelBrowser $client;
+    private PlaylistServiceInterface $playlistServiceInterface;
+    private $playlistController;
+    private SerializeController $serializeController;
+    private JsonResponse $jsonResponse;
 
     protected function setUp(): void
     {
@@ -31,6 +39,26 @@ class PlaylistControllerTest extends WebTestCase
         $this->entityManager->flush();
 
         $this->playlist = $playlist;
+
+        $this->jsonResponse = $this->createMock(JsonResponse::class);
+        $this->serializeController = $this->createMock(SerializeController::class);
+        $this->playlistServiceInterface = $this->createMock(PlaylistServiceInterface::class);
+        $this->playlistController = new PlaylistController($this->playlistServiceInterface);
+    }
+
+    public function testIndex(): void
+    {
+
+        $this->client->request('GET','/api/playlists');
+        //url is real
+        $response = $this->client->getResponse();
+        $this->assertSame(200,$response->getStatusCode());
+
+        //expects methods  indexService  / serializeJson / fromJsonString
+        $this->playlistServiceInterface->expects($this->any())->method('indexService');
+        $this->serializeController->expects($this->any())->method('serializeJson');
+        $this->jsonResponse->expects($this->any())->method('fromJsonString');
+        $this->playlistController->index();
     }
 
     public function testShowPlaylist(): void
