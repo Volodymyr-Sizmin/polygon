@@ -102,6 +102,13 @@ reset_password_email:
 
 ### END AUTHENTICATION ENDPOINTS ###
 
+### PROFILE ENDPOINTS ###
+upload_profile_photo:
+  path: /api/profile/about/photo
+  controller: App\Controller\ProfileController::uploadProfilePhoto
+  methods: POST
+### END PROFILE ENDPOINTS ###
+
 ### TEST ENDPOINTS ###
 ping:
   path: /api/ping

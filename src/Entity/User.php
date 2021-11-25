@@ -119,6 +119,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $phone;
 
     /**
+     * @ORM\OneToMany(targetEntity=File::class, mappedBy="user")
+     * @ORM\Column(type="bigint", name="profilePhoto", options={"default" : 0})
+     */
+    private $profilePhoto;
+
+    /**
      * @ORM\OneToMany(targetEntity=ApiToken::class, mappedBy="user")
      */
     private $apiTokens;
@@ -162,6 +168,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getProfilePhoto(): ?string
+    {
+        return $this->profilePhoto;
+    }
+
+    public function setProfilePhoto(int $profilePhoto): self
+    {
+        $this->profilePhoto = $profilePhoto;
 
         return $this;
     }
@@ -232,9 +250,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private function removeSpaces(string $str) :string
     {
-        $str = preg_replace('/\s\s+/', ' ', $str);
-        $str = preg_replace('/^ /', '', $str);
-        $str = preg_replace('/ $/', '', $str);
+        preg_replace('/\s\s+/', ' ', $str);
+        preg_replace('/^ /', '', $str);
+        preg_replace('/ $/', '', $str);
         return $str;
     }
 
