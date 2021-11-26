@@ -2,12 +2,10 @@
 
 namespace App\Controller\MyTracklist;
 
-use Symfony\Component\HttpFoundation\Response;
 use App\Interfaces\MyTracklist\MyTracklistInterface;
 use App\Controller\SerializeController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use App\Service\FileUploader;
 use App\DTO\Transformer\TracklistTransformerDTO;
 use App\Entity\Track;
 
@@ -171,16 +169,6 @@ class MyTracklistController extends SerializeController
      * @apiSuccess (200) {Boolean} success Should be true
      * @apiSuccess (200) {JSON} body Response body 
      * 
-     * @apiSuccess {id}  id of tracklist.
-     * @apiSuccess {String} author Author of track.
-     * @apiSuccess {String} album Album of track.
-     * @apiSuccess {String} type Type of track.
-     * @apiSuccess {String} genre Genre of track.
-     * @apiSuccess {String} cover URL of image track.
-     * @apiSuccess {String} trackPath URL of track.
-     * @apiSuccess {json}   createdAt time of create.
-     * @apiSuccess {json}   updatedAt time of update.
-     * @apiSuccess {int}    playlistId for PlaylistID
      * 
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
@@ -239,11 +227,107 @@ class MyTracklistController extends SerializeController
      *},
      *"playlistId": null
      *}
+     * 
      */
     public function store(Request $request)
     {
         $dto = $this->tracklistTransformerDTO->transformerDTO($request);
         return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->storeService($dto)));
+    }
+
+    /**
+     * @api {GET} /backend/api/mytracklist/{id} Show Mytracklist
+     * 
+     * @apiName show_mytracklist
+     * @apiGroup MYTRACKLIST
+     * 
+     * @apiSuccess (200) {Boolean} success Should be true
+     * @apiSuccess (200) {JSON} body Response body 
+     * 
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     * {
+     *"id": 7,
+     *"author": "deskot",
+     *"title": "my live",
+     *"album": null,
+     *"type": "Music",
+     *"genre": "Rock",
+     *"cover": null,
+     *"trackPath": "publick",
+     *"createdAt": {
+     *   "timezone": {
+     *       "name": "UTC",
+     *       "transitions": [
+     *           {
+     *               "ts": -9223372036854775808,
+     *               "time": "-292277022657-01-27T08:29:52+0000",
+     *               "offset": 0,
+     *               "isdst": false,
+     *               "abbr": "UTC"
+     *           }
+     *       ],
+     *       "location": {
+     *           "country_code": "??",
+     *           "latitude": 0,
+     *           "longitude": 0,
+     *           "comments": ""
+     *       }
+     *   },
+     *   "offset": 0,
+     *   "timestamp": 1637604470
+     *},
+     *"updatedAt": {
+     *   "timezone": {
+     *       "name": "UTC",
+     *       "transitions": [
+     *           {
+     *               "ts": -9223372036854775808,
+     *               "time": "-292277022657-01-27T08:29:52+0000",
+     *               "offset": 0,
+     *               "isdst": false,
+     *               "abbr": "UTC"
+     *           }
+     *       ],
+     *       "location": {
+     *           "country_code": "??",
+     *           "latitude": 0,
+     *           "longitude": 0,
+     *           "comments": ""
+     *       }
+     *   },
+     *   "offset": 0,
+     *   "timestamp": 1637604470
+     *},
+     *"playlistId": null
+     *}
+     *
+     * @apiError CanNotFindTrack Can not find track
+     * 
+     * @apiErrorExample Error-Response
+     *     HTTP/1.1 Not Found
+     *     [
+     * {
+     *   "success": false,
+     *   "body": "Can not find track"
+     * }
+     *]
+     */
+    public function show($id)
+    {
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->showService($id)));
+    }
+    
+    public function edit($id)
+    {
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->editService($id)));
+    }
+
+    public function update(Track $track, Request $request)
+    {
+
+        $dto = $this->tracklistTransformerDTO->transformerDTO($request);
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->updateService($dto, $track)));
     }
 
     /**
@@ -268,6 +352,15 @@ class MyTracklistController extends SerializeController
      *   "body": "Track successfully deleted"
      *}
      *]
+     *
+     * @apiError CanNotFindTrack Can not find track
+     * 
+     * @apiErrorExample Error-Response
+     *     HTTP/1.1 Not Found
+     *     [
+     * {
+     *   "success": false,
+     *   "body": "Can not find track"
      */
     public function delete($id)
     {

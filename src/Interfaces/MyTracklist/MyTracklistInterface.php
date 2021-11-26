@@ -13,11 +13,11 @@ interface MyTracklistInterface
 
     public function storeService(TracklistDTO $tracklistDTO);
 
-    public function showService();
+    public function showService($id);
 
-    public function editService();
+    public function editService($id);
 
-    public function updateService();
+    public function updateService(TracklistDTO $tracklistDTO, Track $track);
 
     public function deleteService($id);
 }
