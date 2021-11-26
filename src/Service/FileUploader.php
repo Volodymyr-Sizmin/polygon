@@ -84,7 +84,7 @@ class FileUploader
         $this->em->persist($file);
         $this->em->flush();
 
-        return self::ALLOWED_TYPES[$ext] . '/' . $fileName;
+        return $file;
     }
 
     public function getTargetDirectory()

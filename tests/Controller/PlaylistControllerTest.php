@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Interfaces\Playlist\PlaylistServiceInterface;
 use App\Controller\SerializeController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use function PHPUnit\Framework\assertSame;
 
 class PlaylistControllerTest extends WebTestCase
 {
@@ -50,11 +49,10 @@ class PlaylistControllerTest extends WebTestCase
     {
 
         $this->client->request('GET','/api/playlists');
-        //url is real
+        
         $response = $this->client->getResponse();
         $this->assertSame(200,$response->getStatusCode());
 
-        //expects methods  indexService  / serializeJson / fromJsonString
         $this->playlistServiceInterface->expects($this->any())->method('indexService');
         $this->serializeController->expects($this->any())->method('serializeJson');
         $this->jsonResponse->expects($this->any())->method('fromJsonString');

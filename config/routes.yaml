@@ -125,6 +125,21 @@ store_mytracklist:
   controller: App\Controller\MyTracklist\MyTracklistController::store
   methods: POST
 
+show_mytracklist:
+  path: /api/mytracklist/{id}
+  controller: App\Controller\MyTracklist\MyTracklistController::show
+  methods: GET
+
+edit_mytracklist:
+  path: /api/mytracklist/{id}/edit
+  controller: App\Controller\MyTracklist\MyTracklistController::edit
+  methods: GET
+
+update_mytracklist:
+  path: api/mytracklist/{id}
+  controller: App\Controller\MyTracklist\MyTracklistController::update
+  methods: POST
+
 delete_mytracklist:
   path: /api/mytracklist/{id}
   controller: App\Controller\MyTracklist\MyTracklistController::delete
