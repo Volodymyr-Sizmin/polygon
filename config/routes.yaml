@@ -1,3 +1,9 @@
+### PLAYLIST ###
+index_playlist:
+  path: /api/playlists
+  controller: App\Controller\PlaylistController::index
+  methods: GET
+
 create_playlist:
   path: /api/playlists
   controller: App\Controller\PlaylistController::createPlaylist
