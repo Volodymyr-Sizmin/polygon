@@ -2,17 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\File;
 use App\Entity\User;
-use App\Exception\FileUploadException;
 use App\Service\FileUploader;
 use App\Service\ProfileService;
 use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
-use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -29,11 +28,13 @@ use Symfony\Component\Security\Core\Security;
  */
 class ProfileController extends AbstractController
 {
+    private $entityManager;
     private $security;
     private $profileService;
 
-    public function __construct(Security $security, ProfileService $profileService)
+    public function __construct(EntityManagerInterface $entityManager, Security $security, ProfileService $profileService)
     {
+        $this->entityManager = $entityManager;
         $this->security = $security;
         $this->profileService = $profileService;
     }
@@ -78,8 +79,8 @@ class ProfileController extends AbstractController
             return new JsonResponse([
                 'success' => false,
                 'body' => [
-                    'error' => $validateProfilePhoto['error']
-                ]
+                    'error' => $validateProfilePhoto['error'],
+                ],
             ], Response::HTTP_CONFLICT);
         }
 
@@ -90,16 +91,96 @@ class ProfileController extends AbstractController
             return new JsonResponse([
                 'success' => false,
                 'body' => [
-                    'error' => $uploadProfilePhoto['error']
-                ]
+                    'error' => $uploadProfilePhoto['error'],
+                ],
             ], Response::HTTP_CONFLICT);
         }
 
         return new JsonResponse([
             'success' => true,
             'body' => [
-                'message' => 'Profile photo was successfully uploaded.'
-            ]
+                'message' => 'Profile photo was successfully uploaded.',
+            ],
         ], 201);
+    }
+
+    /**
+     * @api {get} /backend/api/profile/about/photo Get Profile Photo
+     * @apiName PostApiUploadProfilePhoto
+     * @apiGroup Profile
+     *
+     * @apiBody {File} photo
+     *
+     * @apiSuccess (200) {Boolean} success Should be true
+     * @apiSuccess (200) {JSON} body Response body
+     * @apiSuccess (200) {String} body.url Profile photo url
+     * @apiSuccessExample {json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "success": "true",
+     *       "body": {
+     *           "url":"https://"
+     *       }
+     *     }
+     */
+    public function getProfilePhoto(Request $request): JsonResponse
+    {
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => 'b.astapau@andersenlab.com']);
+
+        /** @var File $profilePhoto */
+        $profilePhoto = $this->entityManager->getRepository(File::class)->find($user->getProfilePhoto());
+
+        if (!$profilePhoto) {
+            return new JsonResponse([
+                'success' => false,
+                'body' => [
+                    'message' => 'No profile photo set.',
+                ],
+            ], 404);
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'body' => [
+                'url' => $profilePhoto->getUrl(),
+            ],
+        ]);
+    }
+
+    /**
+     * @api {delete} /backend/api/profile/about/photo Delete Profile Photo
+     * @apiName DeleteApiUploadProfilePhoto
+     * @apiGroup Profile
+     *
+     * @apiSuccess (200) {Boolean} success Should be true
+     * @apiSuccess (200) {JSON} body Response body
+     * @apiSuccess (200) {String} body.url Profile photo url
+     * @apiSuccessExample {json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "success": "true",
+     *       "body": {
+     *           "url":"https://."
+     *       }
+     *     }
+     */
+    public function deleteProfilePhoto(Request $request): JsonResponse
+    {
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => 'b.astapau@andersenlab.com']);
+
+        /** @var File $profilePhoto */
+        $profilePhoto = $user->getProfilePhoto();
+
+        $this->entityManager->remove($profilePhoto);
+        $this->entityManager->flush();
+
+        $user->setProfilePhoto(null);
+
+        return new JsonResponse([
+            'success' => true,
+            'body' => [
+                'message' => 'Profile photo was successfully deleted.',
+            ],
+        ]);
     }
 }
