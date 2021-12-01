@@ -3,6 +3,7 @@
 namespace App\Tests\Controller;
 
 use App\Controller\PlaylistController;
+use App\Entity\PlaylistsTracks;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Entity\Playlist;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -11,14 +12,16 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Interfaces\Playlist\PlaylistServiceInterface;
 use App\Controller\SerializeController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class PlaylistControllerTest extends WebTestCase
 {
     protected Playlist $playlist;
     protected EntityManager $entityManager;
     protected KernelBrowser $client;
+    protected PlaylistsTracks $playlistsTracks;
     private PlaylistServiceInterface $playlistServiceInterface;
-    private $playlistController;
+    private PlaylistController $playlistController;
     private SerializeController $serializeController;
     private JsonResponse $jsonResponse;
 
@@ -33,9 +36,8 @@ class PlaylistControllerTest extends WebTestCase
          $playlist->setDescription('test');
          $playlist->setCreatedAt(new \DateTimeImmutable('2021/11/16'));
          $playlist->setUpdatedAt(new \DateTimeImmutable('2021/11/17'));
-
-        $this->entityManager->persist($playlist);
-        $this->entityManager->flush();
+         $this->entityManager->persist($playlist);
+         $this->entityManager->flush();
 
         $this->playlist = $playlist;
 
@@ -48,10 +50,10 @@ class PlaylistControllerTest extends WebTestCase
     public function testIndex(): void
     {
 
-        $this->client->request('GET','/api/playlists');
-        
+        $this->client->request('GET', '/api/playlists');
+
         $response = $this->client->getResponse();
-        $this->assertSame(200,$response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
 
         $this->playlistServiceInterface->expects($this->any())->method('indexService');
         $this->serializeController->expects($this->any())->method('serializeJson');
@@ -74,7 +76,7 @@ class PlaylistControllerTest extends WebTestCase
         $this->assertSame("test", $actualPlaylist->getDescription());
     }
 
-    public function testModifyPlaylist():void
+    public function testModifyPlaylist(): void
     {
         $this->client->jsonRequest('PUT', '/api/playlists/' . $this->playlist->getId(), [
             "name" => "unitTest",
@@ -112,5 +114,28 @@ class PlaylistControllerTest extends WebTestCase
 
         $this->assertSame(true, $responseArr['success']);
         $this->assertSame("Playlist successfully deleted", $responseArr['body']);
+    }
+
+    public function testAddTrack(): void
+    {
+        $this->entityManager = $this->client->getContainer()->get('doctrine')->getManager();
+        $this->client->jsonRequest('POST', '/api/playlists/addtrack', [
+            "playlist_id" => 1,
+            "track_id" => 1
+        ], []);
+
+        $playlistsTracks = new PlaylistsTracks();
+
+        $playlistsTracks->setPlaylistId(1);
+        $playlistsTracks->setTrackId(1);
+
+        $response = $this->client->getResponse();
+
+        $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
+
+        $responseArr = json_decode($response->getContent(), true);
+
+        $this->assertEquals(true, $responseArr['success']);
+        $this->assertSame("Track successfully added", $responseArr['body']);
     }
 }

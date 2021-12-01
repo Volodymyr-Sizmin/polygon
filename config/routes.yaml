@@ -24,6 +24,11 @@ delete_playlist:
   controller: App\Controller\PlaylistController::deletePlaylist
   methods: DELETE
 
+add_track:
+  path: /api/playlists/addtrack
+  controller: App\Controller\PlaylistController:addTrack
+  methods: POST
+
 file_upload:
   path: api/file/upload
   controller: App\Controller\FileController::upload
@@ -146,6 +151,13 @@ delete_mytracklist:
   methods: DELETE
 
 ### END MYTRACKLIST ENDPOINTS ###
+### PROFILE ENDPOINTS ###
+upload_profile_photo:
+  path: /api/profile/about/photo
+  controller: App\Controller\ProfileController::uploadProfilePhoto
+  methods: POST
+### END PROFILE ENDPOINTS ###
+
 
 ### TEST ENDPOINTS ###
 ping:
