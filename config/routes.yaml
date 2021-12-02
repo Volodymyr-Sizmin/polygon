@@ -151,13 +151,6 @@ delete_mytracklist:
   methods: DELETE
 
 ### END MYTRACKLIST ENDPOINTS ###
-### PROFILE ENDPOINTS ###
-upload_profile_photo:
-  path: /api/profile/about/photo
-  controller: App\Controller\ProfileController::uploadProfilePhoto
-  methods: POST
-### END PROFILE ENDPOINTS ###
-
 
 ### PROFILE ENDPOINTS ###
 upload_profile_photo:
