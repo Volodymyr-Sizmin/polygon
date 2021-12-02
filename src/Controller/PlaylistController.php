@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Playlist;
+use App\Entity\PlaylistsTracks;
 use App\Interfaces\Playlist\PlaylistServiceInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 class PlaylistController extends SerializeController
 {
 
-    private $playlist;
+    private PlaylistServiceInterface $playlist;
 
     public function __construct(PlaylistServiceInterface $playlistServiceInterface)
     {
@@ -35,10 +36,10 @@ class PlaylistController extends SerializeController
      * @api {GET} /backend/api/playlists Index Playlist
      * @apiName Index
      * @apiGroup Playlists
-     * 
+     *
      * @apiSuccess (200) {Boolean} succes Should be true
      * @apiSuccess (200) {JSON} body Response body
-     * 
+     *
      * @apiSuccessExample {json} Success-Response:
      *      HTTP/1.1 200 OK
      *  {
@@ -145,7 +146,7 @@ class PlaylistController extends SerializeController
     {
         return JsonResponse::fromJsonString($this->serializeJson($this->playlist->indexService()));
     }
-    
+
     /**
      * @api {POST} /backend/api/playlists Create Playlist
      * @apiName CreatePlaylist
@@ -159,10 +160,10 @@ class PlaylistController extends SerializeController
      *       "name": "name",
      *       "description": "description"
      *     }
-     * 
+     *
      * @apiSuccess (201) {Boolean} success Should be true
      * @apiSuccess (201) {JSON} body Response body
-     * 
+     *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 201 CREATED
      * {
@@ -235,16 +236,16 @@ class PlaylistController extends SerializeController
     }
 
     /**
-     * 
+     *
      * @api {GET} /backend/api/playlists/:id Show Playlist
      * @apiName GetPlaylist
      * @apiGroup Playlists
-     * 
+     *
      * @apiParam  {id} id Playlist id
-     * 
+     *
      * @apiSuccess (200) {Boolean} success Should be true
      * @apiSuccess (200) {JSON} body Response body
-     * 
+     *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
      *     {
@@ -296,7 +297,7 @@ class PlaylistController extends SerializeController
      *       },
      *       "description": "description"
      *      }
-     * 
+     *
      */
     public function showPlaylist(Playlist $playlist): JsonResponse
     {
@@ -317,10 +318,10 @@ class PlaylistController extends SerializeController
      *       "name": "name",
      *       "description": "description"
      *     }
-     * 
+     *
      * @apiSuccess (200) {Boolean} success Should be true
      * @apiSuccess (200) {JSON} body Response body
-     * 
+     *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
      *     {
@@ -347,16 +348,16 @@ class PlaylistController extends SerializeController
     }
 
     /**
-     * 
+     *
      * @api {DELETE} /backend/api/playlists/:id Delete Playlist
      * @apiName DeletePlaylist
      * @apiGroup Playlists
-     * 
+     *
      * @apiParam  {id} id Playlist id
-     * 
+     *
      * @apiSuccess (200) {Boolean} success Should be true
      * @apiSuccess (200) {JSON} body Response body
-     * 
+     *
      * @apiSuccessExample {json} Success-Response:
      *     HTTP/1.1 200 OK
      *     {
@@ -371,5 +372,37 @@ class PlaylistController extends SerializeController
         $entityManager->flush();
 
         return new JsonResponse(['success' => true, 'body' => 'Playlist successfully deleted']);
+    }
+
+
+    public function addTrack(Request $request): JsonResponse
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $playlistsTracks = new PlaylistsTracks();
+
+        $data = json_decode($request->getContent(), true);
+
+        if (
+            $entityManager->getRepository(PlaylistsTracks::class)
+            ->existPlaylistsTracks($data['playlist_id'], $data['track_id'])
+        ) {
+            return new JsonResponse([
+                'success' => false,
+                'body' => 'This track has already been added to this playlist'
+            ]);
+        }
+
+        if (!is_numeric($data['playlist_id']) || !is_numeric($data['track_id'])) {
+            return new JsonResponse(['success' => false, 'body' => 'Track hasn`t been added']);
+        }
+
+        $playlistsTracks->setPlaylistId($data['playlist_id']);
+        $playlistsTracks->setTrackId($data['track_id']);
+
+        $entityManager->persist($playlistsTracks);
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => true, 'body' => 'Track successfully added']);
     }
 }

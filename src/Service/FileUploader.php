@@ -35,7 +35,6 @@ class FileUploader
         self::DOCUMENT_TYPE => 3,
     ];
 
-    // 10 mb
     public const MAX_FILE_SIZE = 10485760;
 
     private string $targetDirectory;
@@ -48,13 +47,10 @@ class FileUploader
         $this->slugger = $slugger;
         $this->em = $em;
     }
-
-    public function getTargetDirectory()
-    {
-        return $this->targetDirectory;
-    }
-
-    public function upload(UploadedFile $file): File
+    /**
+     * return url address of file
+     */
+    public function upload(UploadedFile $file)
     {
         if ($file->getSize() > self::MAX_FILE_SIZE || !$file->getSize()) {
             throw new FileUploadException('Max allowed file size is: ' . self::MAX_FILE_SIZE . ' byte.');
@@ -85,8 +81,13 @@ class FileUploader
         $file->setUpdatedAt(new \DateTime('NOW'));
 
         $this->em->persist($file);
-        $this->em->flush($file);
+        $this->em->flush();
 
         return $file;
+    }
+
+    public function getTargetDirectory()
+    {
+        return $this->targetDirectory;
     }
 }
