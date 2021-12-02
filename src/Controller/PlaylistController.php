@@ -393,7 +393,7 @@ class PlaylistController extends SerializeController
             ]);
         }
 
-        if (!is_numeric($data['playlist_id']) && !is_numeric($data['track_id'])) {
+        if (!is_numeric($data['playlist_id']) || !is_numeric($data['track_id'])) {
             return new JsonResponse(['success' => false, 'body' => 'Track hasn`t been added']);
         }
 
