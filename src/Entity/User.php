@@ -30,10 +30,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", unique=true, nullable=true)
      * @Assert\NotBlank(groups = {"email"}, message = "Invalid e-mail Address")
      * @Assert\Regex(
-     *      groups = {"email"}, 
-     *      pattern = "/^[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+\.{0,1}[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+@[a-zа-я0-9!#$%&`*\-=+'?{}\|~.]+[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+$/iu", 
+     *      groups = {"email"},
+     *      pattern = "/^[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+\.{0,1}[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+@[a-zа-я0-9!#$%&`*\-=+'?{}\|~.]+[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+$/iu",
      *      message = "Invalid e-mail Address"
-     * )     
+     * )
      */
     private $email;
 
@@ -58,7 +58,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *      maxMessage = "Must be {{ limit }} characters or less"
      * ),
      * @Assert\Regex(
-     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu", 
+     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu",
      *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'""?,<>[]{}\|/№!~' symbols, and one dot not first or last"
      * )
      * })
@@ -75,7 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *      maxMessage = "Must be {{ limit }} characters or less"
      * ),
      * @Assert\Regex(
-     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu", 
+     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu",
      *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'""?,<>[]{}\|/№!~' symbols, and one dot not first or last"
      * )
      * })
@@ -92,7 +92,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *      maxMessage = "Must be {{ limit }} characters or less"
      * ),
      * @Assert\Regex(
-     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu", 
+     *      pattern = "/^[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~ ]+$/iu",
      *      message = "Can contain letters, numbers, !@#$%^&*()_-=+;:'""?,<>[]{}\|/№!~' symbols, and one dot not first or last"
      * )
      * })
@@ -110,13 +110,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *      maxMessage = "Must be {{ limit }} characters or less"
      * ),
      * @Assert\Regex(
-     *      groups = {"phone"}, 
-     *      pattern = "/^\+[0-9]{6,12}$/", 
+     *      groups = {"phone"},
+     *      pattern = "/^\+[0-9]{6,12}$/",
      *      message = "incorrect phone format"
      * )
      * })
      */
     private $phone;
+
+    /**
+     * @ORM\OneToMany(targetEntity=File::class, mappedBy="user")
+     * @ORM\Column(type="bigint", name="profilePhoto", options={"default" : 0})
+     */
+    private $profilePhoto;
 
     /**
      * @ORM\OneToMany(targetEntity=ApiToken::class, mappedBy="user")
@@ -128,9 +134,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $isDeleted;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Playlist::class, mappedBy="user", orphanRemoval=true)
+     * @ORM\Column(type="json")
+     */
+    private $playlists;
+
     public function __construct()
     {
         $this->apiTokens = new ArrayCollection();
+        $this->playlists = new ArrayCollection();
     }
 
     /**
@@ -166,6 +179,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getProfilePhoto(): ?string
+    {
+        return $this->profilePhoto;
+    }
+
+    public function setProfilePhoto(int $profilePhoto): self
+    {
+        $this->profilePhoto = $profilePhoto;
+
+        return $this;
+    }
+
     /**
      * A visual identifier that represents this user.
      *
@@ -188,9 +213,91 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
+    /**
+     * @param array $roles
+     * @return $this
+     */
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole(string $role): bool
+    {
+        if (in_array($role, $this->roles)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $role
+     * @return $this
+     */
+    public function addRole(string $role): self
+    {
+        if (!$this->hasRole($role)) {
+            array_push($this->roles, strtoupper($role));
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $role
+     * @return $this
+     */
+    public function removeRole(string $role)
+    {
+        if ($this->hasRole($role)) {
+            unset($this->roles[array_search(strtoupper($role), $this->roles)]);
+            $this->roles = array_values($this->roles);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Playlist[]
+     */
+    public function getPlaylists(): Collection
+    {
+        return $this->playlists;
+    }
+
+    /**
+     * @param Playlist $playlist
+     * @return $this
+     */
+    public function addPlaylist(Playlist $playlist): self
+    {
+        if (!$this->playlists->contains($playlist)) {
+            $this->playlists[] = $playlist;
+            $playlist->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Playlist $playlist
+     * @return $this
+     */
+    public function removePlaylist(Playlist $playlist): self
+    {
+        if ($this->playlists->contains($playlist)) {
+            $this->playlists->removeElement($playlist);
+            if ($playlist->getAuthor() === $this) {
+                $playlist->setAuthor(null);
+            }
+        }
 
         return $this;
     }
@@ -230,11 +337,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    private function removeSpaces(string $str) :string
+    private function removeSpaces(string $str): string
     {
-        $str = preg_replace('/\s\s+/', ' ', $str);
-        $str = preg_replace('/^ /', '', $str);
-        $str = preg_replace('/ $/', '', $str);
+        preg_replace('/\s\s+/', ' ', $str);
+        preg_replace('/^ /', '', $str);
+        preg_replace('/ $/', '', $str);
         return $str;
     }
 

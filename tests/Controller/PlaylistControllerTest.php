@@ -36,8 +36,9 @@ class PlaylistControllerTest extends WebTestCase
          $playlist->setDescription('test');
          $playlist->setCreatedAt(new \DateTimeImmutable('2021/11/16'));
          $playlist->setUpdatedAt(new \DateTimeImmutable('2021/11/17'));
-         $this->entityManager->persist($playlist);
-         $this->entityManager->flush();
+
+        $this->entityManager->persist($playlist);
+        $this->entityManager->flush();
 
         $this->playlist = $playlist;
 
@@ -55,6 +56,7 @@ class PlaylistControllerTest extends WebTestCase
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
 
+        //expects methods  indexService  / serializeJson / fromJsonString
         $this->playlistServiceInterface->expects($this->any())->method('indexService');
         $this->serializeController->expects($this->any())->method('serializeJson');
         $this->jsonResponse->expects($this->any())->method('fromJsonString');

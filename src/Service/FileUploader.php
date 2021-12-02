@@ -11,17 +11,17 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FileUploader
 {
-    const DOCUMENT_TYPE = 'document';
-    const IMAGE_TYPE = 'image';
-    const AUDIO_TYPE = 'audio';
+    public const DOCUMENT_TYPE = 'document';
+    public const IMAGE_TYPE = 'image';
+    public const AUDIO_TYPE = 'audio';
 
-    const PDF_EXTENSION = 'pdf';
-    const PNG_EXTENSION = 'png';
-    const JPEG_EXTENSION = 'jpeg';
-    const JPG_EXTENSION = 'jpg';
-    const MP3_EXTENSION = 'mp3';
+    public const PDF_EXTENSION = 'pdf';
+    public const PNG_EXTENSION = 'png';
+    public const JPEG_EXTENSION = 'jpeg';
+    public const JPG_EXTENSION = 'jpg';
+    public const MP3_EXTENSION = 'mp3';
 
-    const ALLOWED_TYPES = [
+    public const ALLOWED_TYPES = [
         self::PDF_EXTENSION => self::DOCUMENT_TYPE,
         self::PNG_EXTENSION => self::IMAGE_TYPE,
         self::JPEG_EXTENSION => self::IMAGE_TYPE,
@@ -29,14 +29,14 @@ class FileUploader
         self::MP3_EXTENSION => self::AUDIO_TYPE,
     ];
 
-    const FILE_TYPES = [
+    public const FILE_TYPES = [
         self::AUDIO_TYPE => 1,
         self::IMAGE_TYPE => 2,
         self::DOCUMENT_TYPE => 3,
     ];
 
     // 10 mb
-    const MAX_FILE_SIZE = 10485760;
+    public const MAX_FILE_SIZE = 10485760;
 
     private string $targetDirectory;
     private SluggerInterface $slugger;
@@ -54,7 +54,7 @@ class FileUploader
     public function upload(UploadedFile $file)
     {
         if ($file->getSize() > self::MAX_FILE_SIZE || !$file->getSize()) {
-            throw new FileUploadException('max allowed file size is: ' . self::MAX_FILE_SIZE . ' byte.');
+            throw new FileUploadException('Max allowed file size is: ' . self::MAX_FILE_SIZE . ' byte.');
         }
 
         $ext = $file->guessExtension();
@@ -71,7 +71,7 @@ class FileUploader
         try {
             $file->move($dir, $fileName);
         } catch (FileException $e) {
-            throw new FileUploadException('error moving file from tmp folder');
+            throw new FileUploadException('An error occurred during moving file from tmp folder');
         }
 
         $file = new File();
