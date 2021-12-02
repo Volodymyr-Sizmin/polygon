@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 class PlaylistController extends SerializeController
 {
 
-    private $playlist;
+    private PlaylistServiceInterface $playlist;
 
     public function __construct(PlaylistServiceInterface $playlistServiceInterface)
     {
@@ -393,12 +393,12 @@ class PlaylistController extends SerializeController
             ]);
         }
 
-        if (is_numeric($data['playlist_id']) && is_numeric($data['track_id'])) {
-            $playlistsTracks->setPlaylistId($data['playlist_id']);
-            $playlistsTracks->setTrackId($data['track_id']);
-        } else {
+        if (!is_numeric($data['playlist_id']) && !is_numeric($data['track_id'])) {
             return new JsonResponse(['success' => false, 'body' => 'Track hasn`t been added']);
         }
+
+        $playlistsTracks->setPlaylistId($data['playlist_id']);
+        $playlistsTracks->setTrackId($data['track_id']);
 
         $entityManager->persist($playlistsTracks);
         $entityManager->flush();

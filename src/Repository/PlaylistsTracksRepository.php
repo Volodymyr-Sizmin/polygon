@@ -31,7 +31,6 @@ class PlaylistsTracksRepository extends ServiceEntityRepository
                  new Parameter('track_id', $track_id)
              )));
 
-
         $query = $qb->getQuery();
 
         return $query->execute();

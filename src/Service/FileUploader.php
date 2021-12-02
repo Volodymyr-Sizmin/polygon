@@ -35,7 +35,6 @@ class FileUploader
         self::DOCUMENT_TYPE => 3,
     ];
 
-    // 10 mb
     public const MAX_FILE_SIZE = 10485760;
 
     private string $targetDirectory;
