@@ -21,5 +21,25 @@ class PlaylistService implements PlaylistServiceInterface
     {
         return  $this->playlist->findAll();
     }
+
+    /** Create Playlist
+     *
+     * @param array $data
+     * @return Playlist
+     */
+    public function createPlaylist(array $data): Playlist
+    {
+        $playlist = new Playlist();
+
+        $playlist->setName(isset($data["name"]) ? $data["name"] : $playlist->getName());
+        $playlist->setDescription(isset($data["description"]) ? $data["description"] : $playlist->getDescription());
+        $playlist->setCreatedAt(new \DateTimeImmutable());
+        $playlist->setUpdatedAt(new \DateTimeImmutable());
+
+        $this->enityManager->persist($playlist);
+        $this->enityManager->flush();
+
+        return $playlist;
+    }
     
 }
