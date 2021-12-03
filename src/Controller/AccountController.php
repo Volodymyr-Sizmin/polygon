@@ -215,7 +215,7 @@ class AccountController extends AbstractController
         if ($length > 32) {
             return 'Must be 32 characters or less';
         }
-        $pattern = "/^[a-zа-я0-9!@#$%^&`*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+$/u";
+        $pattern = "/^[a-zA-Zа-яА-Я0-9!@#$%^&`*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+\.{0,1}[a-zA-Zа-яА-Я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+$/u";
         if (!preg_match($pattern, $password)) {
             return 'Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last';
         }
@@ -285,14 +285,55 @@ class AccountController extends AbstractController
      *           "message": "Invalid password"
      *       }
      *     }
-     * @apiErrorExample {json} invalid new password
+     * @apiErrorExample {json} password less than 8 characters
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
      *       "body": {
-     *           "message": "Must be 3 characters or more"
+     *           "message": "Must be 8 characters or more"
      *       }
      *     }
+     * @apiErrorExample {json} password more than 32 characters
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Must be 32 characters or less"
+     *       }
+     *     }
+     * @apiErrorExample {json} password validation
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last"
+     *       }
+     *     }
+     * @apiErrorExample {json} password and confirm password
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Password and confirm password don\'t match"
+     *       }
+     *     }
+     * @apiErrorExample {json} passwords can't match
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Old password and new password can't match"
+     *       }
+     *     }
+     * @apiErrorExample {json} Unreliable password
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Unreliable password"
+     *       }
+     *     }
+     * 
      **/
     public function changePassword(User $user, Request $request, UserPasswordHasherInterface $encoder): JsonResponse
     {
@@ -336,6 +377,38 @@ class AccountController extends AbstractController
                 'body' => ['message' => $errorsString]
             ];
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($data['oldPassword'] == $password) {
+            $response = [
+                'success' => false,
+                'body' => ['message' => 'Old password and new password can\'t match']
+            ];
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
+        }
+
+        $unreliablePasswords = [
+            '123456789',
+            'picture1',
+            'password',
+            '12345678',
+            '1234567890',
+            'Million2',
+            'iloveyou',
+            'aaron431',
+            'password1',
+            'qqww1122',
+            'qwertuiop'
+        ];
+
+        foreach ($unreliablePasswords as $unreliablePassword) {
+            if ($password === $unreliablePassword) {
+                $response = [
+                    'success' => false,
+                    'body' => ['message' => 'Unreliable password']
+                ];
+                return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
+            }
         }
 
         $user->setPassword($encoder->hashPassword(
