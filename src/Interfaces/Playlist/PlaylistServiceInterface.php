@@ -8,6 +8,6 @@ interface PlaylistServiceInterface{
 
     public function indexService():array;
 
-    public function createPlaylist(array $data):Playlist;
+    public function createPlaylist(array $data);
     
 }
