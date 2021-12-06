@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @IgnoreAnnotation("apiName")
@@ -26,6 +29,13 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AccountController extends AbstractController
 {
+    private ValidatorInterface $validator;
+
+    public function __construct(ValidatorInterface $validator)
+    {
+        $this->validator = $validator;
+    }
+
     /**
      * @api {get} /backend/api/accounts/logged-in-user View
      * @apiName GetApiAccountsView
@@ -314,7 +324,7 @@ class AccountController extends AbstractController
      *     {
      *       "success": "false",
      *       "body": {
-     *           "message": "Password and confirm password don\'t match"
+     *           "message": "Password and confirm password don't match"
      *       }
      *     }
      * @apiErrorExample {json} passwords can't match
@@ -325,12 +335,12 @@ class AccountController extends AbstractController
      *           "message": "Old password and new password can't match"
      *       }
      *     }
-     * @apiErrorExample {json} Unreliable password
+     * @apiErrorExample {json} unreliable password
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
      *       "body": {
-     *           "message": "Unreliable password"
+     *           "message": "This password has been leaked in a data breach, it must not be used. Please use another password."
      *       }
      *     }
      * 
@@ -387,30 +397,25 @@ class AccountController extends AbstractController
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
-        $unreliablePasswords = [
-            '123456789',
-            'picture1',
-            'password',
-            '12345678',
-            '1234567890',
-            'Million2',
-            'iloveyou',
-            'aaron431',
-            'password1',
-            'qqww1122',
-            'qwertuiop'
-        ];
-
-        foreach ($unreliablePasswords as $unreliablePassword) {
-            if ($password === $unreliablePassword) {
-                $response = [
-                    'success' => false,
-                    'body' => ['message' => 'Unreliable password']
-                ];
-                return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
+        $constraint = new NotCompromisedPassword();
+        $violations = $this->validator->validate($password, $constraint);
+        if ($violations->count() > 0) {
+            foreach ($violations as $violation) {
+                if ($violation instanceof ConstraintViolation) {
+                    $message = $violation->getMessage();
+                    $message = is_string($message) ? $message : '';
+                }
             }
         }
 
+        if (isset($message)) {
+            $response = [
+                'success' => false,
+                'body' => ['message' => $message]
+            ];
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
+        }
+        
         $user->setPassword($encoder->hashPassword(
             $user,
             $password
