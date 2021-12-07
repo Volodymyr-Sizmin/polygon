@@ -5,7 +5,6 @@ use App\Interfaces\MyTracklist\MyTracklistInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Track;
 use App\Service\FileUploader;
-use phpDocumentor\Reflection\Types\Null_;
 use Symfony\Component\Filesystem\Filesystem;
 
 class MyTraclistService implements MyTracklistInterface
@@ -13,19 +12,28 @@ class MyTraclistService implements MyTracklistInterface
     private $entityManager;
     private $trackRepository;
     private $fileUploader;
+    private $fileSystem;
 
-    public function __construct(EntityManagerInterface $entityManagerInterface, FileUploader $fileUploader)
+    public function __construct(EntityManagerInterface $entityManagerInterface, FileUploader $fileUploader, Filesystem $fileSystem)
     {
+        $this->fileSystem = $fileSystem;
         $this->fileUploader =$fileUploader;
         $this->entityManager = $entityManagerInterface;
         $this->trackRepository = $this->entityManager->getRepository(Track::class);
     }
+
+    /**
+     * @return object
+     */
     public function indexService()
     {
         return $this->trackRepository->findAll();
     }
 
-    public function createService():array
+    /**
+     *@return array 
+     */
+    public function createService()
     {
         return array([
             'trackType' => ['Book', 'Podcast', 'Music'],
@@ -54,6 +62,11 @@ class MyTraclistService implements MyTracklistInterface
         ]);
     }
 
+    /**
+     * @param object $tracklistDTO DTO for Request.
+     * 
+     * @return object
+     */
     public function storeService($tracklistDTO)
     {
         $track = new Track;
@@ -80,6 +93,11 @@ class MyTraclistService implements MyTracklistInterface
         return $track;
     }
 
+    /**
+     * @param Int $id The identifier
+     * 
+     * @return object|array 
+     */
     public function showService($id)
     {   
 
@@ -94,6 +112,11 @@ class MyTraclistService implements MyTracklistInterface
 
     }
 
+    /**
+     *@param Int $id The identifier.
+     * 
+     *@return object|array 
+     */ 
     public function editService($id)
     {
 
@@ -108,13 +131,17 @@ class MyTraclistService implements MyTracklistInterface
 
     }
 
+    /**
+     * @param object $tracklistDTO DTO for Request.
+     * @param object $track Repository of Track.
+     * 
+     * @return object
+     */
     public function updateService($tracklistDTO, $track)
     {
-        $fileSystem = new Filesystem;
-
         if($tracklistDTO->cover !== NULL)
         {
-            $fileSystem->remove('../public/uploads/'.$track->getCover());
+            $this->fileSystem->remove('../public/uploads/'.$track->getCover());
             $track->setCover($this->fileUploader->upload($tracklistDTO->cover)->getUrl());
         }
 
@@ -148,6 +175,11 @@ class MyTraclistService implements MyTracklistInterface
         return $track;
     }
 
+    /**
+     * @param Int $id The identifier.
+     * 
+     * @return array
+     */
     public function deleteService($id)
     {
         if ($this->trackRepository->find($id) == NULL ) 

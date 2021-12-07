@@ -24,6 +24,7 @@ use App\Entity\Track;
 
 class MyTracklistController extends SerializeController
 {
+    
     private $myTrackListService;
     private $tracklistTransformerDTO;
 
@@ -39,10 +40,19 @@ class MyTracklistController extends SerializeController
      * @apiGroup MYTRACKLIST
      * @apiName index_mytracklist
      * 
-     * @apiSuccess (200) {Boolean} succes Should be true
-     * @apiSuccess (200) {JSON} body Response body
+     * @apiSuccess {Int}  id Track unique ID
+     * @apiSuccess {String} author    Name of track author
+     * @apiSuccess {String} title     Name of track
+     * @apiSuccess {String} album     Name of Album
+     * @apiSuccess {String} type      Type of track
+     * @apiSuccess {String} genre     Genre of track
+     * @apiSuccess {String} cover     Path to image of track
+     * @apiSuccess {String} trackPath Path to track
+     * @apiSuccess {Json}   createdAt Time of create
+     * @apiSuccess {Json}   updateAt  Time of update
+     * @apiSuccess {Int}    playlistId Can be Null 
      * 
-     *  * @apiSuccessExample Success-Response:
+     * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
      *[
     *{
@@ -103,7 +113,8 @@ class MyTracklistController extends SerializeController
     *}
     * ]
      */
-    public function index()
+
+    public function index() : JsonResponse
     {
         return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->indexService()));
     }
@@ -155,7 +166,8 @@ class MyTracklistController extends SerializeController
      * ]
      *      
      * */
-    public function create()
+
+    public function create(): JsonResponse
     {
         return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->createService()));
     }
@@ -166,8 +178,17 @@ class MyTracklistController extends SerializeController
      * @apiName store_mytracklist
      * @apiGroup MYTRACKLIST
      * 
-     * @apiSuccess (200) {Boolean} success Should be true
-     * @apiSuccess (200) {JSON} body Response body 
+     * @apiSuccess {Int}  id Track unique ID
+     * @apiSuccess {String} author    Name of track author
+     * @apiSuccess {String} title     Name of track
+     * @apiSuccess {String} album     Name of Album
+     * @apiSuccess {String} type      Type of track
+     * @apiSuccess {String} genre     Genre of track
+     * @apiSuccess {String} cover     Path to image of track
+     * @apiSuccess {String} trackPath Path to track
+     * @apiSuccess {Json}   createdAt Time of create
+     * @apiSuccess {Json}   updateAt  Time of update
+     * @apiSuccess {Int}    playlistId Can be Null 
      * 
      * 
      * @apiSuccessExample Success-Response:
@@ -229,7 +250,8 @@ class MyTracklistController extends SerializeController
      *}
      * 
      */
-    public function store(Request $request)
+
+    public function store(Request $request): JsonResponse
     {
         $dto = $this->tracklistTransformerDTO->transformerDTO($request);
         return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->storeService($dto)));
@@ -241,8 +263,17 @@ class MyTracklistController extends SerializeController
      * @apiName show_mytracklist
      * @apiGroup MYTRACKLIST
      * 
-     * @apiSuccess (200) {Boolean} success Should be true
-     * @apiSuccess (200) {JSON} body Response body 
+     * @apiSuccess {Int}  id Track unique ID
+     * @apiSuccess {String} author    Name of track author
+     * @apiSuccess {String} title     Name of track
+     * @apiSuccess {String} album     Name of Album
+     * @apiSuccess {String} type      Type of track
+     * @apiSuccess {String} genre     Genre of track
+     * @apiSuccess {String} cover     Path to image of track
+     * @apiSuccess {String} trackPath Path to track
+     * @apiSuccess {Json}   createdAt Time of create
+     * @apiSuccess {Json}   updateAt  Time of update
+     * @apiSuccess {Int}    playlistId Can be Null 
      * 
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
@@ -313,19 +344,171 @@ class MyTracklistController extends SerializeController
      * }
      *]
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
         return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->showService($id)));
     }
-    
-    public function edit($id)
+
+    /**
+     * @api {GET} /api/mytracklist/{id}/edit
+     * @apiName edit_mytracklist
+     * @apiGroup MYTRACKLIST
+     * 
+     * @apiParam {id} id Track unique ID
+     * 
+     * @apiSuccess {Int}  id Track unique ID
+     * @apiSuccess {String} author    Name of track author
+     * @apiSuccess {String} title     Name of track
+     * @apiSuccess {String} album     Name of Album
+     * @apiSuccess {String} type      Type of track
+     * @apiSuccess {String} genre     Genre of track
+     * @apiSuccess {String} cover     Path to image of track
+     * @apiSuccess {String} trackPath Path to track
+     * @apiSuccess {Json}   createdAt Time of create
+     * @apiSuccess {Json}   updateAt  Time of update
+     * @apiSuccess {Int}    playlistId Can be Null 
+     * 
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     * {
+     *"id": 1,
+     *"author": "deskot",
+     *"title": "my live",
+     *"album": null,
+     *"type": "Music",
+     *"genre": "Rock",
+     *"cover": "image/8ecccced945ef3ee60fba17307ac4a46-619f76784b608.png",
+     *"trackPath": "audio/c0a116860981bb05e9164ee572133fcf-619f767853c72.mp3",
+     *"createdAt": {
+     *   "timezone": {
+     *       "name": "UTC",
+     *       "transitions": [
+     *           {
+     *               "ts": -9223372036854775808,
+     *               "time": "-292277022657-01-27T08:29:52+0000",
+     *               "offset": 0,
+     *               "isdst": false,
+     *               "abbr": "UTC"
+     *           }
+     *      ],
+     *       "location": {
+     *           "country_code": "??",
+     *          "latitude": 0,
+     *           "longitude": 0,
+     *           "comments": ""
+     *       }
+     *   },
+     *   "offset": 0,
+     *   "timestamp": 1637840504
+     *},
+     *"updatedAt": {
+     *   "timezone": {
+     *       "name": "UTC",
+     *       "transitions": [
+     *           {
+     *               "ts": -9223372036854775808,
+     *               "time": "-292277022657-01-27T08:29:52+0000",
+     *               "offset": 0,
+     *               "isdst": false,
+     *               "abbr": "UTC"
+     *           }
+     *       ],
+     *       "location": {
+     *           "country_code": "??",
+     *           "latitude": 0,
+     *           "longitude": 0,
+     *           "comments": ""
+     *       }
+     *   },
+     *   "offset": 0,
+     *   "timestamp": 1637840504
+     *},
+     *"playlistId": null
+     *}
+     */
+    public function edit($id): JsonResponse
     {
         return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->editService($id)));
     }
-
-    public function update(Track $track, Request $request)
+    /**
+     * @api {POST} /api/mytracklist/{id}
+     * @apiName edit_mytracklist
+     * @apiGroup MYTRACKLIST
+     * 
+     * @apiParam {id} id Track unique ID
+     * 
+     * @apiSuccess {Int}  id Track unique ID
+     * @apiSuccess {String} author    Name of track author
+     * @apiSuccess {String} title     Name of track
+     * @apiSuccess {String} album     Name of Album
+     * @apiSuccess {String} type      Type of track
+     * @apiSuccess {String} genre     Genre of track
+     * @apiSuccess {String} cover     Path to image of track
+     * @apiSuccess {String} trackPath Path to track
+     * @apiSuccess {Json}   createdAt Time of create
+     * @apiSuccess {Json}   updateAt  Time of update
+     * @apiSuccess {Int}    playlistId Can be Null 
+     * 
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     * {
+     *"id": 1,
+     *"author": "deskot",
+     *"title": "my live",
+     *"album": null,
+     *"type": "Music",
+     *"genre": "Rock",
+     *"cover": "image/8ecccced945ef3ee60fba17307ac4a46-619f76784b608.png",
+     *"trackPath": "audio/c0a116860981bb05e9164ee572133fcf-619f767853c72.mp3",
+     *"createdAt": {
+     *   "timezone": {
+     *       "name": "UTC",
+     *       "transitions": [
+     *           {
+     *               "ts": -9223372036854775808,
+     *               "time": "-292277022657-01-27T08:29:52+0000",
+     *               "offset": 0,
+     *               "isdst": false,
+     *               "abbr": "UTC"
+     *           }
+     *      ],
+     *       "location": {
+     *           "country_code": "??",
+     *          "latitude": 0,
+     *           "longitude": 0,
+     *           "comments": ""
+     *       }
+     *   },
+     *   "offset": 0,
+     *   "timestamp": 1637840504
+     *},
+     *"updatedAt": {
+     *   "timezone": {
+     *       "name": "UTC",
+     *       "transitions": [
+     *           {
+     *               "ts": -9223372036854775808,
+     *               "time": "-292277022657-01-27T08:29:52+0000",
+     *               "offset": 0,
+     *               "isdst": false,
+     *               "abbr": "UTC"
+     *           }
+     *       ],
+     *       "location": {
+     *           "country_code": "??",
+     *           "latitude": 0,
+     *           "longitude": 0,
+     *           "comments": ""
+     *       }
+     *   },
+     *   "offset": 0,
+     *   "timestamp": 1637840504
+     *},
+     *"playlistId": null
+     *}
+     */
+    public function update(Track $track, Request $request): JsonResponse
     {
-
         $dto = $this->tracklistTransformerDTO->transformerDTO($request);
         return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->updateService($dto, $track)));
     }
@@ -337,9 +520,6 @@ class MyTracklistController extends SerializeController
      * @apiGroup MYTRACKLIST
      * 
      * @apiParam {id} Track unique ID
-     * 
-     * @apiSuccess (200) {Boolean} success Should be true
-     * @apiSuccess (200) {JSON} body Response body 
      * 
      * @apiSuccess {Boolean} true 
      * @apiSuccess {String} body session answer
@@ -361,8 +541,10 @@ class MyTracklistController extends SerializeController
      * {
      *   "success": false,
      *   "body": "Can not find track"
+     * {
+     * ]
      */
-    public function delete($id)
+    public function delete($id): JsonResponse
     {
         return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->deleteService($id)));
     }
