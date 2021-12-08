@@ -140,6 +140,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $playlists;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=City::class, inversedBy="users")
+     */
+    private $city;
+
     public function __construct()
     {
         $this->apiTokens = new ArrayCollection();
@@ -425,6 +430,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsDeleted(bool $isDeleted): self
     {
         $this->isDeleted = $isDeleted;
+
+        return $this;
+    }
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): self
+    {
+        $this->city = $city;
 
         return $this;
     }

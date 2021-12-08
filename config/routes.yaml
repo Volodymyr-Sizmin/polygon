@@ -113,6 +113,16 @@ upload_profile_photo:
   path: /api/profile/about/photo
   controller: App\Controller\ProfileController::uploadProfilePhoto
   methods: POST
+
+show_user_info:
+  path: /api/profile/about/info
+  controller: App\Controller\ProfileController::showUserInfo
+  methods: GET
+
+update_user_info:
+  path: /api/profile/about/update/{id}
+  controller: App\Controller\ProfileController::updateUserInfo
+  methods: PUT  
 ### END PROFILE ENDPOINTS ###
 
 ### TEST ENDPOINTS ###
