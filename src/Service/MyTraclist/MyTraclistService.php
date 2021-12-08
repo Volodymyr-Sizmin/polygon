@@ -190,6 +190,12 @@ class MyTraclistService implements MyTracklistInterface
             ]);
         }
         
+        if($this->trackRepository->find($id)->getCover() != Null)
+        {
+            $this->fileSystem->remove('../public/uploads/'.$this->trackRepository->find($id)->getCover());
+        }
+        $this->fileSystem->remove('../public/uploads/'.$this->trackRepository->find($id)->getTrackPath());
+        
         $this->entityManager->remove($this->trackRepository->find($id));
         $this->entityManager->flush();
 
