@@ -159,6 +159,28 @@ upload_profile_photo:
   methods: POST
 ### END PROFILE ENDPOINTS ###
 
+### BURGER ENDPOINTS ###
+add_to_nextup:
+  path: api/burger/addnextup
+  controller: App\Controller\BurgerController::addNextUp
+  methods: POST
+
+share_song:
+  path: api/burger/sharesong
+  controller: App\Controller\BurgerController::shareSong
+  methods: POST
+
+go_to_artist:
+  path: api/burger/gotoartist
+  controller: App\Controller\BurgerController::getArtist
+  methods: POST
+
+go_to_album:
+  path: api/burger/gotoalbum
+  controller: App\Controller\BurgerController::getAlbum
+  methods: POST
+### END BURGER ENDPOINTS ###
+
 ### TEST ENDPOINTS ###
 ping:
   path: /api/ping
