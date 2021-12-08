@@ -24,6 +24,11 @@ delete_playlist:
   controller: App\Controller\PlaylistController::deletePlaylist
   methods: DELETE
 
+add_track:
+  path: /api/playlists/addtrack
+  controller: App\Controller\PlaylistController:addTrack
+  methods: POST
+
 file_upload:
   path: api/file/upload
   controller: App\Controller\FileController::upload
@@ -107,6 +112,45 @@ reset_password_email:
   methods: POST
 
 ### END AUTHENTICATION ENDPOINTS ###
+
+### MYTRACKLIST ENDPOINTS ###
+
+index_mytracklist:
+  path: /api/mytracklist
+  controller: App\Controller\MyTracklist\MyTracklistController::index
+  methods: GET
+
+create_mytracklist:
+  path: /api/mytracklist/create
+  controller: App\Controller\MyTracklist\MyTracklistController::create
+  methods: GET
+
+store_mytracklist:
+  path: /api/mytracklist
+  controller: App\Controller\MyTracklist\MyTracklistController::store
+  methods: POST
+
+show_mytracklist:
+  path: /api/mytracklist/{id}
+  controller: App\Controller\MyTracklist\MyTracklistController::show
+  methods: GET
+
+edit_mytracklist:
+  path: /api/mytracklist/{id}/edit
+  controller: App\Controller\MyTracklist\MyTracklistController::edit
+  methods: GET
+
+update_mytracklist:
+  path: api/mytracklist/{id}
+  controller: App\Controller\MyTracklist\MyTracklistController::update
+  methods: POST
+
+delete_mytracklist:
+  path: /api/mytracklist/{id}
+  controller: App\Controller\MyTracklist\MyTracklistController::delete
+  methods: DELETE
+
+### END MYTRACKLIST ENDPOINTS ###
 
 ### PROFILE ENDPOINTS ###
 upload_profile_photo:
