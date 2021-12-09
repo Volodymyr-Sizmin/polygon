@@ -390,11 +390,10 @@ class AccountController extends AbstractController
         }
 
         if ($data['oldPassword'] == $password) {
-            $response = [
+            return new JsonResponse([
                 'success' => false,
                 'body' => ['message' => 'Old password and new password can\'t match']
-            ];
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $constraint = new NotCompromisedPassword();
@@ -409,11 +408,10 @@ class AccountController extends AbstractController
         }
 
         if (isset($message)) {
-            $response = [
+            return new JsonResponse([
                 'success' => false,
                 'body' => ['message' => $message]
-            ];
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
+            ], Response::HTTP_BAD_REQUEST);
         }
         
         $user->setPassword($encoder->hashPassword(
