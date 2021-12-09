@@ -72,7 +72,6 @@ class Country
     public function removeCity(City $city): self
     {
         if ($this->cities->removeElement($city)) {
-            // set the owning side to null (unless already changed)
             if ($city->getCountry() === $this) {
                 $city->setCountry(null);
             }
