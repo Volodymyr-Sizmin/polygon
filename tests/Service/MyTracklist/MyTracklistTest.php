@@ -346,7 +346,17 @@ class MyTracklistTest extends WebTestCase
          $this->trackRepositoryMock->expects($this->any())
                                                 ->method('find')
                                                 ->with(1)
-                                                ->willReturn($this->track);
+                                                ->willReturn(new class{
+                                                    public function getCover()
+                                                    {
+                                                        return 'image.img';
+                                                    }
+
+                                                    public function getTrackPath()
+                                                    {
+                                                        return 'track.mp3';
+                                                    }
+                                                });
 
         $this->entityManagerMock->expects($this->any())
                                 ->method('remove');
