@@ -14,7 +14,7 @@ use App\Controller\SerializeController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class PlaylistControllerTest extends WebTestCase
+class PlaylistTest extends WebTestCase
 {
     protected Playlist $playlist;
     protected EntityManager $entityManager;
