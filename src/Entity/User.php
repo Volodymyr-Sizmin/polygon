@@ -339,10 +339,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private function removeSpaces(string $str): string
     {
-        preg_replace('/\s\s+/', ' ', $str);
-        preg_replace('/^ /', '', $str);
-        preg_replace('/ $/', '', $str);
-        return $str;
+        $str = preg_replace('/\s\s+/', ' ', $str);
+        $str = preg_replace('/^ /', '', $str);
+        return preg_replace('/ $/', '', $str);
     }
 
     public function getFirstName(): ?string
