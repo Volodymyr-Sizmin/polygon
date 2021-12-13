@@ -4,7 +4,6 @@ namespace App\Tests;
 
 use App\Repository\UserRepository;
 use Faker\Factory;
-use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -17,11 +16,7 @@ class ProfileTest extends WebTestCase
     public function setUp(): void
     {
         $this->client = static::createClient();
-
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        $testUser = $userRepository->findOneByEmail('b.astapau@andersenlab.com');
-        $this->user = $testUser;
-
+        $this->user = static::getContainer()->get(UserRepository::class)->findOneByEmail('b.astapau@andersenlab.com');
         $this->faker = Factory::create();
     }
 
@@ -40,4 +35,38 @@ class ProfileTest extends WebTestCase
         $this->assertTrue($response->success);
         $this->assertSame($response->body->message, 'Profile photo was successfully uploaded.');
     }
+
+    /**
+     * @TODO fix this test
+     */
+    // public function testGetProfilePhoto(): void
+    // {
+    //     $this->client->loginUser($this->user);
+
+    //     $this->client->request('GET', '/api/profile/about/photo');
+
+    //     $response = json_decode($this->client->getResponse()->getContent());
+
+    //     $this->assertResponseIsSuccessful();
+    //     $this->assertResponseStatusCodeSame(200);
+    //     $this->assertTrue($response->success);
+    //     $this->assertIsString($response->body->url);
+    // }
+
+    /**
+     * @TODO fix this test
+     */
+    // public function testDeleteProfilePhoto(): void
+    // {
+    //     $this->client->loginUser($this->user);
+
+    //     $this->client->request('DELETE', '/api/profile/about/photo');
+
+    //     $response = json_decode($this->client->getResponse()->getContent());
+
+    //     $this->assertResponseIsSuccessful();
+    //     $this->assertResponseStatusCodeSame(200);
+    //     $this->assertTrue($response->success);
+    //     $this->assertIsString($response->body->message);
+    // }
 }

@@ -28,6 +28,11 @@ class MyTracklistController extends SerializeController
     private $myTrackListService;
     private $tracklistTransformerDTO;
 
+    /**
+     * @TODO rename $myTracklistInterface to myTracklistService
+     * is it possible that we can have an interface instad of object?
+     * let's have correct names for properties!
+     */
     public function __construct(MyTracklistInterface $myTracklistInterface, TracklistTransformerDTO $tracklistTransformerDTO)
     {
         $this->myTrackListService = $myTracklistInterface;
