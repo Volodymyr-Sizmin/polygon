@@ -354,7 +354,7 @@ class ProfileController extends AbstractController
      *          }
      *      }
      * @apiErrorExample {json} Not allowed to change
-     *  HTTP/1.1 403
+     *  HTTP/1.1 400
      *     {
      *          "success": false,
      *          "body": {
@@ -362,7 +362,7 @@ class ProfileController extends AbstractController
      *          }
      *      }
      * @apiErrorExample {json} Phone already used
-     *  HTTP/1.1 403
+     *  HTTP/1.1 400
      *      {
      *          "success": false,
      *          "body": {
@@ -370,7 +370,7 @@ class ProfileController extends AbstractController
      *          }
      *      }
      * @apiErrorExample {json} Name validation less than 2 characters
-     *  HTTP/1.1 403
+     *  HTTP/1.1 400
      *      {
      *          "success": false,
      *          "body": {
@@ -379,7 +379,7 @@ class ProfileController extends AbstractController
      *          }
      *      }
      * @apiErrorExample {json} Name validation more than 60 characters
-     *  HTTP/1.1 403
+     *  HTTP/1.1 400
      *      {
      *          "success": false,
      *          "body": {
@@ -388,7 +388,7 @@ class ProfileController extends AbstractController
      *          }
      *      }
      * @apiErrorExample {json} Name validation pattern
-     *  HTTP/1.1 403
+     *  HTTP/1.1 400
      *      {
      *          "success": false,
      *          "body": {
@@ -397,7 +397,7 @@ class ProfileController extends AbstractController
      *          }
      *      }
      * @apiErrorExample {json} Phone validation less than 7 characters
-     *  HTTP/1.1 403
+     *  HTTP/1.1 400
      *      {
      *          "success": false,
      *          "body": {
@@ -405,7 +405,7 @@ class ProfileController extends AbstractController
      *          }
      *      }
      * @apiErrorExample {json} Phone validation more than 15 characters
-     *  HTTP/1.1 403
+     *  HTTP/1.1 400
      *      {
      *          "success": false,
      *          "body": {
@@ -413,7 +413,7 @@ class ProfileController extends AbstractController
      *          }
      *      }
      * @apiErrorExample {json} Phone validation pattern
-     *  HTTP/1.1 403
+     *  HTTP/1.1 400
      *      {
      *          "success": false,
      *          "body": {
@@ -421,7 +421,7 @@ class ProfileController extends AbstractController
      *          }
      *      }
      * @apiErrorExample {json} Country
-     *  HTTP/1.1 403
+     *  HTTP/1.1 400
      *      {
      *          "success": false,
      *          "body": {
@@ -430,12 +430,21 @@ class ProfileController extends AbstractController
      *          }
      *      }
      * @apiErrorExample {json} City
-     *  HTTP/1.1 403
+     *  HTTP/1.1 400
      *      {
      *          "success": false,
      *          "body": {
      *              "message": "You have to choose right city",
      *              "cities": [list of cities]
+     *          }
+     *      }
+     * @apiErrorExample {json} Incompatible country with city
+     *  HTTP/1.1 400
+     *      {
+     *          "success": false,
+     *          "body": {
+     *              "message": "You have to choose right country",
+     *              "country": "country"
      *          }
      *      }
      *
@@ -549,6 +558,59 @@ class ProfileController extends AbstractController
                         'success' => false,
                         'body' => [
                             'message' => 'Phone already used'
+                        ]
+                    ],
+                    Response::HTTP_BAD_REQUEST
+                );
+            }
+        }
+
+        if (isset($data["country"]) && isset($data["city"])) {
+            $country = $this->getDoctrine()->getRepository(Country::class)->findOneby(["name" => $data["country"]]);
+            if (!$country) {
+                $countries = $this->getDoctrine()->getRepository(Country::class)->findAll();
+                $countryNames = [];
+                foreach ($countries as $country) {
+                    $countryNames[] = $country->getName();
+                }
+                return new JsonResponse (
+                    [
+                        'success' => false,
+                        'body' => [
+                            'message' => 'You have to choose right country for',
+                            'countries' => $countryNames
+                        ]
+                    ],
+                    Response::HTTP_BAD_REQUEST
+                );
+            }
+            $countryName = $country->getName();
+            $city = $this->getDoctrine()->getRepository(City::class)->findOneby(["name" => $data["city"]]);
+            if (!$city) {
+                $cities = $this->getDoctrine()->getRepository(City::class)->findAll();
+                $cityNames = [];
+                foreach ($cities as $city) {
+                    $cityNames[] = $city->getName();
+                }
+                return new JsonResponse (
+                    [
+                        'success' => false,
+                        'body' => [
+                            'message' => 'You have to choose right city',
+                            'cities' => $cityNames
+                        ]
+                    ],
+                    Response::HTTP_BAD_REQUEST
+                );
+            }
+            $countryNameOfCity = $city->getCountry()->getName();
+            if ($countryName != $countryNameOfCity) {
+                return new JsonResponse (
+                    [
+                        'success' => false,
+                        'body' => [
+                            'message' => 'You have to choose right country for the ' . $city->getName(),
+                            'country' => $countryNameOfCity
                         ]
                     ],
                     Response::HTTP_BAD_REQUEST

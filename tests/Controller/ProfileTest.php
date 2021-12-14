@@ -453,4 +453,22 @@ class ProfileTest extends WebTestCase
         ];
         $this->assertSame($countryNames, $responseData->body->countries);
     }
+
+    public function testUpdateUserInfoCityDoNotRelatedToCountry(): void
+    {
+        $this->client->loginUser($this->user);
+
+        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+            "country" => "Russia",
+            "city" => "Minsk"
+        ]);
+
+        $response = $this->client->getResponse();
+        $responseData = json_decode($response->getContent());
+
+        $this->assertFalse($responseData->success);
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertSame('You have to choose right country for the Minsk', $responseData->body->message);
+        $this->assertSame('Belarus', $responseData->body->country);
+    }
 }
