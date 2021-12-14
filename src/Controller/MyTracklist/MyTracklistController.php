@@ -25,17 +25,12 @@ use App\Entity\Track;
 
 class MyTracklistController extends SerializeController
 {
-    private $myTrackListService;
+    private $myTracklistInterface;
     private $tracklistTransformerDTO;
 
-    /**
-     * @TODO rename $myTracklistInterface to myTracklistService
-     * is it possible that we can have an interface instad of object?
-     * let's have correct names for properties!
-     */
     public function __construct(MyTracklistInterface $myTracklistInterface, TracklistTransformerDTO $tracklistTransformerDTO)
     {
-        $this->myTrackListService = $myTracklistInterface;
+        $this->myTracklistInterface = $myTracklistInterface;
         $this->tracklistTransformerDTO = $tracklistTransformerDTO;
     }
 
@@ -111,7 +106,7 @@ class MyTracklistController extends SerializeController
      */
     public function index()
     {
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->indexService()));
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->indexService()));
     }
 
     /**
@@ -163,7 +158,7 @@ class MyTracklistController extends SerializeController
      * */
     public function create()
     {
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->createService()));
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->createService()));
     }
 
     /**
@@ -239,7 +234,7 @@ class MyTracklistController extends SerializeController
     {
         $dto = $this->tracklistTransformerDTO->transformerDTO($request);
         return JsonResponse::fromJsonString(
-            $this->serializeJson($this->myTrackListService->storeService($dto))
+            $this->serializeJson($this->myTracklistInterface->storeService($dto))
         );
     }
 
@@ -323,18 +318,18 @@ class MyTracklistController extends SerializeController
      */
     public function show($id)
     {
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->showService($id)));
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->showService($id)));
     }
 
     public function edit($id)
     {
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->editService($id)));
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->editService($id)));
     }
 
     public function update(Track $track, Request $request)
     {
         $dto = $this->tracklistTransformerDTO->transformerDTO($request);
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->updateService($dto, $track)));
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->updateService($dto, $track)));
     }
 
     /**
@@ -371,6 +366,6 @@ class MyTracklistController extends SerializeController
      */
     public function delete($id)
     {
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->deleteService($id)));
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->deleteService($id)));
     }
 }
