@@ -313,8 +313,8 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @api {put} /backend/api/profile/about/update:id Update user info
-     * @apiName PutApiProfileAboutUpdate
+     * @api {put} /backend/api/profile/about/info:id Update user info
+     * @apiName PutApiProfileAboutInfo
      * @apiGroup Profile
      *
      * @apiParam {Number} id Id of the user that we change (part of url)

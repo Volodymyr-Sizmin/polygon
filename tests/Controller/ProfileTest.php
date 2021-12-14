@@ -101,7 +101,7 @@ class ProfileTest extends WebTestCase
     {
         $this->client->loginUser($this->user);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "firstName" => "John",
             "lastName" => "Doe",
             "userName" => "iamJohnDoe",
@@ -135,7 +135,7 @@ class ProfileTest extends WebTestCase
 
     public function testUpdateUserInfoFailureAccess(): void
     {
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "firstName" => "John",
             "lastName" => "Doe",
             "userName" => "iamJohnDoe",
@@ -159,7 +159,7 @@ class ProfileTest extends WebTestCase
         $userRepository = static::getContainer()->get(UserRepository::class);
         $invalidUser = $userRepository->findOneByEmail('password@notandersenlab.com');
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $invalidUser->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $invalidUser->getId(), [
             "firstName" => "John",
             "lastName" => "Doe",
             "userName" => "iamJohnDoe",
@@ -180,7 +180,7 @@ class ProfileTest extends WebTestCase
     {
         $this->client->loginUser($this->user);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "firstName" => "John",
             "lastName" => "Doe",
             "userName" => "iamJohnDoe",
@@ -201,7 +201,7 @@ class ProfileTest extends WebTestCase
     {
         $this->client->loginUser($this->user);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "firstName" => "J"
         ]);
 
@@ -213,7 +213,7 @@ class ProfileTest extends WebTestCase
         $this->assertSame('firstName', $responseData->body->name);
         $this->assertSame('Must be 2 characters or more', $responseData->body->message);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "firstName" => "Joooooooooooooooooooooooooooooooooooooooooooooooooooooooooohn"
         ]);
 
@@ -225,7 +225,7 @@ class ProfileTest extends WebTestCase
         $this->assertSame('firstName', $responseData->body->name);
         $this->assertSame('Must be 60 characters or less', $responseData->body->message);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "firstName" => ".John"
         ]);
 
@@ -237,7 +237,7 @@ class ProfileTest extends WebTestCase
         $this->assertSame('firstName', $responseData->body->name);
         $this->assertSame('Can contain letters, numbers, !@#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last', $responseData->body->message);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "lastName" => "D"
         ]);
 
@@ -249,7 +249,7 @@ class ProfileTest extends WebTestCase
         $this->assertSame('lastName', $responseData->body->name);
         $this->assertSame('Must be 2 characters or more', $responseData->body->message);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "lastName" => "Doooooooooooooooooooooooooooooooooooooooooooooooooooooooooooe"
         ]);
 
@@ -261,7 +261,7 @@ class ProfileTest extends WebTestCase
         $this->assertSame('lastName', $responseData->body->name);
         $this->assertSame('Must be 60 characters or less', $responseData->body->message);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "lastName" => ".Doe"
         ]);
 
@@ -273,7 +273,7 @@ class ProfileTest extends WebTestCase
         $this->assertSame('lastName', $responseData->body->name);
         $this->assertSame('Can contain letters, numbers, !@#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last', $responseData->body->message);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "userName" => "i"
         ]);
 
@@ -285,7 +285,7 @@ class ProfileTest extends WebTestCase
         $this->assertSame('userName', $responseData->body->name);
         $this->assertSame('Must be 2 characters or more', $responseData->body->message);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "userName" => "iamJoooooooooooooooooooooooooooooooooooooooooooooooooooohnDoe"
         ]);
 
@@ -297,7 +297,7 @@ class ProfileTest extends WebTestCase
         $this->assertSame('userName', $responseData->body->name);
         $this->assertSame('Must be 60 characters or less', $responseData->body->message);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "userName" => ".iamJohnDoe"
         ]);
 
@@ -314,7 +314,7 @@ class ProfileTest extends WebTestCase
     {
         $this->client->loginUser($this->user);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "phone" => "+375"
         ]);
 
@@ -325,7 +325,7 @@ class ProfileTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         $this->assertSame('Phone must be 7 characters or more', $responseData->body->message);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "phone" => "+375294444444444"
         ]);
 
@@ -336,7 +336,7 @@ class ProfileTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         $this->assertSame('Phone must be 15 characters or less', $responseData->body->message);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "phone" => "375294444444"
         ]);
 
@@ -347,7 +347,7 @@ class ProfileTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         $this->assertSame('Phone can containe first plus symbol and numbers', $responseData->body->message);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "phone" => "+37529444444x"
         ]);
 
@@ -363,7 +363,7 @@ class ProfileTest extends WebTestCase
     {
         $this->client->loginUser($this->user);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "city" => "Minsk"
         ]);
 
@@ -383,7 +383,7 @@ class ProfileTest extends WebTestCase
     {
         $this->client->loginUser($this->user);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "city" => "SomeCity"
         ]);
 
@@ -412,7 +412,7 @@ class ProfileTest extends WebTestCase
         ];
         $this->assertSame($cityNames, $responseData->body->cities);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "country" => "Belarus"
         ]);
 
@@ -435,7 +435,7 @@ class ProfileTest extends WebTestCase
     {
         $this->client->loginUser($this->user);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "country" => "SomeCountry"
         ]);
 
@@ -454,11 +454,11 @@ class ProfileTest extends WebTestCase
         $this->assertSame($countryNames, $responseData->body->countries);
     }
 
-    public function testUpdateUserInfoCityDoNotRelatedToCountry(): void
+    public function testUpdateUserInfoFailureCityDoNotRelatedToCountry(): void
     {
         $this->client->loginUser($this->user);
 
-        $this->client->jsonRequest('PUT', '/api/profile/about/update/' . $this->user->getId(), [
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "country" => "Russia",
             "city" => "Minsk"
         ]);
