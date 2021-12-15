@@ -36,7 +36,7 @@ class ProfileService
     public function validateProfilePhoto(UploadedFile $photo)
     {
         if (empty($photo)) {
-            return ['error'=>'No file provided.'];
+            return ['error' => 'No file provided.'];
         }
 
         if ($photo->getSize() > self::PROFILE_PHOTO['size']) {
@@ -65,7 +65,7 @@ class ProfileService
             return ['error' => 'An error occurred during upload.'];
         }
 
-        $user->setProfilePhoto($file->getId());
+        $user->setProfilePhoto($file);
         $file->setUser($user);
 
         $this->em->persist($file);
@@ -103,7 +103,7 @@ class ProfileService
         $profilePhoto = $this->em->getRepository(File::class)->find($user->getProfilePhoto());
 
         if (!$profilePhoto) {
-            return ['error'=>'No profile photo set.'];
+            return ['error' => 'No profile photo set.'];
         }
 
         $this->em->remove($profilePhoto);
