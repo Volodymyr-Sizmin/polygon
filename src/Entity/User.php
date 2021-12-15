@@ -184,7 +184,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->profilePhoto;
     }
 
-    public function setProfilePhoto(?int $profilePhoto): self
+    public function setProfilePhoto(?File $profilePhoto): self
     {
         $this->profilePhoto = $profilePhoto;
 
