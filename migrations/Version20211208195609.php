@@ -26,10 +26,15 @@ final class Version20211208195609 extends AbstractMigration
         $this->addSql('ALTER TABLE user ADD city_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE user ADD CONSTRAINT FK_8D93D6498BAC62AF FOREIGN KEY (city_id) REFERENCES city (id)');
         $this->addSql('CREATE INDEX IDX_8D93D6498BAC62AF ON user (city_id)');
+        $this->addSql('INSERT INTO country (name) VALUES ("Belarus")');
+        $this->addSql('INSERT INTO country (name) VALUES ("Poland")');
+        $this->addSql('INSERT INTO country (name) VALUES ("Russia")');
+        $this->addSql('INSERT INTO country (name) VALUES ("Ukraine")');
     }
 
     public function down(Schema $schema): void
     {
+        $this->addSql('DELETE FROM country');
         $this->addSql('ALTER TABLE user DROP FOREIGN KEY FK_8D93D6498BAC62AF');
         $this->addSql('ALTER TABLE city DROP FOREIGN KEY FK_2D5B0234F92F3E70');
         $this->addSql('DROP TABLE city');
