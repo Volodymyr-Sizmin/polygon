@@ -257,7 +257,7 @@ class MyTracklistController extends SerializeController
      *"type": "Music",
      *"genre": "Rock",
      *"cover": null,
-     *"trackPath": "publick",
+     *"track": "publick",
      *"createdAt": {
      *   "timezone": {
      *       "name": "UTC",

@@ -6,8 +6,8 @@ use App\Interfaces\MyTracklist\MyTracklistInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Track;
 use App\Service\FileUploader;
-use phpDocumentor\Reflection\Types\Null_;
 use Symfony\Component\Filesystem\Filesystem;
+use App\Interfaces\FileUploaderInterface;
 
 class MyTracklistService implements MyTracklistInterface
 {
@@ -15,7 +15,7 @@ class MyTracklistService implements MyTracklistInterface
     private $trackRepository;
     private $fileUploader;
 
-    public function __construct(EntityManagerInterface $entityManagerInterface, FileUploader $fileUploader)
+    public function __construct(EntityManagerInterface $entityManagerInterface, FileUploaderInterface $fileUploader)
     {
         $this->fileUploader = $fileUploader;
         $this->entityManager = $entityManagerInterface;

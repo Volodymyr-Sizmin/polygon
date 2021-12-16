@@ -3,49 +3,38 @@
 namespace App\Tests\Controller\MyTracklist;
 
 use App\Service\MyTracklist\MyTracklistService;
-use Doctrine\DBAL\Exception\NotNullConstraintViolationException;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Tests\Stubs\Service\FileUploaderStub;
+use App\Service\FileUploader;
+use App\DTO\Transformer\TracklistTransformerDTO;
+use App\Controller\MyTracklist\MyTracklistController;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Factory\TrackFactory;
-use App\DTO\Transformer\TracklistTransformerDTO;
-use App\DTO\TracklistDTO;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Controller\SerializeController;
-use App\Controller\MyTracklist\MyTracklistController;
 use Zenstruck\Foundry\Test\Factories;
+use Faker\Factory;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\HttpFoundation\Request;
-use App\Service\FileUploader;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 
 class MyTracklistTest extends WebTestCase
 {
     use Factories;
 
-    private $myTracklistServiceMock;
-    private $tracklistTransformerDTOMock;
-    private $tracklistDTOMock;
-    private $jsonResponseMock;
-    private $serializeControllerMock;
-    private $myTracklistController;
-    private $client;
-    private EntityManager $entityManager;
-    private $requestMock;
-    private $fileUploader;
+    private $faker;
+    protected $client;
+    private $request;
+    private $fileUploaderStub;
+
 
     public function setUp(): void
     {
-        $this->client = static::createClient();
-
-        $this->fileUploader = $this->createMock(FileUploader::class);
-        $this->tracklistDTOMock = $this->createMock(TracklistDTO::class);
-        $this->requestMock = $this->createMock(Request::class);
-        $this->myTracklistServiceMock = $this->createMock(MyTracklistService::class);
-        $this->tracklistTransformerDTOMock = $this->createMock(TracklistTransformerDTO::class);
-        $this->jsonResponseMock = $this->createMock(JsonResponse::class);
-        $this->serializeControllerMock = $this->createMock(SerializeController::class);
-        $this->myTracklistController = new MyTracklistController($this->myTracklistServiceMock, $this->tracklistTransformerDTOMock);
-
+        $this->client = self::createClient();
+        $fileUploaderStub = new FileUploaderStub();
+        $this->fileUploaderStub = self::$container->set(FileUploader::class, $fileUploaderStub);
+        $this->faker = Factory::create();
         TrackFactory::createMany(10);
     }
+
 
     public function testIndex(): void
     {
@@ -53,76 +42,30 @@ class MyTracklistTest extends WebTestCase
 
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
-
-        $this->myTracklistServiceMock->expects($this->any())->method('indexService');
-        $this->serializeControllerMock->expects($this->any())->method('serializeJson');
-        $this->jsonResponseMock->expects($this->any())->method('fromJsonString');
-        $this->myTracklistController->index();
     }
 
     public function testCrete(): void
     {
         $this->client->request('GET', '/api/mytracklist/create');
-
-        $response = $this->client->getResponse();
-        $this->assertSame(200, $response->getStatusCode());
-        $this->myTracklistServiceMock->expects($this->any())->method('indexService');
-        $this->serializeControllerMock->expects($this->any())->method('serializeJson');
-        $this->jsonResponseMock->expects($this->any())->method('fromJsonString');
-        $this->myTracklistController->create();
+        $this->assertSame(200,$this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @TODO fix this test
-     */
-//    public function testStore(): void
-//    {
-//        $tracklistDTO = new TracklistDTO();
-//        $tracklistDTO->title = 'testTitle';
-//        $tracklistDTO->author = 'testAuthor';
-//        $tracklistDTO->type = 'testType';
-//        $tracklistDTO->genre = 'test';
-//
-//        $this->expectException(NotNullConstraintViolationException::class);
-//
-//        $this->fileUploader
-//             ->expects($this->once())
-//             ->method('upload')
-//         ;
-//
-//        $this->tracklistTransformerDTOMock
-//             ->expects($this->once())
-//             ->method('transformerDTO')
-//             ->willReturn($tracklistDTO)
-//         ;
-//
-//        $this->myTracklistServiceMock
-//             ->expects($this->once())
-//             ->method('storeService')
-//             ->with($tracklistDTO)
-//         ;
-//
-//        $this->serializeControllerMock
-//             ->expects($this->once())
-//             ->method('serializeJson')
-//             ->with($this->myTracklistServiceMock)
-//         ;
-//
-//        $this->jsonResponseMock->expects($this->any())
-//             ->method('fromJsonString')
-//             ->with($this->serializeControllerMock)
-//         ;
-//
-//        $this->myTracklistController->store($this->requestMock);
-//
-//        $this->client->request('GET', '/api/mytracklist');
-//
-//        $response = $this->client->getResponse();
-//
-//        var_dump($response);
-//
-//        $this->assertSame(200, $response->getStatusCode());
-//    }
+    public function testStore(): void
+    {
+        $photo = new UploadedFile($this->faker->image('/tmp', 100, 100), "image_name" . '.png', 'image/png', null, true);
+        $this->client->request('POST', '/api/mytracklist', [
+            'author'=> 'author',
+            'title' => 'title',
+            'album' => 'album',
+            'type' => 'Music',
+            'genre' => 'genre'
+        ],[
+            'cover' => $photo,
+            'track' => $photo
+        ]);
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
+    }
 
     public function testShow(): void
     {
@@ -130,10 +73,5 @@ class MyTracklistTest extends WebTestCase
 
         $response = $this->client->getResponse();
         $this->assertSame(200, $response->getStatusCode());
-
-        $this->myTracklistServiceMock->expects($this->any())->method('indexService');
-        $this->serializeControllerMock->expects($this->any())->method('serializeJson');
-        $this->jsonResponseMock->expects($this->any())->method('fromJsonString');
-        $this->myTracklistController->index();
     }
 }
