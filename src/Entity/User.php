@@ -120,7 +120,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=File::class, mappedBy="user")
-     * @ORM\Column(type="bigint", name="profilePhoto", options={"default" : 0})
+     * @ORM\Column(type="bigint", name="profilePhoto", options={"default" : null}, nullable=true)
      */
     private $profilePhoto;
 
@@ -184,7 +184,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->profilePhoto;
     }
 
-    public function setProfilePhoto(int $profilePhoto): self
+    public function setProfilePhoto(?int $profilePhoto): self
     {
         $this->profilePhoto = $profilePhoto;
 

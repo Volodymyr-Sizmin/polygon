@@ -74,4 +74,43 @@ class ProfileService
 
         return true;
     }
+
+    /** Get Profile Photo
+     *
+     * @param User $user Instance of User
+     * @return string[]|File $profilePhoto Error message or File
+     */
+    public function getProfilePhoto(User $user)
+    {
+        /** @var File $profilePhoto */
+        $profilePhoto = $this->em->getRepository(File::class)->find($user->getProfilePhoto());
+
+        if (!$profilePhoto) {
+            return ['error' => 'No profile photo set.'];
+        }
+
+        return $profilePhoto;
+    }
+
+    /** Delete Profile Photo
+     *
+     * @param User $user
+     * @return string[]|bool Error message or True
+     */
+    public function deleteProfilePhoto(User $user)
+    {
+        /** @var File $profilePhoto */
+        $profilePhoto = $this->em->getRepository(File::class)->find($user->getProfilePhoto());
+
+        if (!$profilePhoto) {
+            return ['error'=>'No profile photo set.'];
+        }
+
+        $this->em->remove($profilePhoto);
+        $this->em->flush();
+
+        $user->setProfilePhoto(null);
+
+        return true;
+    }
 }

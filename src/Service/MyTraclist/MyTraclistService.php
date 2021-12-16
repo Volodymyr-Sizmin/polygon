@@ -8,6 +8,9 @@ use App\Service\FileUploader;
 use phpDocumentor\Reflection\Types\Null_;
 use Symfony\Component\Filesystem\Filesystem;
 
+/**
+ * @TODO rename correcly TRACK not TRAC
+ */
 class MyTraclistService implements MyTracklistInterface
 {
     private $entityManager;
@@ -56,23 +59,35 @@ class MyTraclistService implements MyTracklistInterface
 
     public function storeService($tracklistDTO)
     {
-        $track = new Track;
+        $track = new Track();
 
-        if($tracklistDTO->album !== NULL)
-        {
+        if ($tracklistDTO->album !== null) {
             $track->setAlbum($tracklistDTO->album);
         }
-        if($tracklistDTO->cover !== NULL)
-        {
+
+        if ($tracklistDTO->cover !== null) {
             $track->setCover($this->fileUploader->upload($tracklistDTO->cover)->getUrl());
         }
 
-        $track->setTrackPath($this->fileUploader->upload($tracklistDTO->track_path)->getUrl());
+        if ($tracklistDTO->track_path !== null) {
+            $track->setTrackPath($this->fileUploader->upload($tracklistDTO->track_path)->getUrl());
+        }
  
-        $track->setTitle($tracklistDTO->title);
-        $track->setAuthor($tracklistDTO->author);
-        $track->setType($tracklistDTO->type);
-        $track->setGenre($tracklistDTO->genre);
+        if ($tracklistDTO->title !== null) {
+            $track->setTitle($tracklistDTO->title);
+        }
+
+        if ($tracklistDTO->author !== null) {
+            $track->setAuthor($tracklistDTO->author);
+        }
+        
+        if ($tracklistDTO->type !== null) {
+            $track->setType($tracklistDTO->type);
+        }
+        
+        if ($tracklistDTO->genre !== null) {
+            $track->setGenre($tracklistDTO->genre);
+        }
 
         $this->entityManager->persist($track);
         $this->entityManager->flush();

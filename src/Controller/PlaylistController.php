@@ -374,7 +374,50 @@ class PlaylistController extends SerializeController
         return new JsonResponse(['success' => true, 'body' => 'Playlist successfully deleted']);
     }
 
-
+    /**
+     * @api {POST} /api/backend/playlists/addtrack Add track
+     * @apiName AddTrack
+     * @apiGroup Playlists
+     *
+     * @apiParam {number} playlist_id Playlist id
+     * @apiParam {number} track_id Track id
+     *
+     *  @apiParamExample {json} Request-Example:
+     *     {
+     *       "playlist_id": 1,
+     *       "track_id": 1
+     *     }
+     *
+     * @apiSuccess (200) {Boolean} success Should be true
+     * @apiSuccess (200) {JSON} body Response body
+     *
+     * @apiSuccessExample {json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *
+     *     {
+     *       "success": true,
+     *       "body": "Track successfully added"
+     *     }
+     *
+     * @apiError ThisTrackHasAlreadyBeenAddedToThisPlaylist This track has already been added to this playlist
+     *
+     * @apiErrorExample Error-Response
+     *     HTTP/1.1 Not Found
+     * {
+     *   "success": false,
+     *   "body": "This track has already been added to this playlist"
+     * }
+     *
+     * @apiError TrackHasNotBeenAdded Track has not been added
+     *
+     * @apiErrorExample Error-Response
+     *     HTTP/1.1 Not Found
+     * {
+     *   "success": false,
+     *   "body": "Track has not been added"
+     * }
+     *
+     */
     public function addTrack(Request $request): JsonResponse
     {
         $entityManager = $this->getDoctrine()->getManager();
