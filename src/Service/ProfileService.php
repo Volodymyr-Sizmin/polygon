@@ -14,9 +14,9 @@ use Symfony\Component\HttpFoundation\Response;
 class ProfileService
 {
     private const PROFILE_PHOTO = [
-        'size' => 39936,
+        'size' => 5242880,
         'height' => 100,
-        'width' => 100,
+        'width' => 100
     ];
 
     private $em;
@@ -40,12 +40,12 @@ class ProfileService
         }
 
         if ($photo->getSize() > self::PROFILE_PHOTO['size']) {
-            return ['error' => 'Image size must be 39kb or less.'];
+            return ['error' => 'Image size must be not bigger than 5mb.'];
         }
 
         $profilePhotoSize = getimagesize($photo->getPathname());
-        if ($profilePhotoSize[1] > self::PROFILE_PHOTO['height'] || $profilePhotoSize[0] > self::PROFILE_PHOTO['width']) {
-            return ['error' => 'Image resolution must be 100x100.'];
+        if ($profilePhotoSize[1] < self::PROFILE_PHOTO['height'] || $profilePhotoSize[0] < self::PROFILE_PHOTO['width']) {
+            return ['error' => 'Image resolution must be not less than 100x100.'];
         }
 
         return true;
