@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\VerificationRequest;
 use App\Repository\VerificationRequestRepository;
+use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,31 +39,33 @@ class RegistrationController extends AbstractController
         $this->encoder = $encoder;
     }
 
-    private function validateEmail($errorsString, $email){
+    private function validateEmail($errorsString, $email)
+    {
         $verificationRequest = $this->getDoctrine()->getRepository(VerificationRequest::class)->findValidByEmail($email);
-        if(!$verificationRequest){
+        if (!$verificationRequest) {
             $errorsString['email'] = 'Invalid email';
             return $errorsString;
         }
         return $errorsString;
     }
 
-    private function validatePassword($errorsString, $data){
+    private function validatePassword($errorsString, $data)
+    {
         $length = strlen($data['password']);
-        if ($length < 8){
+        if ($length < 8) {
             $errorsString['password'] = 'Must be 8 characters or more';
             return $errorsString;
         }
-        if ($length > 32){
+        if ($length > 32) {
             $errorsString['password'] = 'Must be 32 characters or less';
             return $errorsString;
         }
         $pattern = "/^[a-zA-Z0-9!@#$%^&`*()_=+;:'\x22?,<>\[\]{}\\|\/№!~-]+\.?[a-zA-Z0-9!@#$%^&*()_=+;:'\x22?,<>\[\]{}\\|\/№!~-]+$/u";
-        if (!preg_match($pattern, $data['password'])){
+        if (!preg_match($pattern, $data['password'])) {
             $errorsString['password'] = 'Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last';
             return $errorsString;
         }
-        if ($data['password'] !== $data['confirmPassword']){
+        if ($data['password'] !== $data['confirmPassword']) {
             $errorsString['password'] = 'Password and confirm password don\'t match';
             return $errorsString;
         }
@@ -111,7 +114,7 @@ class RegistrationController extends AbstractController
      * @apiError (Empty Request) {Boolean} success Should be false
      * @apiError (Empty Request) {JSON} body Error parametrs
      * @apiError (Empty Request) {String} body.message Error message
-     * @apiErrorExample {json}  Empty json request 
+     * @apiErrorExample {json}  Empty json request
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
@@ -119,7 +122,7 @@ class RegistrationController extends AbstractController
      *          "message": "Empty input"
      *       }
      *     }
-     * 
+     *
      * @apiError (Invalid Request) {Boolean} success Should be false
      * @apiError (Invalid Request) {JSON} body Error parametrs
      * @apiError (Invalid Request) {String} body.message Array of errors
@@ -177,12 +180,12 @@ class RegistrationController extends AbstractController
         if (!$data) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>'Empty input']
+                'body' => ['message' => 'Empty input']
             ];
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
-        $entetyManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->getDoctrine()->getManager();
 
         $user = new User();
         $user->setFirstName($data['firstName']);
@@ -195,9 +198,9 @@ class RegistrationController extends AbstractController
         if (!empty($errorsString)) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>$errorsString ]
+                'body' => ['message' => $errorsString ]
             ];
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
         $user->setPassword($this->encoder->hashPassword(
@@ -205,10 +208,10 @@ class RegistrationController extends AbstractController
             $data['password']
         ));
 
-        $entetyManager->persist($user);
-        $entetyManager->flush();
+        $entityManager->persist($user);
+        $entityManager->flush();
         $response = ['success' => true, 'body' => []];
-        return new JsonResponse($response, Response::HTTP_CREATED); 
+        return new JsonResponse($response, Response::HTTP_CREATED);
     }
 
     /**
@@ -234,9 +237,9 @@ class RegistrationController extends AbstractController
      *     }
      *
      * @apiError (Empty Request) {Boolean} success Should be false
-     * @apiError (Empty Request) {JSON} body Error parametrs
+     * @apiError (Empty Request) {JSON} body Error parameters
      * @apiError (Empty Request) {String} body.message Error message
-     * @apiErrorExample {json} Empty json request 
+     * @apiErrorExample {json} Empty json request
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
@@ -244,9 +247,9 @@ class RegistrationController extends AbstractController
      *           "message": "Empty input"
      *       }
      *     }
-     * 
+     *
      * @apiError (Invalid Request) {Boolean} success Should be false
-     * @apiError (Invalid Request) {JSON} body Error parametrs
+     * @apiError (Invalid Request) {JSON} body Error parameters
      * @apiError (Invalid Request) {String} body.message Array of errors
      * @apiErrorExample {json} Empty input
      *     HTTP/1.1 400
@@ -286,21 +289,21 @@ class RegistrationController extends AbstractController
      *           }
      *       }
      *     }
-     * 
+     *
      */
 
     public function phoneRegistration(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
-        if (!$data){
+        if (!$data) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>'Empty input']
+                'body' => ['message' => 'Empty input']
             ];
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
-        $entetyManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->getDoctrine()->getManager();
 
         $user = new User();
         $user->setFirstName($data['firstName']);
@@ -308,12 +311,12 @@ class RegistrationController extends AbstractController
         $user->setUserName($data['userName']);
         $user->setPhone($data['phone']);
         $errorsString = $this->validate($user, $data, 'phone');
-        if (!empty($errorsString)){
+        if (!empty($errorsString)) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>$errorsString ]
+                'body' => ['message' => $errorsString ]
             ];
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
         $user->setPassword($this->encoder->hashPassword(
@@ -321,9 +324,9 @@ class RegistrationController extends AbstractController
             $data['password']
         ));
 
-        $entetyManager->persist($user);
-        $entetyManager->flush();
+        $entityManager->persist($user);
+        $entityManager->flush();
         $response = ['success' => true, 'body' => []];
-        return new JsonResponse($response, Response::HTTP_CREATED); 
+        return new JsonResponse($response, Response::HTTP_CREATED);
     }
 }

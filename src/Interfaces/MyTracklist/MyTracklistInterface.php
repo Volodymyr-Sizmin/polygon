@@ -5,11 +5,11 @@ namespace App\Interfaces\MyTracklist;
 use App\DTO\TracklistDTO;
 use App\Entity\Track;
 
-interface MyTracklistInterface 
+interface MyTracklistInterface
 {
     public function indexService();
 
-    public function createService():array;
+    public function createService(): array;
 
     public function storeService(TracklistDTO $tracklistDTO);
 

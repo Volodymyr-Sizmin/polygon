@@ -4,6 +4,7 @@ namespace App\Controller\MyTracklist;
 
 use App\Interfaces\MyTracklist\MyTracklistInterface;
 use App\Controller\SerializeController;
+use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use App\DTO\Transformer\TracklistTransformerDTO;
@@ -24,29 +25,24 @@ use App\Entity\Track;
 
 class MyTracklistController extends SerializeController
 {
-    private $myTrackListService;
+    private $myTracklistInterface;
     private $tracklistTransformerDTO;
 
-    /**
-     * @TODO rename $myTracklistInterface to myTracklistService
-     * is it possible that we can have an interface instad of object?
-     * let's have correct names for properties!
-     */
     public function __construct(MyTracklistInterface $myTracklistInterface, TracklistTransformerDTO $tracklistTransformerDTO)
     {
-        $this->myTrackListService = $myTracklistInterface;
+        $this->myTracklistInterface = $myTracklistInterface;
         $this->tracklistTransformerDTO = $tracklistTransformerDTO;
     }
 
     /**
      * @api {GET} /backend/api/mytracklist Index Mytracklist
-     * 
+     *
      * @apiGroup MYTRACKLIST
      * @apiName index_mytracklist
-     * 
+     *
      * @apiSuccess (200) {Boolean} succes Should be true
      * @apiSuccess (200) {JSON} body Response body
-     * 
+     *
      *  * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
      *[
@@ -110,21 +106,21 @@ class MyTracklistController extends SerializeController
      */
     public function index()
     {
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->indexService()));
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->indexService()));
     }
-    
+
     /**
      * @api {GET} /backend/api/mytracklist/create Create MyTracklist
-     * 
+     *
      * @apiGroup MYTRACKLIST
      * @apiName create_mytracklist
-     * 
+     *
      * @apiSuccess (200) {Boolean} success Should be true
      * @apiSuccess (200) {JSON} body Response body
-     * 
+     *
      * @apiSuccess {Array} trackType Array of track type
      * @apiSuccess {Array} genreType Array of genre type
-     * 
+     *
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
      * [
@@ -158,23 +154,23 @@ class MyTracklistController extends SerializeController
      *   ]
      *}
      * ]
-     *      
+     *
      * */
     public function create()
     {
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->createService()));
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->createService()));
     }
 
     /**
      * @api {POST} /backend/api/mytracklist Store Mytracklist
-     * 
+     *
      * @apiName store_mytracklist
      * @apiGroup MYTRACKLIST
-     * 
+     *
      * @apiSuccess (200) {Boolean} success Should be true
-     * @apiSuccess (200) {JSON} body Response body 
-     * 
-     * 
+     * @apiSuccess (200) {JSON} body Response body
+     *
+     *
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
      * {
@@ -232,23 +228,25 @@ class MyTracklistController extends SerializeController
      *},
      *"playlistId": null
      *}
-     * 
+     *
      */
     public function store(Request $request)
     {
         $dto = $this->tracklistTransformerDTO->transformerDTO($request);
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->storeService($dto)));
+        return JsonResponse::fromJsonString(
+            $this->serializeJson($this->myTracklistInterface->storeService($dto))
+        );
     }
 
     /**
      * @api {GET} /backend/api/mytracklist/{id} Show Mytracklist
-     * 
+     *
      * @apiName show_mytracklist
      * @apiGroup MYTRACKLIST
-     * 
+     *
      * @apiSuccess (200) {Boolean} success Should be true
-     * @apiSuccess (200) {JSON} body Response body 
-     * 
+     * @apiSuccess (200) {JSON} body Response body
+     *
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
      * {
@@ -259,7 +257,7 @@ class MyTracklistController extends SerializeController
      *"type": "Music",
      *"genre": "Rock",
      *"cover": null,
-     *"trackPath": "publick",
+     *"track": "publick",
      *"createdAt": {
      *   "timezone": {
      *       "name": "UTC",
@@ -307,48 +305,47 @@ class MyTracklistController extends SerializeController
      *"playlistId": null
      *}
      *
-     * @apiError CanNotFindTrack Can not find track
-     * 
+     * @apiError CanNotFindTrack Track not found
+     *
      * @apiErrorExample Error-Response
      *     HTTP/1.1 Not Found
      *     [
      * {
      *   "success": false,
-     *   "body": "Can not find track"
+     *   "body": "Track not found"
      * }
      *]
      */
     public function show($id)
     {
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->showService($id)));
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->showService($id)));
     }
-    
+
     public function edit($id)
     {
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->editService($id)));
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->editService($id)));
     }
 
     public function update(Track $track, Request $request)
     {
-
         $dto = $this->tracklistTransformerDTO->transformerDTO($request);
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->updateService($dto, $track)));
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->updateService($dto, $track)));
     }
 
     /**
      * @api {DELETE} /backend/api/mytracklist/{id} Delete mytracklist
-     * 
+     *
      * @apiName delete_mytracklist
      * @apiGroup MYTRACKLIST
-     * 
+     *
      * @apiParam {id} Track unique ID
-     * 
+     *
      * @apiSuccess (200) {Boolean} success Should be true
-     * @apiSuccess (200) {JSON} body Response body 
-     * 
-     * @apiSuccess {Boolean} true 
+     * @apiSuccess (200) {JSON} body Response body
+     *
+     * @apiSuccess {Boolean} true
      * @apiSuccess {String} body session answer
-     * 
+     *
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
      * [
@@ -358,17 +355,17 @@ class MyTracklistController extends SerializeController
      *}
      *]
      *
-     * @apiError CanNotFindTrack Can not find track
-     * 
+     * @apiError CanNotFindTrack Track not found
+     *
      * @apiErrorExample Error-Response
      *     HTTP/1.1 Not Found
      *     [
      * {
      *   "success": false,
-     *   "body": "Can not find track"
+     *   "body": "Track not found"
      */
     public function delete($id)
     {
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTrackListService->deleteService($id)));
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->deleteService($id)));
     }
 }

@@ -2,13 +2,16 @@
 
 namespace App\Tests;
 
-use App\Repository\UserRepository;
+use App\Factory\UserFactory;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Zenstruck\Foundry\Test\Factories;
 
 class ProfileTest extends WebTestCase
 {
+    use Factories;
+
     private $client;
     private $user;
     private $faker;
@@ -16,7 +19,7 @@ class ProfileTest extends WebTestCase
     public function setUp(): void
     {
         $this->client = static::createClient();
-        $this->user = static::getContainer()->get(UserRepository::class)->findOneByEmail('b.astapau@andersenlab.com');
+        $this->user = UserFactory::createOne()->object();
         $this->faker = Factory::create();
     }
 
@@ -36,37 +39,31 @@ class ProfileTest extends WebTestCase
         $this->assertSame($response->body->message, 'Profile photo was successfully uploaded.');
     }
 
-    /**
-     * @TODO fix this test
-     */
-    // public function testGetProfilePhoto(): void
-    // {
-    //     $this->client->loginUser($this->user);
+    public function testGetProfilePhoto(): void
+    {
+        $this->client->loginUser($this->user);
 
-    //     $this->client->request('GET', '/api/profile/about/photo');
+        $this->client->request('GET', '/api/profile/about/photo');
 
-    //     $response = json_decode($this->client->getResponse()->getContent());
+        $response = json_decode($this->client->getResponse()->getContent());
 
-    //     $this->assertResponseIsSuccessful();
-    //     $this->assertResponseStatusCodeSame(200);
-    //     $this->assertTrue($response->success);
-    //     $this->assertIsString($response->body->url);
-    // }
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertTrue($response->success);
+        $this->assertIsString($response->body->url);
+    }
 
-    /**
-     * @TODO fix this test
-     */
-    // public function testDeleteProfilePhoto(): void
-    // {
-    //     $this->client->loginUser($this->user);
+     public function testDeleteProfilePhoto(): void
+     {
+         $this->client->loginUser($this->user);
 
-    //     $this->client->request('DELETE', '/api/profile/about/photo');
+         $this->client->request('DELETE', '/api/profile/about/photo');
 
-    //     $response = json_decode($this->client->getResponse()->getContent());
+         $response = json_decode($this->client->getResponse()->getContent());
 
-    //     $this->assertResponseIsSuccessful();
-    //     $this->assertResponseStatusCodeSame(200);
-    //     $this->assertTrue($response->success);
-    //     $this->assertIsString($response->body->message);
-    // }
+         $this->assertResponseIsSuccessful();
+         $this->assertResponseStatusCodeSame(200);
+         $this->assertTrue($response->success);
+         $this->assertIsString($response->body->message);
+     }
 }

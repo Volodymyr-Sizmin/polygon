@@ -95,7 +95,10 @@ class AccountControllerTest extends WebTestCase
         $this->assertEquals("3", $actualUser->getUserName());
     }
 
-    //part of testPasswordChange()
+    /** Try to set password for another user
+     * ! this method in used in testPasswordChange
+     * @return void
+     */
     private function incorrectUser(): void
     {
         $otherUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'b.astapau@andersenlab.com' ])->getId();
@@ -112,7 +115,10 @@ class AccountControllerTest extends WebTestCase
         $this->assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode(), 'failed in incorrectUser()');
     }
 
-    //part of testPasswordChange()
+    /** Try to set invalid password
+     * ! this method in used in testPasswordChange
+     * @return void
+     */
     private function incorrectPassword(): void
     {
         $this->client->jsonRequest('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
@@ -128,7 +134,10 @@ class AccountControllerTest extends WebTestCase
         $this->assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode(), 'failed in incorrectPassword()');
     }
 
-    //part of testPasswordChange()
+    /** Try to set new password with invalid password confirmation
+     * ! this method in used in testPasswordChange
+     * @return void
+     */
     private function invalidNewPassword(): void
     {
         $this->client->jsonRequest('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
@@ -141,29 +150,27 @@ class AccountControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
 
-        $this->assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode(),  'failed in invalidNewPassword()');
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode(), 'failed in invalidNewPassword()');
     }
 
-    /**
-     * @TODO fix this test
-     */
-    // public function testPasswordChange(): void
-    // {
-    //     $this->incorrectUser();
-    //     $this->incorrectPassword();
-    //     $this->invalidNewPassword();
+    public function testPasswordChange(): void
+    {
+        $this->incorrectUser();
+        $this->incorrectPassword();
+        $this->invalidNewPassword();
 
-    //     $this->client->jsonRequest('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
-    //         "oldPassword" => "test",
-    //         "newPassword" => "newtest",
-    //         "confirmPassword" => "newtest"
-    //     ], [
-    //         'HTTP_X-AUTH-TOKEN' => $this->token,
-    //     ]);
+        $this->client->jsonRequest('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
+             "oldPassword" => "test",
+             "newPassword" => "newtesttest",
+             "confirmPassword" => "newtesttest"
+         ], [
+             'HTTP_X-AUTH-TOKEN' => $this->token,
+         ]);
 
-    //     $response = $this->client->getResponse();
-    //     $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
-    // }
+        $response = $this->client->getResponse();
+
+        $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
+    }
 
     public function testDelete(): void
     {
