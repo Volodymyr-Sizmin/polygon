@@ -117,12 +117,12 @@ class ProfileTest extends WebTestCase
         $this->assertTrue($responseData->success);
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED, $response->getStatusCode());
 
-        $this->assertEquals("John", $responseData->user->firstName);
-        $this->assertEquals("Doe", $responseData->user->lastName);
-        $this->assertEquals("iamJohnDoe", $responseData->user->userName);
-        $this->assertEquals("Belarus", $responseData->user->country);
-        $this->assertEquals("Minsk", $responseData->user->city);
-        $this->assertEquals("+375294444444", $responseData->user->phone);
+        $this->assertEquals("John", $responseData->body->firstName);
+        $this->assertEquals("Doe", $responseData->body->lastName);
+        $this->assertEquals("iamJohnDoe", $responseData->body->userName);
+        $this->assertEquals("Belarus", $responseData->body->country);
+        $this->assertEquals("Minsk", $responseData->body->city);
+        $this->assertEquals("+375294444444", $responseData->body->phone);
 
         $actualUser = static::getContainer()->get(UserRepository::class)->findOneById($this->user->getId());
         $this->assertEquals("John", $actualUser->getFirstName());

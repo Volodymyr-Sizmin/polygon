@@ -221,7 +221,7 @@ class ProfileController extends AbstractController
      *     HTTP/1.1 200 OK
      *     {
      *        "success": true,
-     *        "user": {
+     *        "body": {
      *           "id": id,
      *           "firstName": "firstName",
      *           "lastName": "lastName",
@@ -265,7 +265,7 @@ class ProfileController extends AbstractController
         return new JsonResponse(
             [
                 'success' => true,
-                'user' => [
+                'body' => [
                     'id' => $user->getId(),
                     'firstName' => $user->getFirstName(),
                     'lastName' => $user->getLastName(),
@@ -332,7 +332,7 @@ class ProfileController extends AbstractController
      *     HTTP/1.1 201 CREATED
      *     {
      *       "success": true,
-     *       "user": {
+     *       "body": {
      *            "firstName": "firstName",
      *            "lastName": "lastName",
      *            "userName": "userName",
@@ -687,7 +687,7 @@ class ProfileController extends AbstractController
         return new JsonResponse (
             [
                 'success' => true, 
-                'user' => [
+                'body' => [
                     'firstName' => $user->getFirstName(),
                     'lastName' => $user->getLastName(),
                     'userName' => $user->getUserName(),
