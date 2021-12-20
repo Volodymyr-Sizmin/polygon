@@ -119,7 +119,7 @@ class ProfileController extends AbstractController
      *     {
      *       "success": "true",
      *       "body": {
-     *           "url":"https://image/343d9040a671c45832ee5381860e2996-61a4a3e362ca3.png"
+     *           "url":"http://10.10.15.183:1100/uploads/image/343d9040a671c45832ee5381860e2996-61a4a3e362ca3.png"
      *       }
      *     }
      * @apiError (404) {Boolean} success Should be false
@@ -302,8 +302,8 @@ class ProfileController extends AbstractController
         if ($length < 7) {
             return 'must be 7 characters or more';
         }
-        if ($length > 15) {
-            return 'must be 15 characters or less';
+        if ($length > 13) {
+            return 'must be 13 characters or less';
         }
         $pattern = "/^\+[0-9]+$/";
         if (!preg_match($pattern, $phone)) {
@@ -464,7 +464,7 @@ class ProfileController extends AbstractController
                 Response::HTTP_UNAUTHORIZED
             );
         }
-        if ($currentUser->getId() != $user->getId()) {
+        if ($currentUser->getId() !== $user->getId()) {
             return new JsonResponse (
                 [
                     'success' => false,
@@ -549,10 +549,7 @@ class ProfileController extends AbstractController
             if (!$existPhone) {
                 $user->setPhone($data["phone"]);
             }
-            if ($existPhone == $user->getPhone()) {
-                $user->getPhone();
-            }
-            if ($existPhone != $user->getPhone() && $existPhone != null) {
+            if ($existPhone !== $user->getPhone() && $existPhone !== null) {
                 return new JsonResponse (
                     [
                         'success' => false,
@@ -604,7 +601,7 @@ class ProfileController extends AbstractController
                 );
             }
             $countryNameOfCity = $city->getCountry()->getName();
-            if ($countryName != $countryNameOfCity) {
+            if ($countryName !== $countryNameOfCity) {
                 return new JsonResponse (
                     [
                         'success' => false,

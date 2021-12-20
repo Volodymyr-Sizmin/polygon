@@ -5,7 +5,7 @@ namespace App\Tests\Service\MyTracklist;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Entity\Track;
 use App\Repository\TrackRepository;
-use App\Service\MyTraclist\MyTraclistService;
+use App\Service\MyTracklist\MyTracklistService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\FileUploader;
 use App\DTO\TracklistDTO;
@@ -56,7 +56,7 @@ class MyTracklistTest extends WebTestCase
                                    ->method('getRepository')
                                    ->willReturn($this->trackRepositoryMock);
 
-        $this->myTracklistService = new MyTraclistService($this->entityManagerMock, $this->fileUploaderMock);
+        $this->myTracklistService = new MyTracklistService($this->entityManagerMock, $this->fileUploaderMock);
     }
 
     public function testIndexService(): void
@@ -229,44 +229,4 @@ class MyTracklistTest extends WebTestCase
         $this->assertSame($expected,$testMethod);
     }
 
-    public function testDeleteServiceSuccess():void
-    {
-         $this->trackRepositoryMock->expects($this->any())
-                                                ->method('find')
-                                                ->with(1)
-                                                ->willReturn($this->track);
-
-        $this->entityManagerMock->expects($this->any())
-                                ->method('remove');
-
-        $this->entityManagerMock->expects($this->any())
-                                ->method('flush');
-
-        $this->entityManagerMock->remove($this->trackRepositoryMock->find(1));
-      
-        $expected = array([
-            'success' => true, 
-            'body'    => 'Track successfully deleted'
-        ]);
-
-        $testMethod = $this->myTracklistService->deleteService(1);
-
-        $this->assertSame($expected, $testMethod);
-    }
-
-    public function testDeleteServiceError():void
-    {
-        $this->trackRepositoryMock->expects($this->any())
-                                    ->method('find')
-                                    ->with(-1000);
-      
-        $expected = array([
-            'success' => false,
-            'body'    => 'Can not find track'
-        ]);
-
-        $testMethod = $this->myTracklistService->deleteService(-1000);
-
-        $this->assertSame($expected, $testMethod);
-    }
 }

@@ -2,14 +2,18 @@
 
 namespace App\Tests;
 
-use App\Repository\UserRepository;
+use App\Factory\UserFactory;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Zenstruck\Foundry\Test\Factories;
 use Symfony\Component\HttpFoundation\Response;
+use App\Repository\UserRepository;
 
 class ProfileTest extends WebTestCase
 {
+    use Factories;
+
     private $client;
     private $user;
     private $faker;
@@ -17,7 +21,7 @@ class ProfileTest extends WebTestCase
     public function setUp(): void
     {
         $this->client = static::createClient();
-        $this->user = static::getContainer()->get(UserRepository::class)->findOneByEmail('b.astapau@andersenlab.com');
+        $this->user = UserFactory::createOne()->object();
         $this->faker = Factory::create();
     }
 
@@ -37,41 +41,35 @@ class ProfileTest extends WebTestCase
         $this->assertSame($response->body->message, 'Profile photo was successfully uploaded.');
     }
 
-    /**
-     * @TODO fix this test
-     */
-    // public function testGetProfilePhoto(): void
-    // {
-    //     $this->client->loginUser($this->user);
+    public function testGetProfilePhoto(): void
+    {
+        $this->client->loginUser($this->user);
 
-    //     $this->client->request('GET', '/api/profile/about/photo');
+        $this->client->request('GET', '/api/profile/about/photo');
 
-    //     $response = json_decode($this->client->getResponse()->getContent());
+        $response = json_decode($this->client->getResponse()->getContent());
 
-    //     $this->assertResponseIsSuccessful();
-    //     $this->assertResponseStatusCodeSame(200);
-    //     $this->assertTrue($response->success);
-    //     $this->assertIsString($response->body->url);
-    // }
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertTrue($response->success);
+        $this->assertIsString($response->body->url);
+    }
 
-    /**
-     * @TODO fix this test
-     */
-    // public function testDeleteProfilePhoto(): void
-    // {
-    //     $this->client->loginUser($this->user);
+     public function testDeleteProfilePhoto(): void
+     {
+         $this->client->loginUser($this->user);
 
-    //     $this->client->request('DELETE', '/api/profile/about/photo');
+         $this->client->request('DELETE', '/api/profile/about/photo');
 
-    //     $response = json_decode($this->client->getResponse()->getContent());
+         $response = json_decode($this->client->getResponse()->getContent());
 
-    //     $this->assertResponseIsSuccessful();
-    //     $this->assertResponseStatusCodeSame(200);
-    //     $this->assertTrue($response->success);
-    //     $this->assertIsString($response->body->message);
-    // }
+         $this->assertResponseIsSuccessful();
+         $this->assertResponseStatusCodeSame(200);
+         $this->assertTrue($response->success);
+         $this->assertIsString($response->body->message);
+     }
 
-    public function testShowUserInfoSuccess(): void
+     public function testShowUserInfoSuccess(): void
     {
         $this->client->loginUser($this->user);
 
@@ -176,17 +174,12 @@ class ProfileTest extends WebTestCase
         $this->assertSame('You are not allowed to change this user`s data', $responseData->body->message);
     }
 
-    public function testUpdateUserInfoSuccessOwnPhone(): void
+    public function testUpdateUserInfoSuccessPhone(): void
     {
         $this->client->loginUser($this->user);
 
         $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
-            "firstName" => "John",
-            "lastName" => "Doe",
-            "userName" => "iamJohnDoe",
-            "country" => "Belarus",
-            "city" => "Minsk",
-            "phone" => "+375291235566"
+            "phone" => "+375291235567"
         ]);
 
         $response = $this->client->getResponse();
@@ -195,6 +188,22 @@ class ProfileTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertTrue($responseData->success);
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED, $response->getStatusCode());
+    }
+
+    public function testUpdateUserInfoFailurePhone(): void
+    {
+        $this->client->loginUser($this->user);
+
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
+            "phone" => "+375291235566"
+        ]);
+
+        $response = $this->client->getResponse();
+        $responseData = json_decode($response->getContent());
+
+        $this->assertFalse($responseData->success);
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertSame('Phone already used', $responseData->body->message);
     }
 
     public function testUpdateUserInfoFailureValidateName(): void
@@ -326,7 +335,7 @@ class ProfileTest extends WebTestCase
         $this->assertSame('Phone must be 7 characters or more', $responseData->body->message);
 
         $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
-            "phone" => "+375294444444444"
+            "phone" => "+3752944444444"
         ]);
 
         $response = $this->client->getResponse();
@@ -334,7 +343,7 @@ class ProfileTest extends WebTestCase
 
         $this->assertFalse($responseData->success);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $this->assertSame('Phone must be 15 characters or less', $responseData->body->message);
+        $this->assertSame('Phone must be 13 characters or less', $responseData->body->message);
 
         $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "phone" => "375294444444"
