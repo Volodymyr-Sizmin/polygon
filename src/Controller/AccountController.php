@@ -235,7 +235,7 @@ class AccountController extends AbstractController
         return null;
     }
 
-    private function checkCompromisedPassword($password): ?string
+    private function checkCompromisedPassword(string $password): ?string
     {
         $constraint = new NotCompromisedPassword();
         $violations = $this->validator->validate($password, $constraint);
