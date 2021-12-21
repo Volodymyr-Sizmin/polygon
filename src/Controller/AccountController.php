@@ -235,6 +235,21 @@ class AccountController extends AbstractController
         return null;
     }
 
+    private function checkCompromisedPassword($password): ?string
+    {
+        $constraint = new NotCompromisedPassword();
+        $violations = $this->validator->validate($password, $constraint);
+        if ($violations->count() > 0) {
+            foreach ($violations as $violation) {
+                if ($violation instanceof ConstraintViolation) {
+                    $message = $violation->getMessage();
+                    $message = is_string($message) ? $message : '';
+                }
+            }
+        }
+        return isset($message) ? $message : null;
+    }
+
     /**
      * @api {post} /backend/api/accounts/change_pass/:id Change password
      * @apiName PostApiAccountsChangePassword
@@ -389,23 +404,14 @@ class AccountController extends AbstractController
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
-        if ($data['oldPassword'] == $password) {
+        if ($data['oldPassword'] === $password) {
             return new JsonResponse([
                 'success' => false,
                 'body' => ['message' => 'Old password and new password can\'t match']
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $constraint = new NotCompromisedPassword();
-        $violations = $this->validator->validate($password, $constraint);
-        if ($violations->count() > 0) {
-            foreach ($violations as $violation) {
-                if ($violation instanceof ConstraintViolation) {
-                    $message = $violation->getMessage();
-                    $message = is_string($message) ? $message : '';
-                }
-            }
-        }
+        $message = $this->checkCompromisedPassword($password);
 
         if (isset($message)) {
             return new JsonResponse([
