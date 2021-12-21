@@ -19,6 +19,12 @@ class Playlist
     private $id;
 
     /**
+     *
+     * @ORM\ManyToMany(targetEntity="App\Entity\Track", inversedBy="playlists")
+     * @ORM\JoinTable(name="playlists_tracks")
+     */
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $name;
@@ -42,6 +48,13 @@ class Playlist
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="playlists")
      */
     private $author;
+
+    public function setTracks($tracks)
+    {
+        $this->tracks = $tracks;
+
+        return $this;
+    }
 
     public function getId(): ?int
     {

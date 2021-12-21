@@ -2,6 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Playlist;
+use App\Entity\PlaylistsTracks;
+use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Track;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,8 +25,7 @@ class TrackRepository extends ServiceEntityRepository
     public function getTrackPath($id)
     {
         $db = $this->createQueryBuilder('t')
-            ->select('track_path')
-            //->from('t')
+            ->select('t.track_path')
             ->where('t.id=:id')
             ->setParameter('id', $id);
 
@@ -34,13 +36,41 @@ class TrackRepository extends ServiceEntityRepository
 
     public function getArtistData($id)
     {
-        $db = $this->createQueryBuilder('t')
-            ->select('author', 'album', 'track', 'name')
+            $sub = $this->createQueryBuilder('t')
+                ->select('t.author')
+                ->where('t.id=:id')
+                ->setParameter('id', $id);
+
+            $author = $sub->getQuery()->getArrayResult();
+
+        $data = $this->createQueryBuilder('t')
+            ->select('t.author, t.title, t.album, t.cover, p.name')
+            ->leftJoin('App:PlaylistsTracks', 'p_t', 'WITH', 't.id=p_t.track_id')
+            ->leftJoin('App:Playlist', 'p', 'WITH', 'p_t.playlist_id = p.id')
+            ->where('t.author=:author')
+            ->setParameter('author', $author)
+            ->getQuery()
+            ->getArrayResult();
+
+        return $data;
+    }
+
+    public function getAlbumSong($id)
+    {
+        $sub = $this->createQueryBuilder('t')
+            ->select('t.album')
             ->where('t.id=:id')
             ->setParameter('id', $id);
 
-        $query = $db->getQuery();
+        $album = $sub->getQuery()->getArrayResult();
 
-        return $query->execute();
+        $data = $this->createQueryBuilder('t')
+            ->select('t.author, t.title, t.album, t.cover, t.track_path')
+            ->where('t.album=:album')
+            ->setParameter('album', $album)
+            ->getQuery()
+            ->getArrayResult();
+
+        return $data;
     }
 }

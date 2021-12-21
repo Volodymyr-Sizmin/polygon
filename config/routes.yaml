@@ -161,9 +161,9 @@ upload_profile_photo:
 
 ### BURGER ENDPOINTS ###
 add_to_nextup:
-  path: api/burger/addnextup
+  path: api/burger/{id}
   controller: App\Controller\BurgerController::addNextUp
-  methods: POST
+  methods: GET
 
 share_song:
   path: api/burger/sharesong
