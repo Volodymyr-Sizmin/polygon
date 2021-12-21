@@ -117,7 +117,7 @@ class ProfileController extends AbstractController
      *     {
      *       "success": "true",
      *       "body": {
-     *           "url":"https://image/343d9040a671c45832ee5381860e2996-61a4a3e362ca3.png"
+     *           "url":"http://10.10.15.183:1100/uploads/image/343d9040a671c45832ee5381860e2996-61a4a3e362ca3.png"
      *       }
      *     }
      * @apiError (404) {Boolean} success Should be false

@@ -80,7 +80,9 @@ class File
 
     public function getUrl(): ?string
     {
-        return $this->url;
+        $schema = isset($_SERVER["HTTPS"]) ? 'https' : 'http';
+        $uploads_path = $_ENV['FILE_UPLOAD_PATH'];
+        return "{$schema}://{$_SERVER['HTTP_HOST']}/$uploads_path/{$this->url}";
     }
 
     public function setUrl(string $url): self
@@ -124,5 +126,9 @@ class File
         $this->user = $user;
 
         return $this;
+    }
+
+    public function __toString() {
+        return (string) $this->id;
     }
 }

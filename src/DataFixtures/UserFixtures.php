@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\User;
 use App\Entity\ResetRequest;
+use App\Factory\FileFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -16,8 +17,14 @@ class UserFixtures extends Fixture
      */
     private $encoder;
 
-    public function __construct(UserPasswordHasherInterface $encoder)
+    /**
+     * @var FileFactory
+     */
+    private $fileFactory;
+
+    public function __construct(UserPasswordHasherInterface $encoder, FileFactory $fileFactory)
     {
+        $this->fileFactory = $fileFactory;
         $this->encoder = $encoder;
     }
 
@@ -29,8 +36,11 @@ class UserFixtures extends Fixture
         $user->setUserName('b.astapau');
         $user->setEmail('b.astapau@andersenlab.com');
         $user->setPhone('+375291235566');
+        $user->setProfilePhoto(FileFactory::createOne()->object());
+
         $password = $this->encoder->hashPassword($user, 'password');
         $user->setPassword($password);
+
         $manager->persist($user);
         $manager->flush();
     }
@@ -63,7 +73,7 @@ class UserFixtures extends Fixture
         $request->setActivated(true);
 
         $manager->persist($user);
-        $manager->persist($request);        
+        $manager->persist($request);
         $manager->flush();
     }
 
