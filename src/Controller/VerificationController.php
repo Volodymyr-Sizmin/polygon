@@ -45,7 +45,7 @@ class VerificationController extends AbstractController
 
     private function sendEmail(VerificationRequest $verificationRequest, MailerInterface $mailer)
     {
-        $url = 'http://localhost:1100/verify/email/';
+        $url = 'http://localhost:1100/backend/verify/email/';
         $url .= $verificationRequest->getUrl();
         $to = $verificationRequest->getEmail();
         $email = (new Email())
