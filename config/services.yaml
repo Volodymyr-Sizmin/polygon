@@ -38,5 +38,6 @@ services:
     # please note that last definitions always *replace* previous ones
     
     App\Service\FileUploader:
+        public: true
         arguments:
             $targetDirectory: '%uploads_directory%'

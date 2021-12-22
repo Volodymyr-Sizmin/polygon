@@ -8,8 +8,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use App\Interfaces\FileUploaderInterface;
 
-class FileUploader
+class FileUploader implements FileUploaderInterface
 {
     public const DOCUMENT_TYPE = 'document';
     public const IMAGE_TYPE = 'image';
