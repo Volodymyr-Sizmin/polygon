@@ -6,15 +6,17 @@ use App\Repository\TrackRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
-/**
- * @ORM\Entity(repositoryClass=TrackRepository::class)
- */
+    /**
+     * @ORM\Entity(repositoryClass=TrackRepository::class)
+     *
+     */
 class Track
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     *
      */
     private $id;
 
@@ -55,14 +57,14 @@ class Track
 
     /**
      * @Gedmo\Timestampable(on="create")
-     * 
+     *
      * @ORM\Column(type="datetime_immutable")
      */
     private $created_at;
 
     /**
      * @Gedmo\Timestampable(on="update")
-     * 
+     *
      * @ORM\Column(type="datetime_immutable")
      */
     private $updated_at;
@@ -71,7 +73,9 @@ class Track
      * @ORM\Column(type="integer", nullable=true)
      */
     private $playlist_id;
-
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Playlist", mappedBy="tracks")
+     */
     public function getId(): ?int
     {
         return $this->id;
