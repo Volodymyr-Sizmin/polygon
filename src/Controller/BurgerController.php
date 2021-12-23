@@ -35,10 +35,9 @@ class BurgerController extends SerializeController
      *     HTTP/1.1 200 OK
      * {
      * "success":true,
-     * "path":
-     *          {
-     *          "track_path":"audio\/fd3a2bd0c4a7fbef2633ccde4885362c-61a24e3165fb8.mp3"
-     *          }
+     * "path": {
+     *           "track_path":"audio\/fd3a2bd0c4a7fbef2633ccde4885362c-61a24e3165fb8.mp3"
+     *         }
      * }
      *
      * @apiError InvalidId Invalid id
@@ -46,20 +45,21 @@ class BurgerController extends SerializeController
      * @apiErrorExample Error-Response
      *     HTTP/1.1 404 Not Found
      *     [
-     * {
-     *   "success": false,
-     *   "body": "Invalid id"
-     * }
+     *     {
+     *       "success": false,
+     *       "body": "Invalid id"
+     *     }
+     *     ]
      *
      * @apiError ThisTrackDoesNotFound This track does not found
      *
      * @apiErrorExample Error-Response
      *     HTTP/1.1 404 Not Found
-     *     [
-     * {
-     *   "success": false,
-     *   "body": "This track does not found"
-     * }
+     *    [
+     *    {
+     *      "success": false,
+     *      "body": "This track does not found"
+     *    }
      *    ]
      */
     public function shareSong($id): JsonResponse
@@ -76,7 +76,8 @@ class BurgerController extends SerializeController
 
         return new JsonResponse(['success' => true, 'path' => $entityManager
             ->getRepository(Track::class)
-            ->getTrackPath($id)]);
+            ->getTrackPath($id)])
+            ;
     }
 
     /**
@@ -87,7 +88,7 @@ class BurgerController extends SerializeController
      * @apiParam {id} id Track id
      * @apiParamExample {json} Request-Example:
      *     {
-     *       "id": 1,\
+     *       "id": 1
      *     }
      *
      * @apiSuccess (200) {Boolean} success Should be true
@@ -98,18 +99,18 @@ class BurgerController extends SerializeController
      * {
      *      "success":true,"information":[
      *          {
-     *              "author":"Linnur",
-     *              "title":"Sister",
-     *              "album":"red",
-     *              "cover":"image\/dfffffffffwrf4545rggggggg-4554544dg.png",
-     *              "name":"12345"
+     *             "author":"Linnur",
+     *             "title":"Sister",
+     *             "album":"red",
+     *             "cover":"image\/dfffffffffwrf4545rggggggg-4554544dg.png",
+     *             "name":"12345"
      *          },
      *          {
-     *          "author":"Linnur",
-     *          "title":"Brother",
-     *          "album":"red",
-     *          "cover":"image\/f2812e00124f03ad20ba0eb74899db5c-61a24e315f41a.png",
-     *          "name":"test"
+     *            "author":"Linnur",
+     *            "title":"Brother",
+     *            "album":"red",
+     *            "cover":"image\/f2812e00124f03ad20ba0eb74899db5c-61a24e315f41a.png",
+     *            "name":"test"
      *          }
      *                              ]
      * }
@@ -119,20 +120,22 @@ class BurgerController extends SerializeController
      * @apiErrorExample Error-Response
      *     HTTP/1.1 404 Not Found
      *     [
-     * {
-     *   "success": false,
-     *   "body": "Invalid id"
-     * }
+     *     {
+     *       "success": false,
+     *       "body": "Invalid id"
+     *    }
+     *    ]
      *
      * @apiError ThisTrackDoesNotFound This track does not found
      *
      * @apiErrorExample Error-Response
      *     HTTP/1.1 404 Not Found
      *     [
-     * {
-     *   "success": false,
-     *   "body": "This track does not found"
-     * }
+     *     {
+     *       "success": false,
+     *       "body": "This track does not found"
+     *    }
+     *    ]
      */
     public function getArtist(Request $request): JsonResponse
     {
@@ -246,62 +249,62 @@ class BurgerController extends SerializeController
         return JsonResponse::fromJsonString($this->serializeJson($track));
     }
 
-        /**
-         * @api {POST} /backend/api/gotoalbum Go to album
-         * @apiName go_to_album
-         * @apiGroup BURGER
-         *
-         * @apiParam {id} id Track id
-         * @apiParamExample {json} Request-Example:
-         *     {
-         *       "id": 1
-         *     }
-         *
-         * @apiSuccess (200) {Boolean} success Should be true
-         * @apiSuccess (200) {JSON} body Response body
-         *
-         * @apiSuccessExample {json} Success-Response:
-         *     HTTP/1.1 200 OK
-         * {
-         *      "success":true,
-         *      "path":[
-         *                {
-         *                 "author":"Linnur",
-         *                 "title":"Brother",
-         *                 "album":"red",
-         *                 "cover":"image\/f2812e00124f03ad20ba0eb74899db5c-61a24e315f41a.png",
-         *                 "track_path":"audio\/fd3a2bd0c4a7fbef2633ccde4885362c-61a24e3165fb8.mp3"
-         *                },
-         *                {
-         *                 "author":"Linnur",
-         *                 "title":"Sister",
-         *                 "album":"red",
-         *                 "cover":"image\/dfffffffffwrf4545rggggggg-4554544dg.png",
-         *                 "track_path":"audio\/wdwmkjkh5ju4ht4h5kj4hn5kj3h4kj3h5kj3h-34n.mp3"
-         * }
-         *            ]
-         *                }
-         *
-         * @apiError InvalidId Invalid id
-         *
-         * @apiErrorExample Error-Response
-         *     HTTP/1.1 404 Not Found
-         *     [
-         * {
-         *   "success": false,
-         *   "body": "Invalid id"
-         * }
-         *
-         * @apiError ThisTrackDoesNotFound This track does not found
-         *
-         * @apiErrorExample Error-Response
-         *     HTTP/1.1 404 Not Found
-         *     [
-         * {
-         *   "success": false,
-         *   "body": "This track does not found"
-         * }
-         */
+    /**
+     * @api {POST} /backend/api/gotoalbum Go to album
+     * @apiName go_to_album
+     * @apiGroup BURGER
+     *
+     * @apiParam {id} id Track id
+     * @apiParamExample {json} Request-Example:
+     *     {
+     *       "id": 1
+     *     }
+     *
+     * @apiSuccess (200) {Boolean} success Should be true
+     * @apiSuccess (200) {JSON} body Response body
+     *
+     * @apiSuccessExample {json} Success-Response:
+     *     HTTP/1.1 200 OK
+     * {
+     *      "success":true,
+     *      "path":[
+     *                {
+     *                 "author":"Linnur",
+     *                 "title":"Brother",
+     *                 "album":"red",
+     *                 "cover":"image\/f2812e00124f03ad20ba0eb74899db5c-61a24e315f41a.png",
+     *                 "track_path":"audio\/fd3a2bd0c4a7fbef2633ccde4885362c-61a24e3165fb8.mp3"
+     *                },
+     *                {
+     *                 "author":"Linnur",
+     *                 "title":"Sister",
+     *                 "album":"red",
+     *                 "cover":"image\/dfffffffffwrf4545rggggggg-4554544dg.png",
+     *                 "track_path":"audio\/wdwmkjkh5ju4ht4h5kj4hn5kj3h4kj3h5kj3h-34n.mp3"
+     * }
+     *            ]
+     *                }
+     *
+     * @apiError InvalidId Invalid id
+     *
+     * @apiErrorExample Error-Response
+     *     HTTP/1.1 404 Not Found
+     *     [
+     * {
+     *   "success": false,
+     *   "body": "Invalid id"
+     * }
+     *
+     * @apiError ThisTrackDoesNotFound This track does not found
+     *
+     * @apiErrorExample Error-Response
+     *     HTTP/1.1 404 Not Found
+     *     [
+     * {
+     *   "success": false,
+     *   "body": "This track does not found"
+     * }
+     */
     public function getAlbum(Request $request): JsonResponse
     {
         $entityManager = $this->getDoctrine()->getManager();

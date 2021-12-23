@@ -25,9 +25,9 @@ class TrackRepository extends ServiceEntityRepository
     public function getTrackPath($id)
     {
         $db = $this->createQueryBuilder('t')
-            ->select('t.track_path')
-            ->where('t.id=:id')
-            ->setParameter('id', $id);
+        ->select('t.track_path')
+        ->where('t.id=:id')
+        ->setParameter('id', $id);
 
         $query = $db->getQuery();
 
@@ -36,21 +36,21 @@ class TrackRepository extends ServiceEntityRepository
 
     public function getArtistData($id)
     {
-            $sub = $this->createQueryBuilder('t')
-                ->select('t.author')
-                ->where('t.id=:id')
-                ->setParameter('id', $id);
+        $sub = $this->createQueryBuilder('t')
+        ->select('t.author')
+        ->where('t.id=:id')
+        ->setParameter('id', $id);
 
-            $author = $sub->getQuery()->getArrayResult();
+        $author = $sub->getQuery()->getArrayResult();
 
         $data = $this->createQueryBuilder('t')
-            ->select('t.author, t.title, t.album, t.cover, p.name')
-            ->leftJoin('App:PlaylistsTracks', 'p_t', 'WITH', 't.id=p_t.track_id')
-            ->leftJoin('App:Playlist', 'p', 'WITH', 'p_t.playlist_id = p.id')
-            ->where('t.author=:author')
-            ->setParameter('author', $author)
-            ->getQuery()
-            ->getArrayResult();
+        ->select('t.author, t.title, t.album, t.cover, p.name')
+        ->leftJoin('App:PlaylistsTracks', 'p_t', 'WITH', 't.id=p_t.track_id')
+        ->leftJoin('App:Playlist', 'p', 'WITH', 'p_t.playlist_id = p.id')
+        ->where('t.author=:author')
+        ->setParameter('author', $author)
+        ->getQuery()
+        ->getArrayResult();
 
         return $data;
     }
@@ -58,18 +58,18 @@ class TrackRepository extends ServiceEntityRepository
     public function getAlbumSong($id)
     {
         $sub = $this->createQueryBuilder('t')
-            ->select('t.album')
-            ->where('t.id=:id')
-            ->setParameter('id', $id);
+        ->select('t.album')
+        ->where('t.id=:id')
+        ->setParameter('id', $id);
 
         $album = $sub->getQuery()->getArrayResult();
 
         $data = $this->createQueryBuilder('t')
-            ->select('t.author, t.title, t.album, t.cover, t.track_path')
-            ->where('t.album=:album')
-            ->setParameter('album', $album)
-            ->getQuery()
-            ->getArrayResult();
+        ->select('t.author, t.title, t.album, t.cover, t.track_path')
+        ->where('t.album=:album')
+        ->setParameter('album', $album)
+        ->getQuery()
+        ->getArrayResult();
 
         return $data;
     }
