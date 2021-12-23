@@ -26,7 +26,7 @@ delete_playlist:
 
 add_track:
   path: /api/playlists/addtrack
-  controller: App\Controller\PlaylistController:addTrack
+  controller: App\Controller\PlaylistController::addTrack
   methods: POST
 
 file_upload:

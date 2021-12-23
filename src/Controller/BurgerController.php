@@ -6,12 +6,23 @@ use App\Entity\Track;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use App\Controller\SerializeController;
+use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @IgnoreAnnotation("apiName")
+ * @IgnoreAnnotation("apiGroup")
+ * @IgnoreAnnotation("apiParam")
+ * @IgnoreAnnotation("apiParamExample")
+ * @IgnoreAnnotation("apiSuccess")
+ * @IgnoreAnnotation("apiSuccessExample")
+ * @IgnoreAnnotation("apiError")
+ * @IgnoreAnnotation("apiErrorExample")
+ */
 class BurgerController extends SerializeController
 {
 
     /**
-     * @api {GET} /backend/api/sharesong/:id Share song
+     * @api {GET} /backend/api/sharesong/{id} Share song
      * @apiName share_song
      * @apiGroup BURGER
      *
@@ -49,18 +60,18 @@ class BurgerController extends SerializeController
      *   "success": false,
      *   "body": "This track does not found"
      * }
-     *
+     *    ]
      */
     public function shareSong($id): JsonResponse
     {
         $entityManager = $this->getDoctrine()->getManager();
 
         if (!is_numeric($id) && $id < 0) {
-            return new JsonResponse(['success' => false, 'Invalid id']);
+            return new JsonResponse(['success' => false, 'Invalid id'], Response::HTTP_BAD_REQUEST);
         }
 
         if (!$entityManager->getRepository(Track::class)->getTrackPath($id)) {
-            return new JsonResponse(['success' => false, 'This track does not found']);
+            return new JsonResponse(['success' => false, 'This track does not found'], Response::HTTP_NOT_FOUND);
         }
 
         return new JsonResponse(['success' => true, 'path' => $entityManager
@@ -74,6 +85,10 @@ class BurgerController extends SerializeController
      * @apiGroup BURGER
      *
      * @apiParam {id} id Track id
+     * @apiParamExample {json} Request-Example:
+     *     {
+     *       "id": 1,\
+     *     }
      *
      * @apiSuccess (200) {Boolean} success Should be true
      * @apiSuccess (200) {JSON} body Response body
@@ -126,11 +141,11 @@ class BurgerController extends SerializeController
         $data = json_decode($request->getContent(), true);
 
         if (!is_numeric($data['id']) && $data['id'] < 0) {
-            return new JsonResponse(['success' => false, 'Invalid id']);
+            return new JsonResponse(['success' => false, 'Invalid id'], Response::HTTP_BAD_REQUEST);
         }
 
         if (!$entityManager->getRepository(Track::class)->getArtistData($data['id'])) {
-            return new JsonResponse(['success' => false, 'This Artist does not found']);
+            return new JsonResponse(['success' => false, 'This Artist does not found'], Response::HTTP_NOT_FOUND);
         }
 
          return new JsonResponse(['success' => true, 'information' => $entityManager
@@ -237,6 +252,10 @@ class BurgerController extends SerializeController
          * @apiGroup BURGER
          *
          * @apiParam {id} id Track id
+         * @apiParamExample {json} Request-Example:
+         *     {
+         *       "id": 1
+         *     }
          *
          * @apiSuccess (200) {Boolean} success Should be true
          * @apiSuccess (200) {JSON} body Response body
@@ -290,11 +309,11 @@ class BurgerController extends SerializeController
         $data = json_decode($request->getContent(), true);
 
         if (!is_numeric($data['id']) && $data['id'] < 0) {
-            return new JsonResponse(['success' => false, 'Invalid id']);
+            return new JsonResponse(['success' => false, 'Invalid id'], Response::HTTP_BAD_REQUEST);
         }
 
         if (!$entityManager->getRepository(Track::class)->getArtistData($data['id'])) {
-            return new JsonResponse(['success' => false, 'This album does not found']);
+            return new JsonResponse(['success' => false, 'This album does not found'], Response::HTTP_NOT_FOUND);
         }
 
          return new JsonResponse(['success' => true, 'path' => $entityManager
