@@ -402,7 +402,7 @@ class PlaylistController extends SerializeController
      * @apiError ThisTrackHasAlreadyBeenAddedToThisPlaylist This track has already been added to this playlist
      *
      * @apiErrorExample Error-Response
-     *     HTTP/1.1 Not Found
+     *     HTTP/1.1 400 Bad request
      * {
      *   "success": false,
      *   "body": "This track has already been added to this playlist"
@@ -411,7 +411,7 @@ class PlaylistController extends SerializeController
      * @apiError TrackHasNotBeenAdded Track has not been added
      *
      * @apiErrorExample Error-Response
-     *     HTTP/1.1 Not Found
+     *     HTTP/1.1 400 Bad request
      * {
      *   "success": false,
      *   "body": "Track has not been added"
