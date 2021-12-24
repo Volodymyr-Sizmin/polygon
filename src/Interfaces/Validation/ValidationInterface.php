@@ -74,7 +74,7 @@ interface ValidationInterface
      * @param $field
      * @return array|string
      */
-    public  function cvc($field);
+    public function cvc($field);
 
     /**
      * In param put type of field "Сardholder name and Soname" from Request
