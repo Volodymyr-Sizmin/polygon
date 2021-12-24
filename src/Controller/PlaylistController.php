@@ -430,14 +430,20 @@ class PlaylistController extends SerializeController
             $entityManager->getRepository(PlaylistsTracks::class)
             ->existPlaylistsTracks($data['playlist_id'], $data['track_id'])
         ) {
-            return new JsonResponse([
+            return new JsonResponse(
+                [
                 'success' => false,
                 'body' => 'This track has already been added to this playlist'
-            ]);
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         if (!is_numeric($data['playlist_id']) || !is_numeric($data['track_id'])) {
-            return new JsonResponse(['success' => false, 'body' => 'Track hasn`t been added']);
+            return new JsonResponse(
+                ['success' => false, 'body' => 'Track hasn`t been added'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         $playlistsTracks->setPlaylistId($data['playlist_id']);
