@@ -81,8 +81,9 @@ class File
     public function getUrl(): ?string
     {
         $schema = isset($_SERVER["HTTPS"]) ? 'https' : 'http';
+        $host = (isset($_SERVER['HTTP_HOST'])) ? $_SERVER['HTTP_HOST'] : '';
         $uploads_path = $_ENV['FILE_UPLOAD_PATH'];
-        return "{$schema}://{$_SERVER['HTTP_HOST']}/$uploads_path/{$this->url}";
+        return "{$schema}://{$host}/$uploads_path/{$this->url}";
     }
 
     public function setUrl(string $url): self

@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @IgnoreAnnotation("apiName")
@@ -26,6 +29,13 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AccountController extends AbstractController
 {
+    private ValidatorInterface $validator;
+
+    public function __construct(ValidatorInterface $validator)
+    {
+        $this->validator = $validator;
+    }
+
     /**
      * @api {get} /backend/api/accounts/logged-in-user View
      * @apiName GetApiAccountsView
@@ -215,7 +225,7 @@ class AccountController extends AbstractController
         if ($length > 32) {
             return 'Must be 32 characters or less';
         }
-        $pattern = "/^[a-zа-я0-9!@#$%^&`*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+\.{0,1}[a-zа-я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+$/u";
+        $pattern = "/^[a-zA-Zа-яА-Я0-9!@#$%^&`*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+\.{0,1}[a-zA-Zа-яА-Я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+$/u";
         if (!preg_match($pattern, $password)) {
             return 'Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last';
         }
@@ -223,6 +233,21 @@ class AccountController extends AbstractController
             return 'Password and confirm password don\'t match';
         }
         return null;
+    }
+
+    private function checkCompromisedPassword(string $password): ?string
+    {
+        $constraint = new NotCompromisedPassword();
+        $violations = $this->validator->validate($password, $constraint);
+        if ($violations->count() > 0) {
+            foreach ($violations as $violation) {
+                if ($violation instanceof ConstraintViolation) {
+                    $message = $violation->getMessage();
+                    $message = is_string($message) ? $message : '';
+                }
+            }
+        }
+        return isset($message) ? $message : null;
     }
 
     /**
@@ -285,14 +310,55 @@ class AccountController extends AbstractController
      *           "message": "Invalid password"
      *       }
      *     }
-     * @apiErrorExample {json} invalid new password
+     * @apiErrorExample {json} password less than 8 characters
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
      *       "body": {
-     *           "message": "Must be 3 characters or more"
+     *           "message": "Must be 8 characters or more"
      *       }
      *     }
+     * @apiErrorExample {json} password more than 32 characters
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Must be 32 characters or less"
+     *       }
+     *     }
+     * @apiErrorExample {json} password validation
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last"
+     *       }
+     *     }
+     * @apiErrorExample {json} password and confirm password
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Password and confirm password don't match"
+     *       }
+     *     }
+     * @apiErrorExample {json} passwords can't match
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Old password and new password can't match"
+     *       }
+     *     }
+     * @apiErrorExample {json} unreliable password
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "This password has been leaked in a data breach, it must not be used. Please use another password."
+     *       }
+     *     }
+     * 
      **/
     public function changePassword(User $user, Request $request, UserPasswordHasherInterface $encoder): JsonResponse
     {
@@ -338,6 +404,22 @@ class AccountController extends AbstractController
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
+        if ($data['oldPassword'] === $password) {
+            return new JsonResponse([
+                'success' => false,
+                'body' => ['message' => 'Old password and new password can\'t match']
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $message = $this->checkCompromisedPassword($password);
+
+        if (isset($message)) {
+            return new JsonResponse([
+                'success' => false,
+                'body' => ['message' => $message]
+            ], Response::HTTP_BAD_REQUEST);
+        }
+        
         $user->setPassword($encoder->hashPassword(
             $user,
             $password
