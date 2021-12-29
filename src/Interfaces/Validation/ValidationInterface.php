@@ -17,83 +17,83 @@ interface ValidationInterface
     /**
      * In param put type of field "Small field" from Request
      *
-     * @param $field
-     * @param $rageMin
-     * @param $rageMax
+     * @param string $field
+     * @param $lengthMin
+     * @param int $lengthMax
      * @return bool
      * @throws ValidationServiceException
      */
-    public function smallField($field, $rageMin, $rageMax);
+    public function smallField(string $field, int $lengthMin, int $lengthMax): bool;
 
     /**
      * In param put type of field "Big field" from Request
      *
-     * @param $field
-     * @param $rageMin
-     * @param $rageMax
+     * @param string $field
+     * @param int $lengthMin
+     * @param int $lengthMax
      * @return bool
      * @throws ValidationServiceException
      */
-    public function bigField($field, $rageMin, $rageMax);
+    public function bigField(string $field, int $lengthMin, int $lengthMax): bool;
 
     /**
      * In param put type of field "Password" from Request
      *
-     * @param $field
-     * @param $rageMin
-     * @param $rageMax
+     * @param string $field
+     * @param int $lengthMin
+     * @param int $lengthMax
      * @return bool
      * @throws ValidationServiceException
      */
-    public function password($field, $rageMin, $rageMax);
+    public function password(string $field, int $lengthMin, int $lengthMax): bool;
 
     /**
      * In param put type of field "Email" from Request
      *
-     * @param $field
-     * @param $rageMin
-     * @param $rageMax
+     * @param string $field
+     * @param int $lengthMin
+     * @param int $lengthMax
      * @return bool
      * @throws ValidationServiceException
      */
-    public function email($field, $rageMin, $rageMax);
+    public function email(string $field, int $lengthMin, int $lengthMax): bool;
 
     /**
      * In param put type of field "Card Number" from Request
      *
-     * @param $field
+     * @param string $field
      * @return bool
      * @throws ValidationServiceException
      */
-    public function cardNumber($field);
+    public function cardNumber(string $field): bool;
 
     /**
      * In param put type of field "Expiry Date" from Request
      * This method take param only in this format like "01/22" -  month/year
      *
-     * @param $field
+     * @param string $field
      * @return bool
      * @throws ValidationServiceException
      */
-    public function expiryDate($field);
+    public function expiryDate(string $field): bool;
 
     /**
      * In param put type of field "CVC" from Request
      *
-     * @param $field
+     * @param string $field
      * @return bool
      * @throws ValidationServiceException
      */
-    public function cvc($field);
+    public function cvc(string $field): bool;
 
     /**
      * In param put type of field "Сardholder name and Soname" from Request
      *
-     * @param $field
+     * @param string $field
      * @return bool
      * @throws ValidationServiceException
      */
-    public function cardholderName($field);
+    public function cardholderName(string $field): bool;
 
     /**
      * This method you can use every were you want to check Length.
@@ -107,5 +107,5 @@ interface ValidationInterface
      * @return bool
      * @throws ValidationServiceException
      */
-    public function validationLength($length, $lengthMin, $lengthMax);
+    public function validationLength(int $length, int $lengthMin, int $lengthMax): bool;
 }

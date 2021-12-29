@@ -11,12 +11,12 @@ class ValidationService implements ValidationInterface
 {
     /**
      * @param string $field
-     * @param $lengthMin
-     * @param $lengthMax
+     * @param int $lengthMin
+     * @param int $lengthMax
      * @return bool
      * @throws ValidationServiceException
      **/
-    public function smallField($field, $lengthMin, $lengthMax)
+    public function smallField(string $field, int $lengthMin, int $lengthMax): bool
     {
         $length = mb_strlen($field);
         self::validationLength($length, $lengthMin, $lengthMax);
@@ -32,13 +32,13 @@ class ValidationService implements ValidationInterface
     }
 
     /**
-     * @param $field
-     * @param $lengthMin
-     * @param $lengthMax
+     * @param string $field
+     * @param int $lengthMin
+     * @param int $lengthMax
      * @return bool
      * @throws ValidationServiceException
      **/
-    public function bigField($field, $lengthMin, $lengthMax)
+    public function bigField(string $field, int $lengthMin, int $lengthMax): bool
     {
         $length = mb_strlen($field);
         self::validationLength($length, $lengthMin, $lengthMax);
@@ -54,13 +54,13 @@ class ValidationService implements ValidationInterface
     }
 
     /**
-     * @param $field
-     * @param $lengthMin
-     * @param $lengthMax
+     * @param string $field
+     * @param int $lengthMin
+     * @param int $lengthMax
      * @return bool
      * @throws ValidationServiceException
      **/
-    public function password($field, $lengthMin, $lengthMax)
+    public function password(string $field, int $lengthMin, int $lengthMax): bool
     {
         $length = mb_strlen($field);
         self::validationLength($length, $lengthMin, $lengthMax);
@@ -77,13 +77,13 @@ class ValidationService implements ValidationInterface
     }
 
     /**
-     * @param $field
-     * @param $lengthMin
-     * @param $lengthMax
+     * @param string $field
+     * @param int $lengthMin
+     * @param int $lengthMax
      * @return bool
      * @throws ValidationServiceException
      **/
-    public function email($field, $lengthMin, $lengthMax)
+    public function email(string $field, int $lengthMin, int $lengthMax): bool
     {
         $length = mb_strlen($field);
         if (
@@ -98,11 +98,11 @@ class ValidationService implements ValidationInterface
     }
 
     /**
-     * @param $field
+     * @param string $field
      * @return bool
      * @throws ValidationServiceException
      **/
-    public function cardNumber($field)
+    public function cardNumber(string $field): bool
     {
         if (!preg_match("/^[0-9]{16}$/", $field)) {
             throw new ValidationServiceException("Wrong card number");
@@ -111,11 +111,11 @@ class ValidationService implements ValidationInterface
     }
 
     /**
-     * @param $field
+     * @param string $field
      * @return bool
      * @throws ValidationServiceException
      **/
-    public function expiryDate($field)
+    public function expiryDate(string $field): bool
     {
         $field = str_replace('/', '', $field);
         if (preg_match('/0-9{4}/', $field)) {
@@ -130,11 +130,11 @@ class ValidationService implements ValidationInterface
     }
 
     /**
-     * @param $field
+     * @param string $field
      * @return bool
      * @throws ValidationServiceException
      **/
-    public function cvc($field)
+    public function cvc(string $field): bool
     {
         if (!preg_match("/^[0-9]{3}$/", $field)) {
             throw new ValidationServiceException("Wrong cvc number");
@@ -143,11 +143,11 @@ class ValidationService implements ValidationInterface
     }
 
     /**
-     * @param $field
+     * @param string $field
      * @return bool
      * @throws ValidationServiceException
      **/
-    public function cardholderName($field)
+    public function cardholderName(string $field): bool
     {
         if (!preg_match("/^[ A-Z\.\-]{3,}$/", $field)) {
             throw new ValidationServiceException("Can contain letters, hyphen and dot");
@@ -157,12 +157,12 @@ class ValidationService implements ValidationInterface
 
     /**
      * @param $length
-     * @param $lengthMin
-     * @param $lengthMax
+     * @param int $lengthMin
+     * @param int $lengthMax
      * @return bool
      * @throws ValidationServiceException
      */
-    public function validationLength($length, $lengthMin, $lengthMax)
+    public function validationLength(int $length, int $lengthMin, int $lengthMax): bool
     {
         if ($length < $lengthMin) {
             throw new ValidationServiceException("Must be $lengthMin characters or more");

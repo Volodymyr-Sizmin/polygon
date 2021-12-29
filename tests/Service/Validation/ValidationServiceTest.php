@@ -264,7 +264,7 @@ class ValidationServiceTest extends WebTestCase
     {
         $this->expectException(ValidationServiceException::class);
         $this->expectExceptionMessage("Wrong expiry");
-        $this->validationService->expiryDate(1220);
+        $this->validationService->expiryDate('1220');
     }
 
     public function testExpiryDateNotCorrectSymbols(): void
