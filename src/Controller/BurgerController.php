@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Track;
+use App\Interfaces\MyTracklist\MyTracklistInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use App\Controller\SerializeController;
@@ -20,6 +21,12 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class BurgerController extends SerializeController
 {
+    private MyTracklistInterface $myTracklistInterface;
+
+    public function __construct(MyTracklistInterface $myTracklistInterface)
+    {
+        $this->myTracklistInterface = $myTracklistInterface;
+    }
 
     /**
      * @api {GET} /backend/api/sharesong/{id} Share song
@@ -67,11 +74,11 @@ class BurgerController extends SerializeController
         $entityManager = $this->getDoctrine()->getManager();
 
         if (!is_numeric($id) && $id < 0) {
-            return new JsonResponse(['success' => false, 'Invalid id'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['success' => false, 'body' => 'Invalid id'], Response::HTTP_BAD_REQUEST);
         }
 
         if (!$entityManager->getRepository(Track::class)->getTrackPath($id)) {
-            return new JsonResponse(['success' => false, 'This track does not found'], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(['success' => false, 'body' => 'This track does not found'], Response::HTTP_NOT_FOUND);
         }
 
         return new JsonResponse(['success' => true, 'path' => $entityManager
@@ -144,11 +151,11 @@ class BurgerController extends SerializeController
         $data = json_decode($request->getContent(), true);
 
         if (!is_numeric($data['id']) && $data['id'] < 0) {
-            return new JsonResponse(['success' => false, 'Invalid id'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['success' => false, 'body' => 'Invalid id'], Response::HTTP_BAD_REQUEST);
         }
 
         if (!$entityManager->getRepository(Track::class)->getArtistData($data['id'])) {
-            return new JsonResponse(['success' => false, 'This Artist does not found'], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(['success' => false, 'body' => 'This Artist does not found'], Response::HTTP_NOT_FOUND);
         }
 
          return new JsonResponse(['success' => true, 'information' => $entityManager
@@ -244,9 +251,9 @@ class BurgerController extends SerializeController
      * }
      *
      */
-    public function addNextUp(Track $track): JsonResponse
+    public function addNextUp($id): JsonResponse
     {
-        return JsonResponse::fromJsonString($this->serializeJson($track));
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->showService($id)));;
     }
 
     /**
@@ -312,11 +319,11 @@ class BurgerController extends SerializeController
         $data = json_decode($request->getContent(), true);
 
         if (!is_numeric($data['id']) && $data['id'] < 0) {
-            return new JsonResponse(['success' => false, 'Invalid id'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['success' => false, 'body' => 'Invalid id'], Response::HTTP_BAD_REQUEST);
         }
 
         if (!$entityManager->getRepository(Track::class)->getArtistData($data['id'])) {
-            return new JsonResponse(['success' => false, 'This album does not found'], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(['success' => false, 'body' => 'This album does not found'], Response::HTTP_NOT_FOUND);
         }
 
          return new JsonResponse(['success' => true, 'path' => $entityManager
