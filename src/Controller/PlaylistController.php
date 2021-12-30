@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 class PlaylistController extends SerializeController
 {
 
-    private PlaylistServiceInterface $playlist;
+    private $playlist;
 
     public function __construct(PlaylistServiceInterface $playlistServiceInterface)
     {
