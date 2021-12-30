@@ -103,11 +103,11 @@ class AccountControllerTest extends WebTestCase
     {
         $otherUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'b.astapau@andersenlab.com' ])->getId();
 
-        $this->client->jsonRequest('POST', '/api/accounts/change_pass/' . $otherUser, [
+        $this->client->request('POST', '/api/accounts/change_pass/' . $otherUser, [
             "oldPassword" => "test",
             "newPassword" => "newtest",
             "confirmPassword" => "newtest"
-        ], [
+        ], [], [
             'HTTP_X-AUTH-TOKEN' => $this->token,
         ]);
 
@@ -121,11 +121,11 @@ class AccountControllerTest extends WebTestCase
      */
     private function incorrectPassword(): void
     {
-        $this->client->jsonRequest('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
+        $this->client->request('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
             "oldPassword" => "not test",
             "newPassword" => "newtest",
             "confirmPassword" => "newtest"
-        ], [
+        ], [], [
             'HTTP_X-AUTH-TOKEN' => $this->token,
         ]);
 
@@ -140,11 +140,11 @@ class AccountControllerTest extends WebTestCase
      */
     private function invalidNewPassword(): void
     {
-        $this->client->jsonRequest('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
+        $this->client->request('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
             "oldPassword" => "test",
             "newPassword" => "n1",
             "confirmPassword" => "newtest"
-        ], [
+        ], [], [
             'HTTP_X-AUTH-TOKEN' => $this->token,
         ]);
 
@@ -159,13 +159,13 @@ class AccountControllerTest extends WebTestCase
         $this->incorrectPassword();
         $this->invalidNewPassword();
 
-        $this->client->jsonRequest('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
+        $this->client->request('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
              "oldPassword" => "test",
              "newPassword" => "newtesttest",
              "confirmPassword" => "newtesttest"
-         ], [
+        ], [], [
              'HTTP_X-AUTH-TOKEN' => $this->token,
-         ]);
+        ]);
 
         $response = $this->client->getResponse();
 
