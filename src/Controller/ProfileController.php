@@ -237,7 +237,7 @@ class ProfileController extends AbstractController
      * @apiError {JSON} body Error parameters
      * @apiError {String} body.message Error message
      * @apiErrorExample {json} Access denied
-     *  HTTP/1.1 403
+     *  HTTP/1.1 401
      *     {
      *          "success": false,
      *          "body": {
@@ -302,8 +302,8 @@ class ProfileController extends AbstractController
         if ($length < 7) {
             return 'must be 7 characters or more';
         }
-        if ($length > 13) {
-            return 'must be 13 characters or less';
+        if ($length > 15) {
+            return 'must be 15 characters or less';
         }
         $pattern = "/^\+[0-9]+$/";
         if (!preg_match($pattern, $phone)) {
@@ -354,7 +354,7 @@ class ProfileController extends AbstractController
      *          }
      *      }
      * @apiErrorExample {json} Not allowed to change
-     *  HTTP/1.1 400
+     *  HTTP/1.1 403
      *     {
      *          "success": false,
      *          "body": {

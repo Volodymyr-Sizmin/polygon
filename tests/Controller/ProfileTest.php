@@ -335,7 +335,7 @@ class ProfileTest extends WebTestCase
         $this->assertSame('Phone must be 7 characters or more', $responseData->body->message);
 
         $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
-            "phone" => "+3752944444444"
+            "phone" => "+375294444444444"
         ]);
 
         $response = $this->client->getResponse();
@@ -343,7 +343,7 @@ class ProfileTest extends WebTestCase
 
         $this->assertFalse($responseData->success);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $this->assertSame('Phone must be 13 characters or less', $responseData->body->message);
+        $this->assertSame('Phone must be 15 characters or less', $responseData->body->message);
 
         $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
             "phone" => "375294444444"
