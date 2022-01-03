@@ -317,6 +317,42 @@ class ProfileTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
         $this->assertSame('userName', $responseData->body->name);
         $this->assertSame('Can contain letters, numbers, !@#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last', $responseData->body->message);
+    
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
+            "firstName" => "  "
+        ]);
+
+        $response = $this->client->getResponse();
+        $responseData = json_decode($response->getContent());
+
+        $this->assertFalse($responseData->success);
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertSame('firstName', $responseData->body->name);
+        $this->assertSame('Can\'t consist only of spaces', $responseData->body->message);
+
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
+            "lastName" => "  "
+        ]);
+
+        $response = $this->client->getResponse();
+        $responseData = json_decode($response->getContent());
+
+        $this->assertFalse($responseData->success);
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertSame('lastName', $responseData->body->name);
+        $this->assertSame('Can\'t consist only of spaces', $responseData->body->message);
+
+        $this->client->jsonRequest('PUT', '/api/profile/about/info/' . $this->user->getId(), [
+            "userName" => "  "
+        ]);
+
+        $response = $this->client->getResponse();
+        $responseData = json_decode($response->getContent());
+
+        $this->assertFalse($responseData->success);
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertSame('userName', $responseData->body->name);
+        $this->assertSame('Can\'t consist only of spaces', $responseData->body->message);
     }
 
     public function testUpdateUserInfoFailureValidatePhone(): void
