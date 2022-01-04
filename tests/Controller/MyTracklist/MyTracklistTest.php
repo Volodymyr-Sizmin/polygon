@@ -2,136 +2,174 @@
 
 namespace App\Tests\Controller\MyTracklist;
 
+use App\Tests\Stubs\Service\FileUploaderStub;
+use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Factory\TrackFactory;
-use App\DTO\Transformer\TracklistTransformerDTO;
-use App\DTO\TracklistDTO;
-use Symfony\Component\HttpFoundation\JsonResponse; 
-use App\Controller\SerializeController;
-use App\Controller\MyTracklist\MyTracklistController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Zenstruck\Foundry\Test\Factories;
-use Doctrine\ORM\EntityManager;
-use Symfony\Component\HttpFoundation\Request;
-use App\Service\FileUploader;
-use App\Service\MyTraclist\MyTraclistService;
+use Faker\Factory;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Controller\SerializeController;
 
 class MyTracklistTest extends WebTestCase
 {
     use Factories;
 
-    private $myTracklistServiceMock;
-    private $tracklistTransformerDTOMock;
-    private $tracklistDTOMock;
-    private $jsonResponseMock;
-    private $serializeControllerMock;
-    private $myTrackliscController;
-    private $client;
-    private EntityManager $entityManager;
-    private $requestMock;
-    private $fileUploaderMock;
-    private $uploadedFileMock;
+    private $faker;
+    protected $client;
+    private $fileUploaderStub;
+    private $track;
+    private $serializeController;
 
-    public function setUp():void
+
+    public function setUp(): void
     {
-        $this->client = static::createClient();
-
-        $this->fileUploader = $this->createMock(FileUploader::class);
-        $this->tracklistDTOMock = $this->createMock(TracklistDTO::class);
-        $this->requestMock = $this->createMock(Request::class);
-        $this->myTracklistServiceMock = $this->createMock(MyTraclistService::class);
-        $this->tracklistTransformerDTOMock = $this->createMock(TracklistTransformerDTO::class);
-        $this->jsonResponseMock = $this->createMock(JsonResponse::class);
-        $this->serializeControllerMock = $this->createMock(SerializeController::class);
-        $this->myTrackliscController = new MyTracklistController($this->myTracklistServiceMock, $this->tracklistTransformerDTOMock);
-
-        TrackFactory::createMany(10);
+        $this->serializeController = new SerializeController();
+        $this->client = self::createClient();
+        $fileUploaderStub = new FileUploaderStub();
+        $this->fileUploaderStub = self::$container->set(FileUploader::class, $fileUploaderStub);
+        $this->faker = Factory::create();
+        $this->track = TrackFactory::createMany(10);
     }
+
 
     public function testIndex(): void
     {
-        
         $this->client->request('GET', '/api/mytracklist');
-
-        $response = $this->client->getResponse();
-        $this->assertSame(200, $response->getStatusCode());
-
-        $this->myTracklistServiceMock->expects($this->any())->method('indexService');
-        $this->serializeControllerMock->expects($this->any())->method('serializeJson');
-        $this->jsonResponseMock->expects($this->any())->method('fromJsonString');
-        $this->myTrackliscController->index();
+        $this->assertInstanceOf(JsonResponse::class, $this->client->getResponse());
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
     }
 
     public function testCrete(): void
     {
         $this->client->request('GET', '/api/mytracklist/create');
-
-        $response = $this->client->getResponse();
-        $this->assertSame(200, $response->getStatusCode());
-        $this->myTracklistServiceMock->expects($this->any())->method('indexService');
-        $this->serializeControllerMock->expects($this->any())->method('serializeJson');
-        $this->jsonResponseMock->expects($this->any())->method('fromJsonString');
-        $this->myTrackliscController->create();
+        $this->assertInstanceOf(JsonResponse::class, $this->client->getResponse());
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
     }
 
-    /**
-     * @TODO fix this test
-     */
-    // public function testStore(): void
-    // {
-    //     $tracklistDTO = new TracklistDTO();
-    //     $tracklistDTO->title = 'testTitle';
-    //     $tracklistDTO->author = 'testAuthor';
-    //     $tracklistDTO->type = 'testType';
-    //     $tracklistDTO->genre = 'test';
-
-    //     $this->expectException(NotNullConstraintViolationException::class);
-
-    //     $this->fileUploader
-    //         ->expects($this->once())
-    //         ->method('upload')
-    //     ;
-
-    //     $this->tracklistTransformerDTOMock
-    //         ->expects($this->once())
-    //         ->method('transformerDTO')
-    //         ->willReturn($tracklistDTO)
-    //     ;
-
-    //     $this->myTracklistServiceMock
-    //         ->expects($this->once())
-    //         ->method('storeService')
-    //         ->with($tracklistDTO)
-    //     ;
-
-    //     $this->serializeControllerMock
-    //         ->expects($this->once())
-    //         ->method('serializeJson')
-    //         ->with($this->myTracklistServiceMock)
-    //     ;
-
-    //     $this->jsonResponseMock->expects($this->any())
-    //         ->method('fromJsonString')
-    //         ->with($this->serializeControllerMock)
-    //     ;
-
-    //     $this->myTrackliscController->store($this->requestMock);
-
-    //     $this->client->request('POST', '/api/mytracklist');
-
-    //     $response = $this->client->getResponse();
-    //     $this->assertSame(200, $response->getStatusCode());
-    // }
-
-    public function testShow():void
+    public function testStoreSuccess(): void
     {
-        $this->client->request('DELETE', '/api/mytracklist/1');
+        $photo = new UploadedFile(
+            $this->faker->image('/tmp', 100, 100),
+            "image_name" . '.png',
+            'image/png',
+            null,
+            true
+        );
+        $this->client->request(
+            'POST',
+            '/api/mytracklist',
+            [
+            'author' => 'author',
+            'title' => 'title',
+            'album' => 'album',
+            'type' => 'Music',
+            'genre' => 'genre'],
+            [
+            'cover' => $photo,
+            'trackPath' => $photo
+            ]
+        );
+        $this->assertInstanceOf(JsonResponse::class, $this->client->getResponse());
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(201);
+    }
 
-        $response = $this->client->getResponse();
-        $this->assertSame(200, $response->getStatusCode());
+    public function testStoreExpectMessageNotCorrectSymbols(): void
+    {
+        $photo = new UploadedFile(
+            $this->faker->image('/tmp', 100, 100),
+            "image_name" . '.png',
+            'image/png',
+            null,
+            true
+        );
+        $this->client->request(
+            'POST',
+            '/api/mytracklist',
+            [
+                'author' => 'author',
+                'title' => '.s.',
+                'album' => 'album',
+                'type' => 'Music',
+                'genre' => 'genre'],
+            [
+                'cover' => $photo,
+                'trackPath' => $photo
+            ]
+        );
+        $this->assertInstanceOf(JsonResponse::class, $this->client->getResponse());
+        $this->assertResponseStatusCodeSame(400);
+    }
 
-        $this->myTracklistServiceMock->expects($this->any())->method('indexService');
-        $this->serializeControllerMock->expects($this->any())->method('serializeJson');
-        $this->jsonResponseMock->expects($this->any())->method('fromJsonString');
-        $this->myTrackliscController->delete(1);
+    public function testShowSuccess(): void
+    {
+        $this->client->request('GET', '/api/mytracklist/2');
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertInstanceOf(JsonResponse::class, $this->client->getResponse());
+    }
+
+    public function testShowNotFoundTrack(): void
+    {
+        $this->client->request('GET', '/api/mytracklist/11');
+        $this->assertResponseStatusCodeSame(404);
+        $this->assertInstanceOf(JsonResponse::class, $this->client->getResponse());
+        $this->assertSame('{"success":false,"body":"Can not find track"}', $this->client->getResponse()->getContent());
+    }
+
+    public function testEditSuccess(): void
+    {
+        $this->client->request('GET', '/api/mytracklist/2/edit');
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
+        $this->assertInstanceOf(JsonResponse::class, $this->client->getResponse());
+    }
+
+    public function testEditNotFoundTrack(): void
+    {
+        $this->client->request('GET', '/api/mytracklist/11/edit');
+        $this->assertResponseStatusCodeSame(404);
+        $this->assertInstanceOf(JsonResponse::class, $this->client->getResponse());
+        $this->assertSame('{"success":false,"body":"Can not find track"}', $this->client->getResponse()->getContent());
+    }
+
+    public function testUpdateSuccess(): void
+    {
+        $photo = new UploadedFile(
+            $this->faker->image('/tmp', 100, 100),
+            "image_name" . '.png',
+            'image/png',
+            null,
+            true
+        );
+        $this->client->request(
+            'POST',
+            '/api/mytracklist',
+            [
+                'author' => 'author',
+                'title' => 'title',
+                'album' => 'album',
+                'type' => 'Music',
+                'genre' => 'genre'],
+            [
+                'cover' => $photo,
+                'trackPath' => $photo
+            ]
+        );
+        $this->assertInstanceOf(JsonResponse::class, $this->client->getResponse());
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(201);
+    }
+
+    public function testDelete(): void
+    {
+        $this->client->request('DELETE', '/api/mytracklist/2');
+        $this->assertInstanceOf(JsonResponse::class, $this->client->getResponse());
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
     }
 }

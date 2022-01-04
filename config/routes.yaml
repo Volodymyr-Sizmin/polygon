@@ -26,7 +26,7 @@ delete_playlist:
 
 add_track:
   path: /api/playlists/addtrack
-  controller: App\Controller\PlaylistController:addTrack
+  controller: App\Controller\PlaylistController::addTrack
   methods: POST
 
 file_upload:
@@ -165,7 +165,37 @@ delete_profile_photo:
   path: /api/profile/about/photo
   controller: App\Controller\ProfileController::deleteProfilePhoto
   methods: DELETE
+show_user_info:
+  path: /api/profile/about/info
+  controller: App\Controller\ProfileController::showUserInfo
+  methods: GET
+update_user_info:
+  path: /api/profile/about/info/{id}
+  controller: App\Controller\ProfileController::updateUserInfo
+  methods: PUT
 ### END PROFILE ENDPOINTS ###
+
+### BURGER ENDPOINTS ###
+add_to_nextup:
+  path: api/burger/addnextup/{id}
+  controller: App\Controller\BurgerController::addNextUp
+  methods: GET
+
+share_song:
+  path: api/burger/sharesong/{id}
+  controller: App\Controller\BurgerController::shareSong
+  methods: GET
+
+go_to_artist:
+  path: api/burger/gotoartist
+  controller: App\Controller\BurgerController::getArtist
+  methods: POST
+
+go_to_album:
+  path: api/burger/gotoalbum
+  controller: App\Controller\BurgerController::getAlbum
+  methods: POST
+### END BURGER ENDPOINTS ###
 
 ### TEST ENDPOINTS ###
 ping:

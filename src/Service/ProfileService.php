@@ -14,9 +14,9 @@ use Symfony\Component\HttpFoundation\Response;
 class ProfileService
 {
     private const PROFILE_PHOTO = [
-        'size' => 39936,
+        'size' => 5242880,
         'height' => 100,
-        'width' => 100,
+        'width' => 100
     ];
 
     private $em;
@@ -36,16 +36,16 @@ class ProfileService
     public function validateProfilePhoto(UploadedFile $photo)
     {
         if (empty($photo)) {
-            return ['error'=>'No file provided.'];
+            return ['error' => 'No file provided.'];
         }
 
         if ($photo->getSize() > self::PROFILE_PHOTO['size']) {
-            return ['error' => 'Image size must be 39kb or less.'];
+            return ['error' => 'Image size must be not bigger than 5mb.'];
         }
 
         $profilePhotoSize = getimagesize($photo->getPathname());
-        if ($profilePhotoSize[1] > self::PROFILE_PHOTO['height'] || $profilePhotoSize[0] > self::PROFILE_PHOTO['width']) {
-            return ['error' => 'Image resolution must be 100x100.'];
+        if ($profilePhotoSize[1] < self::PROFILE_PHOTO['height'] || $profilePhotoSize[0] < self::PROFILE_PHOTO['width']) {
+            return ['error' => 'Image resolution must be not less than 100x100.'];
         }
 
         return true;
@@ -65,7 +65,7 @@ class ProfileService
             return ['error' => 'An error occurred during upload.'];
         }
 
-        $user->setProfilePhoto($file->getId());
+        $user->setProfilePhoto($file);
         $file->setUser($user);
 
         $this->em->persist($file);
@@ -103,7 +103,7 @@ class ProfileService
         $profilePhoto = $this->em->getRepository(File::class)->find($user->getProfilePhoto());
 
         if (!$profilePhoto) {
-            return ['error'=>'No profile photo set.'];
+            return ['error' => 'No profile photo set.'];
         }
 
         $this->em->remove($profilePhoto);
