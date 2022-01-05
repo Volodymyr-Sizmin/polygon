@@ -237,7 +237,7 @@ class ProfileController extends AbstractController
      * @apiError {JSON} body Error parameters
      * @apiError {String} body.message Error message
      * @apiErrorExample {json} Access denied
-     *  HTTP/1.1 403
+     *  HTTP/1.1 401
      *     {
      *          "success": false,
      *          "body": {
@@ -293,6 +293,9 @@ class ProfileController extends AbstractController
         if (!preg_match($pattern, $name)) {
             return 'Can contain letters, numbers, !@#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last';
         }
+        if (empty(trim($name))) {
+            return 'Can\'t consist only of spaces';
+        }
         return null;
     }
 
@@ -302,8 +305,8 @@ class ProfileController extends AbstractController
         if ($length < 7) {
             return 'must be 7 characters or more';
         }
-        if ($length > 13) {
-            return 'must be 13 characters or less';
+        if ($length > 15) {
+            return 'must be 15 characters or less';
         }
         $pattern = "/^\+[0-9]+$/";
         if (!preg_match($pattern, $phone)) {
@@ -316,6 +319,12 @@ class ProfileController extends AbstractController
      * @api {put} /backend/api/profile/about/info:id Update user info
      * @apiName PutApiProfileAboutInfo
      * @apiGroup Profile
+     * 
+     * @apiHeader {String} X-AUTH-TOKEN API-Token.
+     * @apiHeaderExample {json} Header-Example:
+     *     {
+     *       "X-AUTH-TOKEN": "152133606dc58da26d4d775ae93624c844b6826bdaa9fefa4f05f009500b2f7f5686633434cc6d03de533d06568fc363311579f6e9ef6f18a70277c1"
+     *     }
      *
      * @apiParam {Number} id Id of the user that we change (part of url)
      * @apiBody {String} [firstName]      Optional firstName of the User
@@ -354,7 +363,7 @@ class ProfileController extends AbstractController
      *          }
      *      }
      * @apiErrorExample {json} Not allowed to change
-     *  HTTP/1.1 400
+     *  HTTP/1.1 403
      *     {
      *          "success": false,
      *          "body": {
@@ -394,6 +403,15 @@ class ProfileController extends AbstractController
      *          "body": {
      *              "name": "name",
      *              "message": "Can contain letters, numbers, !@#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,' symbols, and one dot not first or last"
+     *          }
+     *      }
+     * @apiErrorExample {json} Only spaces
+     *  HTTP/1.1 400
+     *      {
+     *          "success": false,
+     *          "body": {
+     *              "name": "name",
+     *              "message": "Can't consist only of spaces"
      *          }
      *      }
      * @apiErrorExample {json} Phone validation less than 7 characters
