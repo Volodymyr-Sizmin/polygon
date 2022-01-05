@@ -410,6 +410,50 @@ class PlaylistController extends SerializeController
         ]);
     }
 
+    /**
+     * @api {POST} /api/backend/playlists/addtrack Add track
+     * @apiName AddTrack
+     * @apiGroup Playlists
+     *
+     * @apiParam {number} playlist_id Playlist id
+     * @apiParam {number} track_id Track id
+     *
+     *  @apiParamExample {json} Request-Example:
+     *     {
+     *       "playlist_id": 1,
+     *       "track_id": 1
+     *     }
+     *
+     * @apiSuccess (200) {Boolean} success Should be true
+     * @apiSuccess (200) {JSON} body Response body
+     *
+     * @apiSuccessExample {json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *
+     *     {
+     *       "success": true,
+     *       "body": "Track successfully added"
+     *     }
+     *
+     * @apiError ThisTrackHasAlreadyBeenAddedToThisPlaylist This track has already been added to this playlist
+     *
+     * @apiErrorExample Error-Response
+     *     HTTP/1.1 400 Bad request
+     * {
+     *   "success": false,
+     *   "body": "This track has already been added to this playlist"
+     * }
+     *
+     * @apiError TrackHasNotBeenAdded Track has not been added
+     *
+     * @apiErrorExample Error-Response
+     *     HTTP/1.1 400 Bad request
+     * {
+     *   "success": false,
+     *   "body": "Track has not been added"
+     * }
+     *
+     */
     public function addTrack(Request $request): JsonResponse
     {
         $playlistsTracks = new PlaylistsTracks();
@@ -420,14 +464,20 @@ class PlaylistController extends SerializeController
             $this->entityManager->getRepository(PlaylistsTracks::class)
             ->existPlaylistsTracks($data['playlist_id'], $data['track_id'])
         ) {
-            return new JsonResponse([
+            return new JsonResponse(
+                [
                 'success' => false,
-                'body' => 'This track has already been added to this playlist',
-            ]);
+                'body' => 'This track has already been added to this playlist'
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         if (!is_numeric($data['playlist_id']) || !is_numeric($data['track_id'])) {
-            return new JsonResponse(['success' => false, 'body' => 'Track hasn`t been added']);
+            return new JsonResponse(
+                ['success' => false, 'body' => 'Track hasn`t been added'],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         $playlistsTracks->setPlaylistId($data['playlist_id']);

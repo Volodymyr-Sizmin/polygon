@@ -20,6 +20,12 @@ class Playlist
     private $id;
 
     /**
+     *
+     * @ORM\ManyToMany(targetEntity="App\Entity\Track", inversedBy="playlists")
+     * @ORM\JoinTable(name="playlists_tracks")
+     */
+
+    /**
      * @ORM\Column(type="string", length=255)
      * @Assert\Sequentially({
      * @Assert\Length(

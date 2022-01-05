@@ -120,7 +120,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=File::class, mappedBy="user")
-     * @ORM\Column(type="bigint", name="profilePhoto", options={"default" : 0})
+     * @ORM\Column(type="bigint", name="profilePhoto", options={"default" : null}, nullable=true)
      */
     private $profilePhoto;
 
@@ -139,6 +139,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="json")
      */
     private $playlists;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=City::class, inversedBy="users")
+     */
+    private $city;
 
     public function __construct()
     {
@@ -184,7 +189,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->profilePhoto;
     }
 
-    public function setProfilePhoto(int $profilePhoto): self
+    public function setProfilePhoto(?File $profilePhoto): self
     {
         $this->profilePhoto = $profilePhoto;
 
@@ -339,10 +344,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private function removeSpaces(string $str): string
     {
-        preg_replace('/\s\s+/', ' ', $str);
-        preg_replace('/^ /', '', $str);
-        preg_replace('/ $/', '', $str);
-        return $str;
+        $str = preg_replace('/\s\s+/', ' ', $str);
+        $str = preg_replace('/^ /', '', $str);
+        return preg_replace('/ $/', '', $str);
     }
 
     public function getFirstName(): ?string
@@ -425,6 +429,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsDeleted(bool $isDeleted): self
     {
         $this->isDeleted = $isDeleted;
+
+        return $this;
+    }
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): self
+    {
+        $this->city = $city;
 
         return $this;
     }
