@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class BurgerController extends SerializeController
 {
-    private $myTracklistInterface;
+    private MyTracklistInterface $myTracklistInterface;
 
     public function __construct(MyTracklistInterface $myTracklistInterface)
     {
