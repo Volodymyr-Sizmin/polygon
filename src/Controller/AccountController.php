@@ -225,9 +225,9 @@ class AccountController extends AbstractController
         if ($length > 32) {
             return 'Must be 32 characters or less';
         }
-        $pattern = "/^[a-zA-Zа-яА-Я0-9!@#$%^&`*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+\.{0,1}[a-zA-Zа-яА-Я0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+$/u";
+        $pattern = "/^[a-zA-Zа-яА-Я0-9!@#$%^&`‘—»*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+\.{0,1}[a-zA-Zа-яА-Я0-9!@#$%^&`‘—»*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+$/u";
         if (!preg_match($pattern, $password)) {
-            return 'Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last';
+            return 'Can contain letters, numbers, !@#$%&‘*+—/\=?^_`{|}~!»№;%:?()[]<>,\' symbols, and one dot not first or last';
         }
         if ($password !== $confirm) {
             return 'Password and confirm password don\'t match';
@@ -331,7 +331,7 @@ class AccountController extends AbstractController
      *     {
      *       "success": "false",
      *       "body": {
-     *           "message": "Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last"
+     *           "message": "Can contain letters, numbers, !@#$%&‘*+—/\=?^_`{|}~!»№;%:?()[]<>,' symbols, and one dot not first or last"
      *       }
      *     }
      * @apiErrorExample {json} password and confirm password
@@ -373,10 +373,14 @@ class AccountController extends AbstractController
             ];
             return new JsonResponse($response, Response::HTTP_FORBIDDEN);
         }
+        
+        $data = [
+            'oldPassword' => $request->get('oldPassword'),
+            'newPassword' => $request->get('newPassword'),
+            'confirmPassword' => $request->get('confirmPassword')
+        ];
 
-        $data = json_decode($request->getContent(), true);
-
-        if (!$data) {
+        if ($data['oldPassword'] === '' || $data['newPassword'] === '' || $data['confirmPassword'] === '') {
             $response = [
                 'success' => false,
                 'body' => ['message' => 'Empty input']
