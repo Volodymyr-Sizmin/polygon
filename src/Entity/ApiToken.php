@@ -79,9 +79,9 @@ class ApiToken
     {
         if ($this->remember) {
             $this->expiresAt = true;
-        } else {
-            $this->expiresAt = new \DateTime('+1 hour');
         }
+
+        $this->expiresAt = new \DateTime('+1 hour');
     }
 
     public function checkExpired()
