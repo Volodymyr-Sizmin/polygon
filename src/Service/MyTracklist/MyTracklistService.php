@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Service\MyTracklist;
 
 use App\Interfaces\MyTracklist\MyTracklistInterface;
@@ -110,26 +111,26 @@ class MyTracklistService implements MyTracklistInterface
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return object
      * @throws MyTracklistException
      */
-    public function showService($id): object
+    public function showService(int $id): object
     {
-        if ($this->trackRepository->find($id) == null) {
+        if ($this->trackRepository->find($id) === null) {
             throw new MyTracklistException('Can not find track');
         }
         return $this->trackRepository->find($id);
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return object
      * @throws MyTracklistException
      */
-    public function editService($id): object
+    public function editService(int $id): object
     {
-        if ($this->trackRepository->find($id) == null) {
+        if ($this->trackRepository->find($id) === null) {
             throw new MyTracklistException('Can not find track');
         }
         return $this->trackRepository->find($id);
@@ -174,17 +175,17 @@ class MyTracklistService implements MyTracklistInterface
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return array
      * @throws MyTracklistException
      */
-    public function deleteService($id): array
+    public function deleteService(int $id): array
     {
-        if ($this->trackRepository->find($id) == null) {
+        if ($this->trackRepository->find($id) === null) {
             throw new MyTracklistException('Can not find track');
         }
 
-        if ($this->trackRepository->find($id)->getCover() != null) {
+        if ($this->trackRepository->find($id)->getCover() !== null) {
             $this->fileSystem->remove('../public/uploads/' . $this->trackRepository->find($id)->getCover());
         }
         $this->fileSystem->remove('../public/uploads/' . $this->trackRepository->find($id)->getTrackPath());

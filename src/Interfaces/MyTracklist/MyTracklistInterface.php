@@ -26,16 +26,16 @@ interface MyTracklistInterface
     public function storeService(TracklistDTO $tracklistDTO): Track;
 
     /**
-     * @param $id
+     * @param int $id
      * @return object
      */
-    public function showService($id): object;
+    public function showService(int $id): object;
 
     /**
-     * @param $id
+     * @param int $id
      * @return object
      */
-    public function editService($id): object;
+    public function editService(int $id): object;
 
     /**
      * @param TracklistDTO $tracklistDTO
@@ -45,8 +45,8 @@ interface MyTracklistInterface
     public function updateService(TracklistDTO $tracklistDTO, Track $track): Track;
 
     /**
-     * @param $id
+     * @param int $id
      * @return array
      */
-    public function deleteService($id): array;
+    public function deleteService(int $id): array;
 }
