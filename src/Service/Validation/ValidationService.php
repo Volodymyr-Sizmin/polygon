@@ -25,8 +25,8 @@ class ValidationService implements ValidationInterface
             !preg_match("/^[ a-zA-Zа-яёА-ЯЁ0-9!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№~\.]+$/u", $field)
         ) {
             throw new ValidationServiceException('Can contain letters, numbers,
-             !@#$%^&*()_-=+;:\'\"?,<>[]{}\|/№!~\' symbols, 
-             and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
+!@#$%^&*()_-=+;:\'\"?,<>[]{}\|/№!~\' symbols, 
+and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
         }
         return true;
     }
@@ -47,8 +47,8 @@ class ValidationService implements ValidationInterface
             !preg_match("/^[ a-zA-Zа-яёА-ЯЁ0-9!#$%&‘*+\—\\\|\/=?\-^_`\x27{\}~!»№;%:()[\]<>,\.]+$/u", $field)
         ) {
             throw new ValidationServiceException('Can contain letters, numbers, 
-            !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, 
-            and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
+!#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, 
+and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
         }
         return true;
     }
@@ -71,7 +71,7 @@ class ValidationService implements ValidationInterface
             `'{\}~!»№;%:()[\]<>,]+$|^[a-zA-Zа-яёА-ЯЁ0-9!#$%&*+\—\\\|\/=?\-^_`'{\}~!»№;%:()[\]<>,]+$)/u", $field)
         ) {
             throw new ValidationServiceException('Can contain letters, numbers, 
-            !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last');
+!#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last');
         }
         return true;
     }

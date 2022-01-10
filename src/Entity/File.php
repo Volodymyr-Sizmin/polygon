@@ -93,6 +93,11 @@ class File
         return $this;
     }
 
+    public function getPath(): string
+    {
+        return $this->url;
+    }
+
     public function getCreatedAt(): ?\DateTime
     {
         return $this->created_at;

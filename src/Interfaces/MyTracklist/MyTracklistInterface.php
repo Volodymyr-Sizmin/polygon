@@ -7,17 +7,46 @@ use App\Entity\Track;
 
 interface MyTracklistInterface
 {
-    public function indexService();
+    /**
+     * @return array
+     */
+    public function indexService(): array;
 
+    /**
+     * @return array
+     */
     public function createService(): array;
 
-    public function storeService(TracklistDTO $tracklistDTO);
+    /**
+     * the method in the service is a stub before creating the admin panel and the corresponding tables
+     * when everything is ready, you can change this method
+     * @param TracklistDTO $tracklistDTO
+     * @return Track
+     */
+    public function storeService(TracklistDTO $tracklistDTO): Track;
 
-    public function showService($id);
+    /**
+     * @param int $id
+     * @return object
+     */
+    public function showService(int $id): object;
 
-    public function editService($id);
+    /**
+     * @param int $id
+     * @return object
+     */
+    public function editService(int $id): object;
 
-    public function updateService(TracklistDTO $tracklistDTO, Track $track);
+    /**
+     * @param TracklistDTO $tracklistDTO
+     * @param Track $track
+     * @return Track
+     */
+    public function updateService(TracklistDTO $tracklistDTO, Track $track): Track;
 
-    public function deleteService($id);
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function deleteService(int $id): array;
 }

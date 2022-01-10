@@ -35,8 +35,8 @@ class ValidationServiceTest extends WebTestCase
     {
         $this->expectException(ValidationServiceException::class);
         $this->expectExceptionMessage('Can contain letters, numbers,
-             !@#$%^&*()_-=+;:\'\"?,<>[]{}\|/№!~\' symbols, 
-             and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
+!@#$%^&*()_-=+;:\'\"?,<>[]{}\|/№!~\' symbols, 
+and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
         $this->validationService->smallField('.s.', 2, 60);
     }
 
@@ -44,8 +44,8 @@ class ValidationServiceTest extends WebTestCase
     {
         $this->expectException(ValidationServiceException::class);
         $this->expectExceptionMessage('Can contain letters, numbers,
-             !@#$%^&*()_-=+;:\'\"?,<>[]{}\|/№!~\' symbols, 
-             and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
+!@#$%^&*()_-=+;:\'\"?,<>[]{}\|/№!~\' symbols, 
+and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
         $this->validationService->smallField('s..s', 2, 60);
     }
 
@@ -53,8 +53,8 @@ class ValidationServiceTest extends WebTestCase
     {
         $this->expectException(ValidationServiceException::class);
         $this->expectExceptionMessage('Can contain letters, numbers,
-             !@#$%^&*()_-=+;:\'\"?,<>[]{}\|/№!~\' symbols, 
-             and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
+!@#$%^&*()_-=+;:\'\"?,<>[]{}\|/№!~\' symbols, 
+and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
         $this->validationService->smallField('s  s', 2, 60);
     }
 
@@ -62,14 +62,21 @@ class ValidationServiceTest extends WebTestCase
     {
         $this->expectException(ValidationServiceException::class);
         $this->expectExceptionMessage('Can contain letters, numbers,
-             !@#$%^&*()_-=+;:\'\"?,<>[]{}\|/№!~\' symbols, 
-             and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
+!@#$%^&*()_-=+;:\'\"?,<>[]{}\|/№!~\' symbols, 
+and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
         $this->validationService->smallField(' ⅚ ⅜ ⅝ ⅞', 2, 60);
     }
 
     public function testSmallFieldReturnTrue(): void
     {
-        self::assertSame( true, $this->validationService->smallField('Field2021ЯяЁё !@#$%^&*()_-=+;:\'\"?,<>[]{}\|/№!~\'', 2, 60));
+        self::assertSame(
+            true,
+            $this->validationService->smallField(
+                'Field2021ЯяЁё !@#$%^&*()_-=+;:\'\"?,<>[]{}\|/№!~\'',
+                2,
+                60
+            )
+        );
     }
 
     public function testBigFieldExpectMessageMustBe2charactersOrMore(): void
@@ -93,8 +100,8 @@ class ValidationServiceTest extends WebTestCase
     {
         $this->expectException(ValidationServiceException::class);
         $this->expectExceptionMessage('Can contain letters, numbers, 
-            !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, 
-            and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
+!#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, 
+and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
         $this->validationService->bigField('.w.', 2, 255);
     }
 
@@ -102,8 +109,8 @@ class ValidationServiceTest extends WebTestCase
     {
         $this->expectException(ValidationServiceException::class);
         $this->expectExceptionMessage('Can contain letters, numbers, 
-            !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, 
-            and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
+!#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, 
+and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
         $this->validationService->bigField('s..s', 2, 255);
     }
 
@@ -111,8 +118,8 @@ class ValidationServiceTest extends WebTestCase
     {
         $this->expectException(ValidationServiceException::class);
         $this->expectExceptionMessage('Can contain letters, numbers, 
-            !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, 
-            and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
+!#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, 
+and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
         $this->validationService->bigField('s  s', 2, 255);
     }
 
@@ -120,14 +127,21 @@ class ValidationServiceTest extends WebTestCase
     {
         $this->expectException(ValidationServiceException::class);
         $this->expectExceptionMessage('Can contain letters, numbers, 
-            !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, 
-            and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
+!#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, 
+and dot can\'t use like the first and last symbol and also can\'t be repeated consecutively');
         $this->validationService->bigField('⅚ ⅜ ⅝ ⅞', 2, 255);
     }
 
     public function testBigField(): void
     {
-        self::assertSame( true, $this->validationService->bigField('Can contain AaФфёЁ, 0123456789, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last', 2, 255));
+        self::assertSame(
+            true,
+            $this->validationService->bigField(
+                'Can contain AaФфёЁ, 0123456789, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last',
+                2,
+                255
+            )
+        );
     }
 
     public function testPasswordExpectMessageMustBe8charactersOrMore(): void
@@ -148,7 +162,7 @@ class ValidationServiceTest extends WebTestCase
     {
         $this->expectException(ValidationServiceException::class);
         $this->expectExceptionMessage('Can contain letters, numbers, 
-            !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last');
+!#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last');
         $this->validationService->password('.ss.ss.ss.', 8, 32);
     }
 
@@ -156,7 +170,7 @@ class ValidationServiceTest extends WebTestCase
     {
         $this->expectException(ValidationServiceException::class);
         $this->expectExceptionMessage('Can contain letters, numbers, 
-            !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last');
+!#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last');
         $this->validationService->password('ss..ss..ss', 8, 32);
     }
 
@@ -164,7 +178,7 @@ class ValidationServiceTest extends WebTestCase
     {
         $this->expectException(ValidationServiceException::class);
         $this->expectExceptionMessage('Can contain letters, numbers, 
-            !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last');
+!#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last');
         $this->validationService->password('阿阿阿阿阿阿阿阿', 8, 32);
     }
 

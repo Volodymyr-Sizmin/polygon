@@ -5,28 +5,39 @@ namespace App\Service\MyTracklist;
 use App\Interfaces\MyTracklist\MyTracklistInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Track;
-use App\Service\FileUploader;
-use Symfony\Component\Filesystem\Filesystem;
 use App\Interfaces\FileUploaderInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use App\Exception\MyTracklistException;
 
 class MyTracklistService implements MyTracklistInterface
 {
     private $entityManager;
     private $trackRepository;
     private $fileUploader;
+    private $fileSystem;
 
-    public function __construct(EntityManagerInterface $entityManagerInterface, FileUploaderInterface $fileUploader)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManagerInterface,
+        FileUploaderInterface $fileUploader,
+        Filesystem $fileSystem
+    ) {
+        $this->fileSystem = $fileSystem;
         $this->fileUploader = $fileUploader;
         $this->entityManager = $entityManagerInterface;
         $this->trackRepository = $this->entityManager->getRepository(Track::class);
     }
 
-    public function indexService()
+    /**
+     * @return array
+     */
+    public function indexService(): array
     {
         return $this->trackRepository->findAll();
     }
 
+    /**
+     * @return array|mixed
+     */
     public function createService(): array
     {
         return array([
@@ -56,7 +67,12 @@ class MyTracklistService implements MyTracklistInterface
         ]);
     }
 
-    public function storeService($tracklistDTO)
+    /**
+     * @param \App\DTO\TracklistDTO $tracklistDTO
+     * @return Track
+     * @throws \App\Exception\FileUploadException
+     */
+    public function storeService($tracklistDTO): Track
     {
         $track = new Track();
 
@@ -65,13 +81,13 @@ class MyTracklistService implements MyTracklistInterface
         }
 
         if ($tracklistDTO->cover !== null) {
-            $track->setCover($this->fileUploader->upload($tracklistDTO->cover)->getUrl());
+            $track->setCover($this->fileUploader->upload($tracklistDTO->cover)->getPath());
         }
 
         if ($tracklistDTO->track_path !== null) {
-            $track->setTrackPath($this->fileUploader->upload($tracklistDTO->track_path)->getUrl());
+            $track->setTrackPath($this->fileUploader->upload($tracklistDTO->track_path)->getPath());
         }
-
+ 
         if ($tracklistDTO->title !== null) {
             $track->setTitle($tracklistDTO->title);
         }
@@ -94,35 +110,43 @@ class MyTracklistService implements MyTracklistInterface
         return $track;
     }
 
-    public function showService($id)
+    /**
+     * @param int $id
+     * @return object
+     * @throws MyTracklistException
+     */
+    public function showService(int $id): object
     {
-        if ($this->trackRepository->find($id) == null) {
-            return array([
-                'success' => false,
-                'body'    => 'Can not find track'
-            ]);
+        if ($this->trackRepository->find($id) === null) {
+            throw new MyTracklistException('Can not find track');
         }
         return $this->trackRepository->find($id);
     }
 
-    public function editService($id)
+    /**
+     * @param int $id
+     * @return object
+     * @throws MyTracklistException
+     */
+    public function editService(int $id): object
     {
-        if ($this->trackRepository->find($id) == null) {
-            return array([
-                'success' => false,
-                'body'    => 'Track not found'
-            ]);
+        if ($this->trackRepository->find($id) === null) {
+            throw new MyTracklistException('Can not find track');
         }
         return $this->trackRepository->find($id);
     }
 
-    public function updateService($tracklistDTO, $track)
+    /**
+     * @param \App\DTO\TracklistDTO $tracklistDTO
+     * @param Track $track
+     * @return Track
+     * @throws \App\Exception\FileUploadException
+     */
+    public function updateService($tracklistDTO, $track): Track
     {
-        $fileSystem = new Filesystem();
-
         if ($tracklistDTO->cover !== null) {
-            $fileSystem->remove('../public/uploads/' . $track->getCover());
-            $track->setCover($this->fileUploader->upload($tracklistDTO->cover)->getUrl());
+            $this->fileSystem->remove('../public/uploads/' . $track->getCover());
+            $track->setCover($this->fileUploader->upload($tracklistDTO->cover)->getPath());
         }
 
         if ($tracklistDTO->album !== null) {
@@ -150,21 +174,28 @@ class MyTracklistService implements MyTracklistInterface
         return $track;
     }
 
-    public function deleteService($id)
+    /**
+     * @param int $id
+     * @return array
+     * @throws MyTracklistException
+     */
+    public function deleteService(int $id): array
     {
-        if ($this->trackRepository->find($id) == null) {
-            return array([
-                'success' => false,
-                'body'    => 'Track not found'
-            ]);
+        if ($this->trackRepository->find($id) === null) {
+            throw new MyTracklistException('Can not find track');
         }
+
+        if ($this->trackRepository->find($id)->getCover() !== null) {
+            $this->fileSystem->remove('../public/uploads/' . $this->trackRepository->find($id)->getCover());
+        }
+        $this->fileSystem->remove('../public/uploads/' . $this->trackRepository->find($id)->getTrackPath());
 
         $this->entityManager->remove($this->trackRepository->find($id));
         $this->entityManager->flush();
 
-        return array([
+        return array(
             'success' => true,
-            'body'    => 'Track was successfully deleted'
-        ]);
+            'body' => 'Track deleted successfully'
+        );
     }
 }
