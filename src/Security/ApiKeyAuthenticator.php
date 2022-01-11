@@ -47,7 +47,12 @@ implements AuthenticationEntryPointInterface
             if (!$token){
                 throw new CustomUserMessageAuthenticationException('Unauthorized access');
             }
-            if($token->checkExpired()){
+
+            if ($token->getRemember()) {
+                return $token->getUser();
+            }
+
+            if($token->checkExpired()) {
                 $user = $token->getUser();
                 $user->removeApiToken($token);
                 $this->entityManager->remove($token);

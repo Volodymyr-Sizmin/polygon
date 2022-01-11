@@ -77,11 +77,7 @@ class ApiToken
 
     public function renewExpiresAt()
     {
-        if ($this->remember) {
-            return $this->expiresAt = true;
-        }
-
-        return $this->expiresAt = new \DateTime('+1 hour');
+        $this->expiresAt = new \DateTime('+1 hour');
     }
 
     public function checkExpired()
