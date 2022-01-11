@@ -516,4 +516,54 @@ class ProfileTest extends WebTestCase
         $this->assertSame('You have to choose right country for the Minsk', $responseData->body->message);
         $this->assertSame('Belarus', $responseData->body->country);
     }
+
+    public function testCheckPasswordSuccess(): void
+    {
+        $user = static::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'b.astapau@andersenlab.com']);
+        $this->client->loginUser($user);
+
+        $this->client->request('POST', '/api/profile/about/password/' . $user->getId(), [
+            "password" => "password"
+        ]);
+
+        $response = $this->client->getResponse();
+        $responseData = json_decode($response->getContent());
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK, $response->getStatusCode());
+    }
+
+    public function testCheckPasswordFailure(): void
+    {
+        $user = static::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'b.astapau@andersenlab.com']);
+        $this->client->loginUser($user);
+
+        $this->client->request('POST', '/api/profile/about/password/' . $user->getId(), [
+            "password" => "wrongpassword"
+        ]);
+
+        $response = $this->client->getResponse();
+        $responseData = json_decode($response->getContent());
+
+        $this->assertFalse($responseData->success);
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertSame('Wrong password. Please try again', $responseData->body->message);
+    }
+
+    public function testCheckPasswordFailureEmpty(): void
+    {
+        $user = static::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'b.astapau@andersenlab.com']);
+        $this->client->loginUser($user);
+
+        $this->client->request('POST', '/api/profile/about/password/' . $user->getId(), [
+            "password" => ""
+        ]);
+
+        $response = $this->client->getResponse();
+        $responseData = json_decode($response->getContent());
+
+        $this->assertFalse($responseData->success);
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertSame('Empty input', $responseData->body->message);
+    }
 }

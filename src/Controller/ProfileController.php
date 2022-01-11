@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * @IgnoreAnnotation("apiName")
@@ -282,7 +283,11 @@ class ProfileController extends AbstractController
 
     private function validateName($name): ?string
     {
+        $name = trim($name);
         $length = mb_strlen($name);
+        if (empty($name)) {
+            return 'Can\'t consist only of spaces';
+        }
         if ($length < 2) {
             return 'Must be 2 characters or more';
         }
@@ -292,9 +297,6 @@ class ProfileController extends AbstractController
         $pattern = "/^[a-zA-Zа-яА-Я0-9\s!@#$%^&`*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+\.{0,1}[a-zA-Zа-яА-Я0-9\s!@#$%^&*()_\-=+;:'\x22?,<>[\]{}\\\|\/№!~]+$/u";
         if (!preg_match($pattern, $name)) {
             return 'Can contain letters, numbers, !@#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last';
-        }
-        if (empty(trim($name))) {
-            return 'Can\'t consist only of spaces';
         }
         return null;
     }
@@ -311,6 +313,40 @@ class ProfileController extends AbstractController
         $pattern = "/^\+[0-9]+$/";
         if (!preg_match($pattern, $phone)) {
             return 'can containe first plus symbol and numbers';
+        }
+        return null;
+    }
+
+    /** Check user access
+     *
+     * @param User $user
+     * @return JsonResponse|null Error message or Null
+     */
+
+    private function checkAccess(User $user)
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse (
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Access denied'
+                    ]
+                ], 
+                Response::HTTP_UNAUTHORIZED
+            );
+        }
+        if ($currentUser->getId() !== $user->getId()) {
+            return new JsonResponse (
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'You are not allowed to change this user`s data'
+                    ]
+                ],
+                Response::HTTP_FORBIDDEN
+            );
         }
         return null;
     }
@@ -470,29 +506,8 @@ class ProfileController extends AbstractController
 
     public function updateUserInfo(User $user, Request $request): JsonResponse
     {
-        $currentUser = $this->getUser();
-        if (!$currentUser) {
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'body' => [
-                        'message' => 'Access denied'
-                    ]
-                ], 
-                Response::HTTP_UNAUTHORIZED
-            );
-        }
-        if ($currentUser->getId() !== $user->getId()) {
-            return new JsonResponse (
-                [
-                    'success' => false,
-                    'body' => [
-                        'message' => 'You are not allowed to change this user`s data'
-                    ]
-                ],
-                Response::HTTP_FORBIDDEN
-            );
-        }
+        $noAccess = $this->checkAccess($user);
+        if ($noAccess) return $noAccess;
 
         $data = json_decode($request->getContent(), true);
 
@@ -695,9 +710,8 @@ class ProfileController extends AbstractController
             }
         }
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($user);
-        $entityManager->flush();
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         return new JsonResponse (
             [
@@ -712,6 +726,111 @@ class ProfileController extends AbstractController
                 ]
             ], 
             Response::HTTP_CREATED
+        );
+    }
+
+    /**
+     * @api {post} /backend/api/profile/about/password:id Check user password
+     * @apiName PostApiProfileAboutPassword
+     * @apiGroup Profile
+     * 
+     * @apiHeader {String} X-AUTH-TOKEN API-Token.
+     * @apiHeaderExample {json} Header-Example:
+     *     {
+     *       "X-AUTH-TOKEN": "152133606dc58da26d4d775ae93624c844b6826bdaa9fefa4f05f009500b2f7f5686633434cc6d03de533d06568fc363311579f6e9ef6f18a70277c1"
+     *     }
+     *
+     * @apiParam {Number} id Id of the user that we check (part of url)
+     * @apiBody {String} password      password of the User
+     *
+     * @apiSuccess (200) {Boolean} success Should be true
+     * @apiSuccess (200) {JSON} body Response body
+     * @apiSuccess (200) {String} body.message Success message
+     * @apiSuccessExample {json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "success": true,
+     *       "body": {}
+     *     }
+     * 
+     * @apiError {Boolean} success Should be false
+     * @apiError {JSON} body Error parameters
+     * @apiError {String} body.message Error message
+     * @apiErrorExample {json} Access denied
+     *  HTTP/1.1 401
+     *     {
+     *          "success": false,
+     *          "body": {
+     *              "message": "Access denied"
+     *          }
+     *      }
+     * @apiErrorExample {json} Not allowed to change
+     *  HTTP/1.1 403
+     *     {
+     *          "success": false,
+     *          "body": {
+     *              "message": "You are not allowed to change this user`s data"
+     *          }
+     *      }
+     * @apiErrorExample {json} Empty input
+     *  HTTP/1.1 400
+     *      {
+     *          "success": false,
+     *          "body": {
+     *              "message": "Empty input"
+     *          }
+     *      }
+     * @apiErrorExample {json} Wrong password
+     *  HTTP/1.1 400
+     *      {
+     *          "success": false,
+     *          "body": {
+     *              "message": "Wrong password. Please try again"
+     *          }
+     *      }
+     * 
+     */
+
+    public function checkPassword(User $user, Request $request, UserPasswordHasherInterface $encoder): JsonResponse
+    {
+        $noAccess = $this->checkAccess($user);
+        if ($noAccess) return $noAccess;
+
+        $data = [
+            'password' => $request->get('password')
+        ];
+
+        if (empty($data['password'])) {
+            return new JsonResponse (
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Empty input'
+                    ]
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        $verified = $encoder->isPasswordValid($user, $data['password']);
+        if (!$verified) {
+            return new JsonResponse (
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Wrong password. Please try again'
+                    ]
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        return new JsonResponse (
+            [
+                'success' => true,
+                'body' => []
+            ],
+            Response::HTTP_OK
         );
     }
 }
