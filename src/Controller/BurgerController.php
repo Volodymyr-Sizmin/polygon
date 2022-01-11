@@ -29,7 +29,7 @@ class BurgerController extends SerializeController
     }
 
     /**
-     * @api {GET} /backend/api/sharesong/{id} Share song
+     * @api {GET} /backend/api/burger/sharesong/{id} Share song
      * @apiName share_song
      * @apiGroup BURGER
      *
@@ -78,7 +78,14 @@ class BurgerController extends SerializeController
         }
 
         if (!$entityManager->getRepository(Track::class)->getTrackPath($id)) {
-            return new JsonResponse(['success' => false, 'body' => 'This track does not found'], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => 'This track does not found'
+                ],
+                Response::HTTP_NOT_FOUND
+            )
+                ;
         }
 
         return new JsonResponse(['success' => true, 'path' => $entityManager
@@ -88,7 +95,7 @@ class BurgerController extends SerializeController
     }
 
     /**
-     * @api {POST} /backend/api/gotoartist Go to artist
+     * @api {POST} /backend/api/burger/gotoartist Go to artist
      * @apiName go_to_artist
      * @apiGroup BURGER
      *
@@ -133,7 +140,7 @@ class BurgerController extends SerializeController
      *    }
      *    ]
      *
-     * @apiError ThisTrackDoesNotFound This track does not found
+     * @apiError ThisArtistDoesNotFound This artist does not found
      *
      * @apiErrorExample Error-Response
      *     HTTP/1.1 404 Not Found
@@ -155,7 +162,14 @@ class BurgerController extends SerializeController
         }
 
         if (!$entityManager->getRepository(Track::class)->getArtistData($data['id'])) {
-            return new JsonResponse(['success' => false, 'body' => 'This Artist does not found'], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => 'This artist does not found'
+                ],
+                Response::HTTP_NOT_FOUND
+            )
+                ;
         }
 
          return new JsonResponse(['success' => true, 'information' => $entityManager
@@ -164,7 +178,7 @@ class BurgerController extends SerializeController
     }
 
     /**
-     * @api {GET} /backend/api/addnextup/:id Add next up
+     * @api {GET} /backend/api/burger/addnextup/:id Add next up
      *
      * @apiName add_next_up
      * @apiGroup BURGER
@@ -253,11 +267,11 @@ class BurgerController extends SerializeController
      */
     public function addNextUp($id): JsonResponse
     {
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->showService($id)));;
+        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->showService($id)));
     }
 
     /**
-     * @api {POST} /backend/api/gotoalbum Go to album
+     * @api {POST} /backend/api/burger/gotoalbum Go to album
      * @apiName go_to_album
      * @apiGroup BURGER
      *
@@ -302,7 +316,7 @@ class BurgerController extends SerializeController
      *   "body": "Invalid id"
      * }
      *
-     * @apiError ThisTrackDoesNotFound This track does not found
+     * @apiError ThisAlbumDoesNotFound This album does not found
      *
      * @apiErrorExample Error-Response
      *     HTTP/1.1 404 Not Found
@@ -323,11 +337,19 @@ class BurgerController extends SerializeController
         }
 
         if (!$entityManager->getRepository(Track::class)->getArtistData($data['id'])) {
-            return new JsonResponse(['success' => false, 'body' => 'This album does not found'], Response::HTTP_NOT_FOUND);
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => 'This album does not found'
+                ],
+                Response::HTTP_NOT_FOUND
+            )
+                ;
         }
 
          return new JsonResponse(['success' => true, 'path' => $entityManager
             ->getRepository(Track::class)
-            ->getAlbumSong($data['id'])]);
+            ->getAlbumSong($data['id'])])
+             ;
     }
 }
