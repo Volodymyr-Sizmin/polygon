@@ -49,6 +49,11 @@ class File
      */
     private $user;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Playlist::class, inversedBy="cover")
+     */
+    private $playlist;
+
     public function getId(): ?int
     {
         return $this->id;

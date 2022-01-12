@@ -5,9 +5,12 @@ namespace App\Controller;
 use App\Entity\Playlist;
 use App\Entity\PlaylistsTracks;
 use App\Interfaces\Playlist\PlaylistServiceInterface;
+use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @IgnoreAnnotation("apiName")
@@ -24,12 +27,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class PlaylistController extends SerializeController
 {
+    private EntityManagerInterface $entityManager;
+    private PlaylistServiceInterface $playlistService;
 
-    private $playlist;
-
-    public function __construct(PlaylistServiceInterface $playlistServiceInterface)
+    public function __construct(EntityManagerInterface $entityManager, PlaylistServiceInterface $playlistService)
     {
-        $this->playlist = $playlistServiceInterface;
+        $this->entityManager = $entityManager;
+        $this->playlistService = $playlistService;
     }
 
     /**
@@ -37,7 +41,7 @@ class PlaylistController extends SerializeController
      * @apiName Index
      * @apiGroup Playlists
      *
-     * @apiSuccess (200) {Boolean} succes Should be true
+     * @apiSuccess (200) {Boolean} success Should be true
      * @apiSuccess (200) {JSON} body Response body
      *
      * @apiSuccessExample {json} Success-Response:
@@ -141,10 +145,9 @@ class PlaylistController extends SerializeController
      *   "description": "description"
      *}
      */
-
     public function index(): JsonResponse
     {
-        return JsonResponse::fromJsonString($this->serializeJson($this->playlist->indexService()));
+        return JsonResponse::fromJsonString($this->serializeJson($this->playlistService->indexService()));
     }
 
     /**
@@ -215,28 +218,35 @@ class PlaylistController extends SerializeController
      *       },
      *       "description": "description"
      *   }
+     *
+     *   @apiErrorExample {json} Error-Response:
+     *     HTTP/1.1 400 Bad Request
+     *     {
+     *       "success": false,
+     *       "body": {
+     *          "message": "An error occurred during playlist creation."
+     *       }
+     *     }
      */
     public function createPlaylist(Request $request): JsonResponse
     {
-        $entityManager = $this->getDoctrine()->getManager();
-
-        $playlist = new Playlist();
-
         $data = json_decode($request->getContent(), true);
 
-        $playlist->setName(isset($data["name"]) ? $data["name"] : $playlist->getName());
-        $playlist->setDescription(isset($data["description"]) ? $data["description"] : $playlist->getDescription());
-        $playlist->setCreatedAt(new \DateTimeImmutable());
-        $playlist->setUpdatedAt(new \DateTimeImmutable());
-
-        $entityManager->persist($playlist);
-        $entityManager->flush();
+        /** @var $playlist Playlist */
+        $playlist = $this->playlistService->createPlaylist($data);
+        if (isset($playlist['errors'])) {
+            return new JsonResponse([
+                'success' => false,
+                'body' => [
+                    'message' => $playlist['errors'],
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
 
         return JsonResponse::fromJsonString($this->serializeJson($playlist), Response::HTTP_CREATED);
     }
 
     /**
-     *
      * @api {GET} /backend/api/playlists/:id Show Playlist
      * @apiName GetPlaylist
      * @apiGroup Playlists
@@ -297,7 +307,6 @@ class PlaylistController extends SerializeController
      *       },
      *       "description": "description"
      *      }
-     *
      */
     public function showPlaylist(Playlist $playlist): JsonResponse
     {
@@ -326,29 +335,51 @@ class PlaylistController extends SerializeController
      *     HTTP/1.1 200 OK
      *     {
      *       "success": true,
-     *       "body": "Playlist successfully modified"
+     *       "body": {
+     *          "message": "Playlist was successfully modified"
+     *       }
+     *     }
+     *
+     * @apiErrorExample {json} Error-Response:
+     *     HTTP/1.1 400 Bad Request
+     *     {
+     *       "success": false,
+     *       "body": {
+     *          "message": "Empty data"
+     *       }
      *     }
      */
-    public function modifyPlaylist(Playlist $playlist, Request $request): JsonResponse
+    public function modifyPlaylist(Playlist $playlist, array $data): JsonResponse
     {
-        $entityManager = $this->getDoctrine()->getManager();
-        $data = json_decode($request->getContent(), true);
-        $playlist->setName(isset($data["name"]) ? $data["name"] : $playlist->getName());
-        $playlist->setDescription(isset($data["description"]) ? $data["description"] : $playlist->getDescription());
-        $playlist->setUpdatedAt(new \DateTimeImmutable());
+        try {
+            $playlist = $this->playlistService->modifyPlaylist($playlist, $data);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'success' => false,
+                'body' => [
+                    'message' => $e->getMessage(),
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
 
-        $entityManager->persist($playlist);
-        $entityManager->flush();
+        if (isset($playlist['errors'])) {
+            return new JsonResponse([
+                'success' => false,
+                'body' => [
+                    'message' => $playlist['errors'],
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
 
-        return new JsonResponse(['success' => true, 'playlist' => [
-            'name' => $playlist->getName(),
-            'description' => $playlist->getDescription(),
-            'updatedAt' => $playlist->getCreatedAt()
-        ]]);
+        return new JsonResponse([
+            'success' => true,
+            'body' => [
+                'message' => 'Playlist was successfully modified',
+            ],
+        ]);
     }
 
     /**
-     *
      * @api {DELETE} /backend/api/playlists/:id Delete Playlist
      * @apiName DeletePlaylist
      * @apiGroup Playlists
@@ -362,16 +393,21 @@ class PlaylistController extends SerializeController
      *     HTTP/1.1 200 OK
      *     {
      *       "success": true,
-     *       "body": "Playlist successfully deleted"
+     *       "body": {
+     *          "message": "Playlist was successfully deleted"
+     *       }
      *     }
      */
     public function deletePlaylist(Playlist $playlist): JsonResponse
     {
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($playlist);
-        $entityManager->flush();
+        $this->playlistService->deletePlaylist($playlist);
 
-        return new JsonResponse(['success' => true, 'body' => 'Playlist successfully deleted']);
+        return new JsonResponse([
+            'success' => true,
+            'body' => [
+                'message' => 'Playlist was successfully deleted',
+            ],
+        ]);
     }
 
     /**
@@ -420,14 +456,12 @@ class PlaylistController extends SerializeController
      */
     public function addTrack(Request $request): JsonResponse
     {
-        $entityManager = $this->getDoctrine()->getManager();
-
         $playlistsTracks = new PlaylistsTracks();
 
         $data = json_decode($request->getContent(), true);
 
         if (
-            $entityManager->getRepository(PlaylistsTracks::class)
+            $this->entityManager->getRepository(PlaylistsTracks::class)
             ->existPlaylistsTracks($data['playlist_id'], $data['track_id'])
         ) {
             return new JsonResponse(
@@ -449,8 +483,8 @@ class PlaylistController extends SerializeController
         $playlistsTracks->setPlaylistId($data['playlist_id']);
         $playlistsTracks->setTrackId($data['track_id']);
 
-        $entityManager->persist($playlistsTracks);
-        $entityManager->flush();
+        $this->entityManager->persist($playlistsTracks);
+        $this->entityManager->flush();
 
         return new JsonResponse(['success' => true, 'body' => 'Track successfully added']);
     }
