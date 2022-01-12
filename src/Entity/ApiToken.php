@@ -75,17 +75,17 @@ class ApiToken
         return $this;
     }
 
-    public function renewExpiresAt(){
-        if ($this->remember)
-            $this->expiresAt = new \DateTime('+2 weeks');
-        else
-            $this->expiresAt = new \DateTime('+1 hour');
+    public function renewExpiresAt()
+    {
+        $this->expiresAt = new \DateTime('+1 hour');
     }
 
     public function checkExpired()
     {
-        $now = new \DateTime('now');
-        return $this->expiresAt < $now;
+        if ($this->expiresAt instanceof \DateTime) {
+            return $this->expiresAt < new \DateTime('now');
+        }
+            return false;
     }
 
     public function getUser(): ?User
