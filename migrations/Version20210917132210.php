@@ -14,7 +14,6 @@ final class Version20210917132210 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<END
             CREATE TABLE files
             (
@@ -68,7 +67,6 @@ final class Version20210917132210 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('DROP TABLE file_types');
         $this->addSql('DROP TABLE files');
     }
