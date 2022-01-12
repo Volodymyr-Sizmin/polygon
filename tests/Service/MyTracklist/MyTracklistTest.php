@@ -149,7 +149,7 @@ class MyTracklistTest extends WebTestCase
         $this->assertSame($track->getAlbum(), null);
     }
 
-    public function testStoreServiceIfAlbumAndCoverIsNotNULL()
+    public function testStoreServiceIfAlbumAndCoverIsNotNULL(): void
     {
         $this->tracklistDto->title = 'My live';
         $this->tracklistDto->author = 'Deskot';
@@ -202,7 +202,7 @@ class MyTracklistTest extends WebTestCase
         $this->assertSame($track->getCover(), $testMethod->getCover());
     }
 
-    public function testUpdateServiceAllPropertyIsNull()
+    public function testUpdateServiceAllPropertyIsNull(): void
     {
         $this->trackRepositoryMock->expects($this->any())
             ->method('find')
@@ -219,7 +219,7 @@ class MyTracklistTest extends WebTestCase
         $this->assertSame($this->tracklistDto->genre, $testMethod->getGenre());
     }
 
-    public function testUpdateServicePropertyGenreIsNotNull()
+    public function testUpdateServicePropertyGenreIsNotNull(): void
     {
         $this->trackRepositoryMock->expects($this->any())
             ->method('find')
@@ -232,7 +232,7 @@ class MyTracklistTest extends WebTestCase
         $this->assertSame($this->tracklistDto->genre, $testMethod->getGenre());
     }
 
-    public function testUpdateServicePropertyTypeIsNotNull()
+    public function testUpdateServicePropertyTypeIsNotNull(): void
     {
         $this->trackRepositoryMock->expects($this->any())
             ->method('find')
@@ -245,7 +245,7 @@ class MyTracklistTest extends WebTestCase
         $this->assertSame($this->tracklistDto->type, $testMethod->getType());
     }
 
-    public function testUpdateServicePropertyAuthorIsNottNull()
+    public function testUpdateServicePropertyAuthorIsNotNull(): void
     {
         $this->trackRepositoryMock->expects($this->any())
             ->method('find')
@@ -258,7 +258,7 @@ class MyTracklistTest extends WebTestCase
         $this->assertSame($this->tracklistDto->author, $testMethod->getAuthor());
     }
 
-    public function testUpdateServicePropertyTitleIsNotNull()
+    public function testUpdateServicePropertyTitleIsNotNull(): void
     {
         $this->trackRepositoryMock->expects($this->any())
             ->method('find')
@@ -271,7 +271,7 @@ class MyTracklistTest extends WebTestCase
         $this->assertSame($this->tracklistDto->title, $testMethod->getTitle());
     }
 
-    public function testUpdateServicePropertyAlbumIsNotNull()
+    public function testUpdateServicePropertyAlbumIsNotNull(): void
     {
         $this->trackRepositoryMock->expects($this->any())
             ->method('find')
@@ -284,7 +284,7 @@ class MyTracklistTest extends WebTestCase
         $this->assertSame($this->tracklistDto->album, $testMethod->getAlbum());
     }
 
-    public function testUpdateServicePropertyCoverIsNotNull()
+    public function testUpdateServicePropertyCoverIsNotNull(): void
     {
         $track = new Track();
         $this->trackRepositoryMock->expects($this->exactly(2))
