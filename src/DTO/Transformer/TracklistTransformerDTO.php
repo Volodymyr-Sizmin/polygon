@@ -14,7 +14,7 @@ class TracklistTransformerDTO
      * @return TracklistDTO
      * @throws \App\Exception\ValidationServiceException
      */
-    public function transformerDTO(Request $request)
+    public function transformerDTO(Request $request): TracklistDTO
     {
         $validation = new ValidationService();
         $dto = new TracklistDTO();

@@ -39,10 +39,10 @@ interface MyTracklistInterface
 
     /**
      * @param TracklistDTO $tracklistDTO
-     * @param Track $track
+     * @param int $id
      * @return Track
      */
-    public function updateService(TracklistDTO $tracklistDTO, Track $track): Track;
+    public function updateService(TracklistDTO $tracklistDTO, int $id): Track;
 
     /**
      * @param int $id

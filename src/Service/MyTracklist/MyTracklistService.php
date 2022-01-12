@@ -138,12 +138,17 @@ class MyTracklistService implements MyTracklistInterface
 
     /**
      * @param \App\DTO\TracklistDTO $tracklistDTO
-     * @param Track $track
+     * @param int $id
      * @return Track
-     * @throws \App\Exception\FileUploadException
+     * @throws MyTracklistException
      */
-    public function updateService($tracklistDTO, $track): Track
+    public function updateService($tracklistDTO, $id): Track
     {
+        if ($this->trackRepository->find($id) === null) {
+            throw new MyTracklistException('Can not find track');
+        }
+
+        $track = $this->trackRepository->find($id);
         if ($tracklistDTO->cover !== null) {
             $this->fileSystem->remove('../public/uploads/' . $track->getCover());
             $track->setCover($this->fileUploader->upload($tracklistDTO->cover)->getPath());
