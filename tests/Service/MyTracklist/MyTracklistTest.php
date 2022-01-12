@@ -204,9 +204,12 @@ class MyTracklistTest extends WebTestCase
 
     public function testUpdateServiceAllPropertyIsNull()
     {
-        $track = new Track();
+        $this->trackRepositoryMock->expects($this->any())
+            ->method('find')
+            ->with(1)
+            ->willReturn(new Track());
 
-        $testMethod = $this->myTracklistService->updateService($this->tracklistDto, $track);
+        $testMethod = $this->myTracklistService->updateService($this->tracklistDto, 1);
 
         $this->assertSame($this->tracklistDto->title, $testMethod->getTitle());
         $this->assertSame($this->tracklistDto->cover, $testMethod->getCover());
@@ -218,50 +221,65 @@ class MyTracklistTest extends WebTestCase
 
     public function testUpdateServicePropertyGenreIsNotNull()
     {
-        $track = new Track();
+        $this->trackRepositoryMock->expects($this->any())
+            ->method('find')
+            ->with(1)
+            ->willReturn(new Track());
         $this->tracklistDto->genre = 'Rock';
 
-        $testMethod = $this->myTracklistService->updateService($this->tracklistDto, $track);
+        $testMethod = $this->myTracklistService->updateService($this->tracklistDto, 1);
 
         $this->assertSame($this->tracklistDto->genre, $testMethod->getGenre());
     }
 
     public function testUpdateServicePropertyTypeIsNotNull()
     {
-        $track = new Track();
+        $this->trackRepositoryMock->expects($this->any())
+            ->method('find')
+            ->with(1)
+            ->willReturn(new Track());
         $this->tracklistDto->type = 'Music';
 
-        $testMethod = $this->myTracklistService->updateService($this->tracklistDto, $track);
+        $testMethod = $this->myTracklistService->updateService($this->tracklistDto, 1);
 
         $this->assertSame($this->tracklistDto->type, $testMethod->getType());
     }
 
     public function testUpdateServicePropertyAuthorIsNottNull()
     {
-        $track = new Track();
+        $this->trackRepositoryMock->expects($this->any())
+            ->method('find')
+            ->with(1)
+            ->willReturn(new Track());
         $this->tracklistDto->author = 'Deskot';
 
-        $testMethod = $this->myTracklistService->updateService($this->tracklistDto, $track);
+        $testMethod = $this->myTracklistService->updateService($this->tracklistDto, 1);
 
         $this->assertSame($this->tracklistDto->author, $testMethod->getAuthor());
     }
 
     public function testUpdateServicePropertyTitleIsNotNull()
     {
-        $track = new Track();
+        $this->trackRepositoryMock->expects($this->any())
+            ->method('find')
+            ->with(1)
+            ->willReturn(new Track());
         $this->tracklistDto->title = 'My live';
 
-        $testMethod = $this->myTracklistService->updateService($this->tracklistDto, $track);
+        $testMethod = $this->myTracklistService->updateService($this->tracklistDto, 1);
 
         $this->assertSame($this->tracklistDto->title, $testMethod->getTitle());
     }
 
     public function testUpdateServicePropertyAlbumIsNotNull()
     {
-        $track = new Track();
+        $this->trackRepositoryMock->expects($this->any())
+            ->method('find')
+            ->with(1)
+            ->willReturn(new Track());
         $this->tracklistDto->album = 'This is my live';
 
-        $testMethod = $this->myTracklistService->updateService($this->tracklistDto, $track);
+        $testMethod = $this->myTracklistService->updateService($this->tracklistDto, 1);
 
         $this->assertSame($this->tracklistDto->album, $testMethod->getAlbum());
     }
@@ -269,6 +287,10 @@ class MyTracklistTest extends WebTestCase
     public function testUpdateServicePropertyCoverIsNotNull()
     {
         $track = new Track();
+        $this->trackRepositoryMock->expects($this->exactly(2))
+            ->method('find')
+            ->with(1)
+            ->willReturn($track);
         $this->tracklistDto->cover = $this->uploadedFileMock;
         $this->fileUploaderMock->expects($this->any())
                                ->method('upload')
@@ -285,7 +307,7 @@ class MyTracklistTest extends WebTestCase
                              ->method('remove')
                              ->with('../public/uploads/' . $track->getCover());
 
-        $testMethod = $this->myTracklistService->updateService($this->tracklistDto, $track);
+        $testMethod = $this->myTracklistService->updateService($this->tracklistDto, 1);
 
         $this->assertSame('URL IMAGE', $testMethod->getCover());
     }
