@@ -173,6 +173,10 @@ update_user_info:
   path: /api/profile/about/info/{id}
   controller: App\Controller\ProfileController::updateUserInfo
   methods: PUT
+check_password:
+  path: /api/profile/about/password/{id}
+  controller: App\Controller\ProfileController::checkPassword
+  methods: POST
 ### END PROFILE ENDPOINTS ###
 
 ### BURGER ENDPOINTS ###
