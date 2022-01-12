@@ -283,6 +283,10 @@ class MyTracklistController extends SerializeController
     {
         try {
             $dto = $this->tracklistTransformerDTO->transformerDTO($request);
+            return JsonResponse::fromJsonString(
+                $this->serializeJson($this->myTracklistInterface->storeService($dto)),
+                Response::HTTP_CREATED
+            );
         } catch (\Exception $exception) {
             return JsonResponse::fromJsonString(
                 $this->serializeJson(array(
@@ -292,10 +296,6 @@ class MyTracklistController extends SerializeController
                 Response::HTTP_BAD_REQUEST
             );
         }
-        return JsonResponse::fromJsonString(
-            $this->serializeJson($this->myTracklistInterface->storeService($dto)),
-            Response::HTTP_CREATED
-        );
     }
 
     /**
@@ -408,7 +408,7 @@ class MyTracklistController extends SerializeController
      * @param $id
      * @return JsonResponse
      *
-     * @api {GET} /api/mytracklist/{id}/edit
+     * @api {GET} /backend/api/mytracklist/{id}/edit
      * @apiName edit_mytracklist
      * @apiGroup MYTRACKLIST
      *
@@ -513,12 +513,12 @@ class MyTracklistController extends SerializeController
     }
 
     /**
-     * @param Track $track
+     * @param $id
      * @param Request $request
      * @return JsonResponse
      *
-     * @api {POST} /api/mytracklist/{id}
-     * @apiName edit_mytracklist
+     * @api {POST} /backend/api/mytracklist/{id}
+     * @apiName update_mytracklist
      * @apiGroup MYTRACKLIST
      *
      * @apiParam {id} id Track unique ID
@@ -603,19 +603,19 @@ class MyTracklistController extends SerializeController
      *          and dot can't use like the first and last symbol and also can't be repeated consecutively"
      *      }
      */
-    public function update(Track $track, Request $request): JsonResponse
+    public function update($id, Request $request): JsonResponse
     {
         try {
             $dto = $this->tracklistTransformerDTO->transformerDTO($request);
+            return JsonResponse::fromJsonString(
+                $this->serializeJson($this->myTracklistInterface->updateService($dto, $id), Response::HTTP_CREATED)
+            );
         } catch (\Exception $exception) {
             return JsonResponse::fromJsonString($this->serializeJson(array(
                 'success' => false,
                 'body' => $exception->getMessage()
             )), Response::HTTP_BAD_REQUEST);
         }
-        return JsonResponse::fromJsonString(
-            $this->serializeJson($this->myTracklistInterface->updateService($dto, $track), Response::HTTP_CREATED)
-        );
     }
 
     /**
