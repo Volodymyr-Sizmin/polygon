@@ -265,9 +265,9 @@ class BurgerController extends SerializeController
      * }
      *
      */
-    public function addNextUp($id): JsonResponse
+    public function addNextUp(Track $track): JsonResponse
     {
-        return JsonResponse::fromJsonString($this->serializeJson($this->myTracklistInterface->showService($id)));
+        return JsonResponse::fromJsonString($this->serializeJson($track));
     }
 
     /**
