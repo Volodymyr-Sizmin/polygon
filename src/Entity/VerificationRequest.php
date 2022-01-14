@@ -45,6 +45,11 @@ class VerificationRequest
      */
     private $url;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class)
+     */
+    private $user;
+
     public function __construct($dest)
     {
         $urlstr = date('Ymd').bin2hex(random_bytes(20));
@@ -109,6 +114,18 @@ class VerificationRequest
     public function setUrl(string $url): self
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
