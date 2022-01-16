@@ -24,6 +24,7 @@ use Doctrine\ORM\EntityManagerInterface;
  * @IgnoreAnnotation("apiErrorExample")
  * @IgnoreAnnotation("apiHeader")
  * @IgnoreAnnotation("apiHeaderExample")
+ * @IgnoreAnnotation("apiDescription")
  */
 class VerificationController extends AbstractController
 {
@@ -39,6 +40,7 @@ class VerificationController extends AbstractController
      * @api {post} /backend/api/verify/email/send Send verification email
      * @apiName PostApiSendVerificationEmail
      * @apiGroup Authentication
+     * @apiDescription Send request by form-data
      *
      * @apiBody {String} email
      *

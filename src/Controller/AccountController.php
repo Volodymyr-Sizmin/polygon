@@ -25,6 +25,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * @IgnoreAnnotation("apiHeader")
  * @IgnoreAnnotation("apiHeaderExample")
  * @IgnoreAnnotation("apiParamExample")
+ * @IgnoreAnnotation("apiDescription")
  */
 
 class AccountController extends AbstractController
@@ -254,6 +255,7 @@ class AccountController extends AbstractController
      * @api {post} /backend/api/accounts/change_pass/:id Change password
      * @apiName PostApiAccountsChangePassword
      * @apiGroup User
+     * @apiDescription Send request by form-data
      *
      * @apiHeader {String} X-AUTH-TOKEN API-Token.
      * @apiHeaderExample {json} Header-Example:

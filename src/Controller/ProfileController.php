@@ -30,6 +30,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  * @IgnoreAnnotation("apiErrorExample")
  * @IgnoreAnnotation("apiHeader")
  * @IgnoreAnnotation("apiHeaderExample")
+ * @IgnoreAnnotation("apiDescription")
  */
 class ProfileController extends AbstractController
 {
@@ -360,7 +361,7 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @api {put} /backend/api/profile/about/info:id Update user info
+     * @api {put} /backend/api/profile/about/info/:id Update user info
      * @apiName PutApiProfileAboutInfo
      * @apiGroup Profile
      * 
@@ -738,9 +739,10 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @api {post} /backend/api/profile/about/password:id Check user password
+     * @api {post} /backend/api/profile/about/password/:id Check user password
      * @apiName PostApiProfileAboutPassword
      * @apiGroup Profile
+     * @apiDescription Send request by form-data
      * 
      * @apiHeader {String} X-AUTH-TOKEN API-Token.
      * @apiHeaderExample {json} Header-Example:
@@ -758,7 +760,9 @@ class ProfileController extends AbstractController
      *     HTTP/1.1 200 OK
      *     {
      *       "success": true,
-     *       "body": {}
+     *       "body": {
+     *              "message": "Password is correct"
+     *          }
      *     }
      * 
      * @apiError {Boolean} success Should be false
@@ -836,7 +840,9 @@ class ProfileController extends AbstractController
         return new JsonResponse (
             [
                 'success' => true,
-                'body' => []
+                'body' => [
+                    'message' => 'Password is correct'
+                ]
             ],
             Response::HTTP_OK
         );
@@ -846,7 +852,15 @@ class ProfileController extends AbstractController
      * @api {post} /backend/api/profile/about/email/:id Send verification message to user email
      * @apiName PostApiProfileAboutEmail
      * @apiGroup Profile
+     * @apiDescription Send request by form-data
+     * 
+     * @apiHeader {String} X-AUTH-TOKEN API-Token.
+     * @apiHeaderExample {json} Header-Example:
+     *     {
+     *       "X-AUTH-TOKEN": "152133606dc58da26d4d775ae93624c844b6826bdaa9fefa4f05f009500b2f7f5686633434cc6d03de533d06568fc363311579f6e9ef6f18a70277c1"
+     *     }
      *
+     * @apiParam {Number} id Id of the user that send message (part of url)
      * @apiBody {String} email
      *
      * @apiSuccess (200) {Boolean} success Should be true
@@ -864,6 +878,22 @@ class ProfileController extends AbstractController
      * @apiError {Boolean} success Should be false
      * @apiError {JSON} body Error parametrs
      * @apiError {String} body.message Error message
+     * @apiErrorExample {json} Access denied
+     *  HTTP/1.1 401
+     *     {
+     *          "success": false,
+     *          "body": {
+     *              "message": "Access denied"
+     *          }
+     *      }
+     * @apiErrorExample {json} Not allowed to change
+     *  HTTP/1.1 403
+     *     {
+     *          "success": false,
+     *          "body": {
+     *              "message": "You are not allowed to change this user`s data"
+     *          }
+     *      }
      * @apiErrorExample {json} Empty request 
      *     HTTP/1.1 400
      *     {
