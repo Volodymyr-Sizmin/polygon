@@ -947,7 +947,7 @@ class ProfileController extends AbstractController
             [
                 'success' => true,
                 'body' => [
-                    'message' => $verificationRequest->getUrl()
+                    'url' => $verificationRequest->getUrl()
                 ]
             ],
             Response::HTTP_CREATED
@@ -1034,7 +1034,7 @@ class ProfileController extends AbstractController
             [
                 'success' => true,
                 'body' => [
-                    'message' => $user->getEmail()
+                    'email' => $user->getEmail()
                 ]
             ],
             Response::HTTP_OK

@@ -127,7 +127,7 @@ class VerificationController extends AbstractController
             [
                 'success' => true,
                 'body' => [
-                    'message' => $verificationRequest->getUrl()
+                    'url' => $verificationRequest->getUrl()
                 ]
             ],
             Response::HTTP_CREATED
@@ -211,7 +211,7 @@ class VerificationController extends AbstractController
             [
                 'success' => true,
                 'body' => [
-                    'message' => $verificationRequest->getEmail()
+                    'email' => $verificationRequest->getEmail()
                 ]
             ],
             Response::HTTP_OK
