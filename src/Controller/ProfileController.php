@@ -955,7 +955,7 @@ class ProfileController extends AbstractController
             );  
         }
 
-        $url = 'http://localhost:1100/backend/api/profile/about/email/';
+        $url = $_ENV['APP_HOST'] . '/backend/api/profile/about/email/';
         $error = $this->verificationService->sendEmail($verificationRequest, $url);
         if ($error) {
             return new JsonResponse (

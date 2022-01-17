@@ -108,7 +108,7 @@ class VerificationController extends AbstractController
             );  
         }
 
-        $url = 'http://localhost:1100/backend/verify/email/';
+        $url = $_ENV['APP_HOST'] . '/backend/verify/email/';
         $error = $this->verificationService->sendEmail($verificationRequest, $url);
         if ($error) {
             return new JsonResponse (
