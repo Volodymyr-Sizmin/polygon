@@ -19,7 +19,7 @@ class VerificationTest extends WebTestCase
     public function testVerificationRequest(): void
     {
         $client = static::createClient();
-        $client->jsonRequest('POST', '/api/verify/email/send', [
+        $client->Request('POST', '/api/verify/email/send', [
             "email"=>"verification@notandersenlab.com", 
         ]);
         $response = $client->getResponse();

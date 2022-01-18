@@ -177,6 +177,14 @@ check_password:
   path: /api/profile/about/password/{id}
   controller: App\Controller\ProfileController::checkPassword
   methods: POST
+send_email_verification_id:
+  path: /api/profile/about/email/{id}
+  controller: App\Controller\ProfileController::emailVerification
+  methods: POST
+verify_email_to_change:
+  path: /api/profile/about/email/{url}
+  controller: App\Controller\ProfileController::verifyEmail
+  methods: GET   
 ### END PROFILE ENDPOINTS ###
 
 ### BURGER ENDPOINTS ###

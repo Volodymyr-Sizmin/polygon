@@ -6,8 +6,10 @@ use App\Entity\File;
 use App\Entity\User;
 use App\Entity\City;
 use App\Entity\Country;
+use App\Entity\VerificationRequest;
 use App\Service\FileUploader;
 use App\Service\ProfileService;
+use App\Service\VerificationService;
 use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,18 +30,25 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  * @IgnoreAnnotation("apiErrorExample")
  * @IgnoreAnnotation("apiHeader")
  * @IgnoreAnnotation("apiHeaderExample")
+ * @IgnoreAnnotation("apiDescription")
  */
 class ProfileController extends AbstractController
 {
     private $entityManager;
     private $security;
     private $profileService;
+    private $verificationService;
 
-    public function __construct(EntityManagerInterface $entityManager, Security $security, ProfileService $profileService)
+    public function __construct(
+        EntityManagerInterface $entityManager, 
+        Security $security, 
+        ProfileService $profileService, 
+        VerificationService $verificationService)
     {
         $this->entityManager = $entityManager;
         $this->security = $security;
         $this->profileService = $profileService;
+        $this->verificationService = $verificationService;
     }
 
     /**
@@ -352,7 +361,7 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @api {put} /backend/api/profile/about/info:id Update user info
+     * @api {put} /backend/api/profile/about/info/:id Update user info
      * @apiName PutApiProfileAboutInfo
      * @apiGroup Profile
      * 
@@ -730,9 +739,10 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @api {post} /backend/api/profile/about/password:id Check user password
+     * @api {post} /backend/api/profile/about/password/:id Check user password
      * @apiName PostApiProfileAboutPassword
      * @apiGroup Profile
+     * @apiDescription Send request by form-data
      * 
      * @apiHeader {String} X-AUTH-TOKEN API-Token.
      * @apiHeaderExample {json} Header-Example:
@@ -750,7 +760,9 @@ class ProfileController extends AbstractController
      *     HTTP/1.1 200 OK
      *     {
      *       "success": true,
-     *       "body": {}
+     *       "body": {
+     *              "message": "Password is correct"
+     *          }
      *     }
      * 
      * @apiError {Boolean} success Should be false
@@ -828,7 +840,232 @@ class ProfileController extends AbstractController
         return new JsonResponse (
             [
                 'success' => true,
-                'body' => []
+                'body' => [
+                    'message' => 'Password is correct'
+                ]
+            ],
+            Response::HTTP_OK
+        );
+    }
+
+    /**
+     * @api {post} /backend/api/profile/about/email/:id Send verification message to user email
+     * @apiName PostApiProfileAboutEmail
+     * @apiGroup Profile
+     * @apiDescription Send request by form-data
+     * 
+     * @apiHeader {String} X-AUTH-TOKEN API-Token.
+     * @apiHeaderExample {json} Header-Example:
+     *     {
+     *       "X-AUTH-TOKEN": "152133606dc58da26d4d775ae93624c844b6826bdaa9fefa4f05f009500b2f7f5686633434cc6d03de533d06568fc363311579f6e9ef6f18a70277c1"
+     *     }
+     *
+     * @apiParam {Number} id Id of the user that send message (part of url)
+     * @apiBody {String} email
+     *
+     * @apiSuccess (200) {Boolean} success Should be true
+     * @apiSuccess (200) {JSON} body Response body
+     * @apiSuccess (200) {String} body.url used to create verification url
+     * @apiSuccessExample {json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "success": "true",
+     *       "body": { 
+     *           "url": "525a4dc0a3a5c198bbc05a61d3b25979"
+     *       }
+     *     }
+     *
+     * @apiError {Boolean} success Should be false
+     * @apiError {JSON} body Error parametrs
+     * @apiError {String} body.message Error message
+     * @apiErrorExample {json} Access denied
+     *  HTTP/1.1 401
+     *     {
+     *          "success": false,
+     *          "body": {
+     *              "message": "Access denied"
+     *          }
+     *      }
+     * @apiErrorExample {json} Not allowed to change
+     *  HTTP/1.1 403
+     *     {
+     *          "success": false,
+     *          "body": {
+     *              "message": "You are not allowed to change this user`s data"
+     *          }
+     *      }
+     * @apiErrorExample {json} Empty request 
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Empty input"
+     *       }
+     *     }
+     * @apiErrorExample {json} Invalid email address 
+     *     HTTP/1.1 400
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Invalid email address"
+     *       }
+     *     }
+     * @apiErrorExample {json} SMTP error 
+     *     HTTP/1.1 424
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Connection could not be established with host"
+     *       }
+     *     }
+     */
+
+    public function emailVerification(User $user, Request $request): JsonResponse
+    {
+        $noAccess = $this->checkAccess($user);
+        if ($noAccess) return $noAccess;
+
+        $data = [
+            'email' => $request->get('email')
+        ];
+
+        if (empty($data['email'])) {
+            return new JsonResponse (
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Empty input'
+                    ]
+                ],
+                Response::HTTP_BAD_REQUEST
+            ); 
+        }
+        $verificationRequest = new VerificationRequest($data['email']);
+        $errorsString = $this->verificationService->validate($verificationRequest);
+
+        if (!empty($errorsString)) {
+            return new JsonResponse (
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => $errorsString
+                    ]
+                ],
+                Response::HTTP_BAD_REQUEST
+            );  
+        }
+
+        $url = $_ENV['APP_HOST'] . '/backend/api/profile/about/email/';
+        $error = $this->verificationService->sendEmail($verificationRequest, $url);
+        if ($error) {
+            return new JsonResponse (
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => $error->getMessage()
+                    ]
+                ],
+                Response::HTTP_FAILED_DEPENDENCY
+            );   
+        }
+
+        $verificationRequest->setUser($user);
+        $this->entityManager->persist($verificationRequest);
+        $this->entityManager->flush();
+
+        return new JsonResponse (
+            [
+                'success' => true,
+                'body' => [
+                    'url' => $verificationRequest->getUrl()
+                ]
+            ],
+            Response::HTTP_CREATED
+        ); 
+    }
+
+    /**
+     * @api {GET} /backend/api/profile/about/email/:url Email verification url
+     * @apiName GetApiProfileAboutEmail
+     * @apiGroup Profile
+     *
+     * @apiParam {String} url request token(part of url)
+     *
+     * @apiSuccess (200) {Boolean} success Should be true
+     * @apiSuccess (200) {JSON} body Response body
+     * @apiSuccess (200) {String} body.email Email that was connected to this verification request
+     * @apiSuccessExample {json} Success-Response:
+     *     HTTP/1.1 200 OK
+     *     {
+     *       "success": "true",
+     *       "body": { 
+     *           "email": "example@andersenlab.com"
+     *       }
+     *     }
+     *
+     * @apiError {Boolean} success Should be false
+     * @apiError {JSON} body Error parametrs
+     * @apiError {String} body.message Error message
+     * @apiErrorExample {json} Url doesn't exist
+     *     HTTP/1.1 404
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Not found"
+     *       }
+     *     }
+     * @apiErrorExample {json} Request expired
+     *     HTTP/1.1 410
+     *     {
+     *       "success": "false",
+     *       "body": {
+     *           "message": "Expired"
+     *       }
+     *     }
+     * 
+     */
+
+    public function verifyEmail(string $url): Response
+    {
+        $verificationRequest = $this->getDoctrine()->getRepository(VerificationRequest::class)->findOneBy(['url' => $url]);
+        if (!$verificationRequest) {
+            return new JsonResponse (
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Not found'
+                    ]
+                ],
+                Response::HTTP_NOT_FOUND
+            );
+        }
+        if ($verificationRequest->checkExpired()) {
+            $this->entityManager->remove($verificationRequest);
+            $this->entityManager->flush();
+            return new JsonResponse (
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Expired'
+                    ]
+                ],
+                Response::HTTP_GONE
+            );
+        }
+        
+        $verificationRequest->setVerified(true);
+        $user = $this->getDoctrine()->getRepository(User::class)->find($verificationRequest->getUser());
+        $user->setEmail($verificationRequest->getEmail());
+        $this->entityManager->persist($verificationRequest);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return new JsonResponse (
+            [
+                'success' => true,
+                'body' => [
+                    'email' => $user->getEmail()
+                ]
             ],
             Response::HTTP_OK
         );
