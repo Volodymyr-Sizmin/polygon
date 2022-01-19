@@ -46,7 +46,7 @@ class ResetController extends AbstractController
 
     private function sendEmail(ResetRequest $resetRequest, MailerInterface $mailer)
     {
-        $url = 'http://localhost:1100/backend/reset/email/';
+        $url = $_ENV['APP_HOST'] . '/backend/reset/email/';
         $url .= $resetRequest->getUrl();
         $to = $resetRequest->getUser()->getEmail();
         $email = (new Email())
