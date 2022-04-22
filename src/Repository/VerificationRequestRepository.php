@@ -19,9 +19,9 @@ class VerificationRequestRepository extends ServiceEntityRepository
         parent::__construct($registry, VerificationRequest::class);
     }
 
-    public function findValidByEmail(string $email): ?VerificationRequest
+    public function findValidByPhone(string $phone): ?VerificationRequest
     {
-        $qb = $this->createQueryBuilder('v')->where('v.verified = TRUE')->andWhere('v.email = :email')->setParameter('email', $email);
+        $qb = $this->createQueryBuilder('v')->where('v.verified = TRUE')->andWhere('v.phone = :phone')->setParameter('phone', $phone);
         $query = $qb->getQuery();
         return $query->setMaxResults(1)->getOneOrNullResult(); 
     }

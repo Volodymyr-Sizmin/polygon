@@ -6,6 +6,8 @@
 parameters:
     uploads_directory: '%kernel.project_dir%/public/%env(FILE_UPLOAD_PATH)%'
     uploads_max_file_num: '%env(FIlE_UPLOAD_MAX_NUM)%'
+    parameters:
+        jwt_secret: Andersen
 
 doctrine:
     orm:

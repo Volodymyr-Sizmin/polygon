@@ -1,128 +1,100 @@
 <?php
 
-namespace App\Tests\Feature\Controller;
+namespace App\Tests\Controller;
 
-use App\Entity\User;
+use App\Entity\BankUser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use GuzzleHttp\Client;
+use GuzzleHttp;
+use Symfony\Component\HttpFoundation\Request;
 
 class RegistrationTest extends WebTestCase
 {
-    public function testEmptyEmailRegistration(): void
-    {
-        $client = static::createClient();
-        $client->jsonRequest('POST', '/api/registration/email', [
-            "firstName" => "",
-            "lastName" => "",
-            "userName" => "",
-            "email" => "",
-            "password" => "",
-            "confirmPassword" => ""
-        ]);
-        $response = $client->getResponse();
-        //dd($response);
-        $this->assertSame(400,$response->getStatusCode());
-        $responseData = json_decode($response->getContent());
-        $this->assertSame(false, $responseData->success);
-        $this->assertSame('Invalid e-mail Address', $responseData->body->message->email);
-        $this->assertSame('Must be 2 characters or more', $responseData->body->message->firstName);
-        $this->assertSame('Must be 2 characters or more', $responseData->body->message->lastName);
-        $this->assertSame('Must be 2 characters or more', $responseData->body->message->userName);
-    }
-
     public function testEmptyPhoneRegistration(): void
     {
         $client = static::createClient();
-        $client->jsonRequest('POST', '/api/registration/phone', [
-            "firstName" => "",
-            "lastName" => "",
-            "userName" => "",
+        $data = [
             "phone" => "",
             "password" => "",
-            "confirmPassword" => ""
-        ]);
+        ];
+        $client->jsonRequest('POST', 'api/auth/register', $data);
         $response = $client->getResponse();
         $this->assertSame(400,$response->getStatusCode());
         $responseData = json_decode($response->getContent());
-        $this->assertSame(false,$responseData->success);
-        $this->assertSame('Must be 7 characters or more', $responseData->body->message->phone);
-        $this->assertSame('Must be 2 characters or more', $responseData->body->message->firstName);
-        $this->assertSame('Must be 2 characters or more', $responseData->body->message->lastName);
-        $this->assertSame('Must be 2 characters or more', $responseData->body->message->userName);
-    }
-
-    public function testUsedEmailRegistration(): void
-    {
-        $client = static::createClient();
-        $client->jsonRequest('POST', '/api/registration/email', [
-            "firstName" => "",
-            "lastName" => "",
-            "userName" => "",
-            "email" => "b.astapau@andersenlab.com",
-            "password" => "",
-            "confirmPassword" => ""
-        ]);
-        $response = $client->getResponse();
-        $this->assertSame(400, $response->getStatusCode());
-        $responseData = json_decode($response->getContent());
         $this->assertSame(false, $responseData->success);
-        $this->assertSame('This value is already used.', $responseData->body->message->email);
+        //$this->assertSame('Must be 10 characters or more', $responseData->body->message->phone);
     }
 
     public function testUsedPhoneRegistration(): void
     {
         $client = static::createClient();
-        $client->jsonRequest('POST', '/api/registration/phone', [
-            "firstName" => "",
-            "lastName" => "",
-            "userName" => "",
-            "phone" => "+375291235566",
+        $client->jsonRequest('POST', 'api/auth/register', [
+            "phone" => "+375 29 61778847601",
             "password" => "",
-            "confirmPassword" => ""
         ]);
         $response = $client->getResponse();
         $this->assertSame(400, $response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame(false, $responseData->success);
-        $this->assertSame('This value is already used.', $responseData->body->message->phone);
-    }
-
-    public function testEmailRegistration(): void
-    {
-        $client = static::createClient();
-        $client->jsonRequest('POST', '/api/registration/email', [
-            "firstName" => "Boris1",
-            "lastName" => "Astapau1",
-            "userName" => "b.astapau1",
-            "email" => "b.astapau@andersenlab1.com",
-            "password" => "password",
-            "confirmPassword" => "password"
-        ]);
-        $response = $client->getResponse();
-        $this->assertSame(201,$response->getStatusCode());
-        $responseData = json_decode($response->getContent());
-        $this->assertSame($responseData->success, true);
-        $entityManager = $client->getContainer()->get('doctrine')->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'b.astapau@andersenlab1.com']);
-        $this->assertNotNull($user);
+        //$this->assertSame('This value is already used.', $responseData->body->message->phone);
     }
 
     public function testPhoneRegistration(): void
     {
-        $client = static::createClient();
-        $client->jsonRequest('POST', '/api/registration/phone', [
-            "firstName" => "Boris2",
-            "lastName" => "Astapau2",
-            "userName" => "b.astapau2",
-            "phone" => "+375291235562",
-            "password" => "password",
-            "confirmPassword" => "password"
+        $client = new Client();
+        $this->client = static::createClient();
+        $data = [
+            'content' => [
+                "phone" => "+375 29 61778847606",
+
+                "password" => "123456789",
+            ]
+
+        ];
+
+        $response = $client->post('api/auth/register', [
+            GuzzleHttp\RequestOptions::JSON => [
+                'title' => 'phone', 'body' => '+375 29 61778847606',
+                'title1' => 'password', 'body1' => '123456789'
+            ]
         ]);
+
+        dd($response);
+        /*$this->client->request(
+            'POST',
+            '/api/auth/register',
+
+            array(),
+            array('content' => [
+                "phone" => "+375 29 61778847606",
+
+                "password" => "123456789"]),
+            array('CONTENT_TYPE' => 'application/json'),
+        '[{"phone":"+375 29 61778847606"","password":"123456789"},{"title":"title2","body":"body2"}]'
+        );*/
+        //$client->jsonRequest('POST', 'api/auth/register', $data);
+
         $response = $client->getResponse();
-        $this->assertSame(201, $response->getStatusCode());
+
+        $this->assertJsonResponse($this->client->getResponse(), 201, false);
+
+        /*$this->assertSame(201, $response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame($responseData->success, true);
         $entityManager = $client->getContainer()->get('doctrine')->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['phone' => '+375291235562']);
-        $this->assertNotNull($user);
+        $user = $entityManager->getRepository(BankUser::class)->findOneBy(['phone' => '+375 29 61778847606']);
+        $this->assertNotNull($user);*/
+    }
+
+    protected function assertJsonResponse($response, $statusCode = 200)
+    {
+        $this->assertEquals(
+            $statusCode, $response->getStatusCode(),
+            $response->getContent()
+        );
+        $this->assertTrue(
+            $response->headers->contains('Content-Type', 'application/json'),
+            $response->headers
+        );
     }
 }
