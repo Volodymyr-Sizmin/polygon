@@ -67,6 +67,7 @@ class ResetRequest
     public function checkExpired(): bool
     {
         $now = new \DateTime('now');
+
         return $this->expiresAt < $now;
     }
 

@@ -23,7 +23,8 @@ class VerificationRequestRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('v')->where('v.verified = TRUE')->andWhere('v.email = :email')->setParameter('email', $email);
         $query = $qb->getQuery();
-        return $query->setMaxResults(1)->getOneOrNullResult(); 
+
+        return $query->setMaxResults(1)->getOneOrNullResult();
     }
 
     // /**

@@ -5,13 +5,10 @@ namespace App\DTO\Transformer;
 use App\DTO\TracklistDTO;
 use Symfony\Component\HttpFoundation\Request;
 use App\Service\Validation\ValidationService;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class TracklistTransformerDTO
 {
     /**
-     * @param Request $request
-     * @return TracklistDTO
      * @throws \App\Exception\ValidationServiceException
      */
     public function transformerDTO(Request $request): TracklistDTO

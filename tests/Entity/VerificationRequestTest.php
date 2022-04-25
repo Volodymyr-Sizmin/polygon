@@ -2,14 +2,14 @@
 
 namespace App\Tests;
 
-use App\Entity\User;
 use App\Entity\VerificationRequest;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class VerificationRequestTest extends KernelTestCase
 {
     private $entityManager;
-    public function setUp() : void
+
+    public function setUp(): void
     {
         $kernel = self::bootKernel();
         $this->entityManager = $kernel->getContainer()->get('doctrine')->getManager();
@@ -19,7 +19,7 @@ class VerificationRequestTest extends KernelTestCase
     {
         $email = 'p.test@andersenlab.com';
         $request = new VerificationRequest($email);
-        $this->assertSame($email,$request->getEmail());
+        $this->assertSame($email, $request->getEmail());
         $this->assertNotEmpty($request->getUrl());
     }
 

@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -13,17 +12,15 @@ use DateTime;
 
 class SerializeController extends AbstractController
 {
-
-    public function serializeJson($serializable): String
+    public function serializeJson($serializable): string
     {
-        $dateCallback = function ($innerObject) 
-        {
+        $dateCallback = function ($innerObject) {
             return $innerObject instanceof DateTimeImmutable ? $innerObject->format(DateTime::ISO8601) : '';
         };
         $defaultContext = [
             AbstractNormalizer::CALLBACKS => [
-                'birthday' => $dateCallback
-            ]
+                'birthday' => $dateCallback,
+            ],
         ];
 
         $encoders = [new JsonEncoder()];

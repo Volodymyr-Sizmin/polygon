@@ -16,19 +16,17 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 use App\Repository\ApiTokenRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
- 
-class ApiKeyAuthenticator extends AbstractAuthenticator 
-implements AuthenticationEntryPointInterface
+class ApiKeyAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
-
     /**
      * @var EntityManagerInterface
      */
     private $entityManager;
-    
+
     private $apiTokenRepo;
 
-    public function __construct(ApiTokenRepository $apiTokenRepo, EntityManagerInterface $entityManager){
+    public function __construct(ApiTokenRepository $apiTokenRepo, EntityManagerInterface $entityManager)
+    {
         $this->apiTokenRepo = $apiTokenRepo;
         $this->entityManager = $entityManager;
     }
@@ -37,14 +35,14 @@ implements AuthenticationEntryPointInterface
     {
         return $request->headers->has('X-AUTH-TOKEN');
     }
-    
+
     public function authenticate(Request $request): PassportInterface
     {
         $apiToken = $request->headers->get('X-AUTH-TOKEN');
 
-        return new SelfValidatingPassport(new UserBadge($apiToken, function($credentials){
+        return new SelfValidatingPassport(new UserBadge($apiToken, function ($credentials) {
             $token = $this->apiTokenRepo->findOneBy(['token' => $credentials]);
-            if (!$token){
+            if (!$token) {
                 throw new CustomUserMessageAuthenticationException('Unauthorized access');
             }
 
@@ -52,7 +50,7 @@ implements AuthenticationEntryPointInterface
                 return $token->getUser();
             }
 
-            if($token->checkExpired()) {
+            if ($token->checkExpired()) {
                 $user = $token->getUser();
                 $user->removeApiToken($token);
                 $this->entityManager->remove($token);
@@ -60,6 +58,7 @@ implements AuthenticationEntryPointInterface
                 throw new CustomUserMessageAuthenticationException('Unauthorized access');
             }
             $token->renewExpiresAt();
+
             return $token->getUser();
         }));
     }
@@ -72,18 +71,19 @@ implements AuthenticationEntryPointInterface
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $data = [
-            'success'=> false,
+            'success' => false,
             'body' => [
-                'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
-            ]
+                'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
+            ],
         ];
 
-        return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);    
+        return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
-   public function start(Request $request, AuthenticationException $authException = null): ?Response
-   {
+    public function start(Request $request, AuthenticationException $authException = null): ?Response
+    {
         $authException = new CustomUserMessageAuthenticationException('No API token provided');
-        return $this->onAuthenticationFailure($request,$authException);
-   }
+
+        return $this->onAuthenticationFailure($request, $authException);
+    }
 }

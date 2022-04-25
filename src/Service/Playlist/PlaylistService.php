@@ -10,25 +10,24 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PlaylistService implements PlaylistServiceInterface
 {
-
     private $enityManager;
 
     public function __construct(EntityManagerInterface $em, ValidatorInterface $validator)
     {
         $this->enityManager = $em;
-        $this->playlist     = $this->enityManager->getRepository(Playlist::class);
-        $this->validator    = $validator;
+        $this->playlist = $this->enityManager->getRepository(Playlist::class);
+        $this->validator = $validator;
     }
 
     public function indexService(): array
     {
-        return  $this->playlist->findAll();
+        return $this->playlist->findAll();
     }
 
-    /** Create Playlist
+    /** Create Playlist.
      *
-     * @param array $data
      * @throws \InvalidArgumentException If passed data is empty
+     *
      * @return Playlist
      */
     public function createPlaylist(array $data)
@@ -39,8 +38,8 @@ class PlaylistService implements PlaylistServiceInterface
 
         $playlist = new Playlist();
 
-        $playlist->setName(isset($data["name"]) ? $data["name"] : $playlist->getName());
-        $playlist->setDescription(isset($data["description"]) ? $data["description"] : $playlist->getDescription());
+        $playlist->setName(isset($data['name']) ? $data['name'] : $playlist->getName());
+        $playlist->setDescription(isset($data['description']) ? $data['description'] : $playlist->getDescription());
         $playlist->setCreatedAt(new \DateTimeImmutable());
         $playlist->setUpdatedAt(new \DateTimeImmutable());
 
@@ -55,10 +54,10 @@ class PlaylistService implements PlaylistServiceInterface
         return $playlist;
     }
 
-    /** Modify Playlist
+    /** Modify Playlist.
      *
-     * @param array $data
      * @throws \InvalidArgumentException If no playlist is passed or data is empty
+     *
      * @return array|Playlist Returns instance of Playlist or an array with error messages
      */
     public function modifyPlaylist(Playlist $playlist, array $data): Playlist
@@ -89,11 +88,9 @@ class PlaylistService implements PlaylistServiceInterface
         return $playlist;
     }
 
-    /** Delete Playlist
+    /** Delete Playlist.
      *
-     * @param Playlist $playlist
      * @throws \InvalidArgumentException If no playlist is passed
-     * @return void
      */
     public function deletePlaylist(Playlist $playlist): void
     {
@@ -104,5 +101,4 @@ class PlaylistService implements PlaylistServiceInterface
         $this->enityManager->remove($playlist);
         $this->enityManager->flush();
     }
-    
 }

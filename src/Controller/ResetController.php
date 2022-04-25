@@ -4,12 +4,10 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\ResetRequest;
-use App\Repository\ResetRequestRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -46,7 +44,7 @@ class ResetController extends AbstractController
 
     private function sendEmail(ResetRequest $resetRequest, MailerInterface $mailer)
     {
-        $url = $_ENV['APP_HOST'] . '/backend/reset/email/';
+        $url = $_ENV['APP_HOST'].'/backend/reset/email/';
         $url .= $resetRequest->getUrl();
         $to = $resetRequest->getUser()->getEmail();
         $email = (new Email())
@@ -77,7 +75,7 @@ class ResetController extends AbstractController
      *     HTTP/1.1 200 OK
      *     {
      *       "success": "true",
-     *       "body": { 
+     *       "body": {
      *           "url":"525a4dc0a3a5c198bbc05a61d3b25979"
      *       }
      *     }
@@ -85,7 +83,7 @@ class ResetController extends AbstractController
      * @apiError {Boolean} success Should be false
      * @apiError {JSON} body Error parametrs
      * @apiError {String} body.message Error message
-     * @apiErrorExample {json}  Empty json request 
+     * @apiErrorExample {json}  Empty json request
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
@@ -93,7 +91,7 @@ class ResetController extends AbstractController
      *           "message": "Empty input"
      *       }
      *     }
-     * @apiErrorExample {json} No user with such email 
+     * @apiErrorExample {json} No user with such email
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
@@ -105,39 +103,43 @@ class ResetController extends AbstractController
     public function emailRequestCreation(Request $request, MailerInterface $mailer): Response
     {
         $data = json_decode($request->getContent(), true);
-        if (!$data){
+        if (!$data) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>'empty input']
+                'body' => ['message' => 'empty input'],
             ];
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
+
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-        if(!$user){
+        if (!$user) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>'bad email']
+                'body' => ['message' => 'bad email'],
             ];
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
+
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
         $resetRequest = new ResetRequest($user);
 
         $error = $this->sendEmail($resetRequest, $mailer);
-        if ($error){
+        if ($error) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>$error->getMessage()]
+                'body' => ['message' => $error->getMessage()],
             ];
-            return new JsonResponse($response, Response::HTTP_FAILED_DEPENDENCY); 
+
+            return new JsonResponse($response, Response::HTTP_FAILED_DEPENDENCY);
         }
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($resetRequest);
         $entityManager->flush();
         $response = ['success' => true, 'body' => ['url' => $resetRequest->getUrl()]];
-        return new JsonResponse($response, Response::HTTP_CREATED); 
+
+        return new JsonResponse($response, Response::HTTP_CREATED);
     }
 
     /**
@@ -175,29 +177,31 @@ class ResetController extends AbstractController
      *           "message": "expired"
      *       }
      *     }
-     * 
      */
     public function activateResetEmail(string $url): Response
     {
         $resetRequest = $this->getDoctrine()->getRepository(ResetRequest::class)->findOneBy(['url' => $url]);
-        if(!$resetRequest){
+        if (!$resetRequest) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>'not found']
+                'body' => ['message' => 'not found'],
             ];
+
             return new JsonResponse($response, Response::HTTP_NOT_FOUND);
         }
-        if($resetRequest->checkExpired()){
+        if ($resetRequest->checkExpired()) {
             $this->deleteRequest($resetRequest);
             $response = [
                 'success' => false,
-                'body' => ['message'=>'expired']
+                'body' => ['message' => 'expired'],
             ];
-            return new JsonResponse($response, Response::HTTP_GONE);//410
+
+            return new JsonResponse($response, Response::HTTP_GONE); //410
         }
         $this->activateRequest($resetRequest);
         $response = ['success' => true, 'body' => []];
-        return new JsonResponse($response, Response::HTTP_OK); 
+
+        return new JsonResponse($response, Response::HTTP_OK);
     }
 
     /**
@@ -208,7 +212,7 @@ class ResetController extends AbstractController
      * @apiBody {String} email
      * @apiBody {String} password
      * @apiBody {String} confirmPassword
-     * 
+     *
      * @apiSuccess (200) {Boolean} success Should be true
      * @apiSuccess (200) {JSON} body Response body
      * @apiSuccess (200) {String} body.url used to create verification url
@@ -222,7 +226,7 @@ class ResetController extends AbstractController
      * @apiError {Boolean} success Should be false
      * @apiError {JSON} body Error parametrs
      * @apiError {String} body.message Error message
-     * @apiErrorExample {json}  Empty json request 
+     * @apiErrorExample {json}  Empty json request
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
@@ -266,46 +270,51 @@ class ResetController extends AbstractController
     public function resetPasswordEmail(Request $request, UserPasswordHasherInterface $encoder): Response
     {
         $data = json_decode($request->getContent(), true);
-        if (!$data){
+        if (!$data) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>'Empty input']
+                'body' => ['message' => 'Empty input'],
             ];
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
+
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
         $entityManager = $this->getDoctrine()->getManager();
-        
+
         $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $data['email']]);
         $resetRequest = $entityManager->getRepository(ResetRequest::class)->findOneBy(['user' => $user]);
 
-        if ($data['password'] !== $data['confirmPassword']){
+        if ($data['password'] !== $data['confirmPassword']) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>'passsword and confirm password don\'t match']
+                'body' => ['message' => 'passsword and confirm password don\'t match'],
             ];
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST); 
+
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
-        if(!$resetRequest){
+        if (!$resetRequest) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>'not found']
+                'body' => ['message' => 'not found'],
             ];
+
             return new JsonResponse($response, Response::HTTP_NOT_FOUND);
         }
-        if($resetRequest->checkExpired()){
+        if ($resetRequest->checkExpired()) {
             $this->deleteRequest($resetRequest);
             $response = [
                 'success' => false,
-                'body' => ['message'=>'expired']
+                'body' => ['message' => 'expired'],
             ];
-            return new JsonResponse($response, Response::HTTP_GONE);//410
+
+            return new JsonResponse($response, Response::HTTP_GONE); //410
         }
-        if(!$resetRequest->getActivated()){
+        if (!$resetRequest->getActivated()) {
             $response = [
                 'success' => false,
-                'body' => ['message'=>'needs to be activated']
+                'body' => ['message' => 'needs to be activated'],
             ];
+
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
@@ -318,6 +327,7 @@ class ResetController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
         $response = ['success' => true, 'body' => []];
-        return new JsonResponse($response, Response::HTTP_OK); 
+
+        return new JsonResponse($response, Response::HTTP_OK);
     }
 }

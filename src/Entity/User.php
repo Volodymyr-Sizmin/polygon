@@ -162,8 +162,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPublicData(): array
     {
         return [
-            "id" => $this->getId(),
-            "username" => $this->getUsername()
+            'id' => $this->getId(),
+            'username' => $this->getUsername(),
         ];
     }
 
@@ -219,7 +219,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @param array $roles
      * @return $this
      */
     public function setRoles(array $roles): self
@@ -229,10 +228,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @param string $role
-     * @return bool
-     */
     public function hasRole(string $role): bool
     {
         if (in_array($role, $this->roles)) {
@@ -243,7 +238,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @param string $role
      * @return $this
      */
     public function addRole(string $role): self
@@ -256,7 +250,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @param string $role
      * @return $this
      */
     public function removeRole(string $role)
@@ -278,7 +271,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @param Playlist $playlist
      * @return $this
      */
     public function addPlaylist(Playlist $playlist): self
@@ -292,7 +284,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @param Playlist $playlist
      * @return $this
      */
     public function removePlaylist(Playlist $playlist): self
@@ -346,6 +337,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $str = preg_replace('/\s\s+/', ' ', $str);
         $str = preg_replace('/^ /', '', $str);
+
         return preg_replace('/ $/', '', $str);
     }
 
@@ -418,6 +410,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeApiToken(ApiToken $apiToken): self
     {
         $this->apiTokens->removeElement($apiToken);
+
         return $this;
     }
 

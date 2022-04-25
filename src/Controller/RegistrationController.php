@@ -4,13 +4,11 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\VerificationRequest;
-use App\Repository\VerificationRequestRepository;
 use Doctrine\Common\Annotations\Annotation\IgnoreAnnotation;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -27,7 +25,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * @IgnoreAnnotation("apiHeader")
  * @IgnoreAnnotation("apiHeaderExample")
  */
-
 class RegistrationController extends AbstractController
 {
     private $validator;
@@ -44,8 +41,10 @@ class RegistrationController extends AbstractController
         $verificationRequest = $this->getDoctrine()->getRepository(VerificationRequest::class)->findValidByEmail($email);
         if (!$verificationRequest) {
             $errorsString['email'] = 'Invalid email';
+
             return $errorsString;
         }
+
         return $errorsString;
     }
 
@@ -54,29 +53,34 @@ class RegistrationController extends AbstractController
         $length = strlen($data['password']);
         if ($length < 8) {
             $errorsString['password'] = 'Must be 8 characters or more';
+
             return $errorsString;
         }
         if ($length > 32) {
             $errorsString['password'] = 'Must be 32 characters or less';
+
             return $errorsString;
         }
         $pattern = "/^[a-zA-Z0-9!@#$%^&`*()_=+;:'\x22?,<>\[\]{}\\|\/№!~-]+\.?[a-zA-Z0-9!@#$%^&*()_=+;:'\x22?,<>\[\]{}\\|\/№!~-]+$/u";
         if (!preg_match($pattern, $data['password'])) {
             $errorsString['password'] = 'Can contain letters, numbers, !#$%&‘*+—/\=?^_`{|}~!»№;%:?*()[]<>,\' symbols, and one dot not first or last';
+
             return $errorsString;
         }
         if ($data['password'] !== $data['confirmPassword']) {
             $errorsString['password'] = 'Password and confirm password don\'t match';
+
             return $errorsString;
         }
+
         return $errorsString;
     }
 
     private function validate($user, $data, $type = 'email')
     {
         $errorsString = [];
-        if ($type == 'email') {
-            $errorsString =  $this->validateEmail($errorsString, $data['email']);
+        if ('email' == $type) {
+            $errorsString = $this->validateEmail($errorsString, $data['email']);
         }
 
         $errorsString = $this->validatePassword($errorsString, $data);
@@ -86,6 +90,7 @@ class RegistrationController extends AbstractController
         foreach ($errors as $error) {
             $errorsString[$error->getPropertyPath()] = $error->getMessage();
         }
+
         return $errorsString;
     }
 
@@ -180,8 +185,9 @@ class RegistrationController extends AbstractController
         if (!$data) {
             $response = [
                 'success' => false,
-                'body' => ['message' => 'Empty input']
+                'body' => ['message' => 'Empty input'],
             ];
+
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
@@ -198,8 +204,9 @@ class RegistrationController extends AbstractController
         if (!empty($errorsString)) {
             $response = [
                 'success' => false,
-                'body' => ['message' => $errorsString ]
+                'body' => ['message' => $errorsString],
             ];
+
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
@@ -211,6 +218,7 @@ class RegistrationController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
         $response = ['success' => true, 'body' => []];
+
         return new JsonResponse($response, Response::HTTP_CREATED);
     }
 
@@ -289,17 +297,16 @@ class RegistrationController extends AbstractController
      *           }
      *       }
      *     }
-     *
      */
-
     public function phoneRegistration(Request $request): Response
     {
         $data = json_decode($request->getContent(), true);
         if (!$data) {
             $response = [
                 'success' => false,
-                'body' => ['message' => 'Empty input']
+                'body' => ['message' => 'Empty input'],
             ];
+
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
@@ -314,8 +321,9 @@ class RegistrationController extends AbstractController
         if (!empty($errorsString)) {
             $response = [
                 'success' => false,
-                'body' => ['message' => $errorsString ]
+                'body' => ['message' => $errorsString],
             ];
+
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
@@ -327,6 +335,7 @@ class RegistrationController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
         $response = ['success' => true, 'body' => []];
+
         return new JsonResponse($response, Response::HTTP_CREATED);
     }
 }

@@ -8,7 +8,6 @@ use App\Entity\Playlist;
 use App\Service\Playlist\PlaylistService;
 use App\Repository\PlaylistRepository;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
 use function PHPUnit\Framework\assertSame;
 
 class PlaylistServiceTest extends WebTestCase
@@ -45,7 +44,7 @@ class PlaylistServiceTest extends WebTestCase
                              ->getMockBuilder(EntityManager::class)
                              ->disableOriginalConstructor()
                              ->getMock();
-        $this->entityManagerMock ->expects($this->any())
+        $this->entityManagerMock->expects($this->any())
                             ->method('getRepository')
                             ->willReturn($this->playlistRepositoryMock);
         $this->validatorInterface = $this
@@ -56,7 +55,7 @@ class PlaylistServiceTest extends WebTestCase
         $this->playlistService = new PlaylistService($this->entityManagerMock, $this->validatorInterface);
 
         $excepted = $this->entityManagerMock->getRepository(Playlist::class)->findAll();
-        $testMethod = $this->playlistService ->indexService();
+        $testMethod = $this->playlistService->indexService();
 
         assertSame($excepted, $testMethod);
     }

@@ -22,17 +22,13 @@ use Symfony\Component\HttpFoundation\Response;
  * @IgnoreAnnotation("apiHeader")
  * @IgnoreAnnotation("apiHeaderExample")
  */
-
 class MyTracklistController extends SerializeController
 {
-
     private $myTracklistInterface;
     private $tracklistTransformerDTO;
 
     /**
      * MyTracklistController constructor.
-     * @param MyTracklistInterface $myTracklistInterface
-     * @param TracklistTransformerDTO $tracklistTransformerDTO
      */
     public function __construct(
         MyTracklistInterface $myTracklistInterface,
@@ -43,8 +39,6 @@ class MyTracklistController extends SerializeController
     }
 
     /**
-     * @return JsonResponse
-     *
      * @api {GET} /backend/api/mytracklist Index Mytracklist
      *
      * @apiGroup MYTRACKLIST
@@ -122,7 +116,6 @@ class MyTracklistController extends SerializeController
      *    "playlistId": null
      *}
      * ]
-     *
      */
     public function index(): JsonResponse
     {
@@ -133,8 +126,7 @@ class MyTracklistController extends SerializeController
     }
 
     /**
-     * the method in the service is a stub before creating the admin panel and the corresponding tables
-     * @return JsonResponse
+     * the method in the service is a stub before creating the admin panel and the corresponding tables.
      *
      * @api {GET} /backend/api/mytracklist/create Create MyTracklist
      *
@@ -180,7 +172,6 @@ class MyTracklistController extends SerializeController
      *   ]
      *}
      * ]
-     *
      */
     public function create(): JsonResponse
     {
@@ -191,9 +182,6 @@ class MyTracklistController extends SerializeController
     }
 
     /**
-     * @param Request $request
-     * @return JsonResponse
-     *
      * @api {POST} /backend/api/mytracklist Store Mytracklist
      *
      * @apiName store_mytracklist
@@ -277,22 +265,22 @@ class MyTracklistController extends SerializeController
      *          !@#$%^&*()_-=+;:'\\\"?,<>[]{}\\|/№!~' symbols, \n
      *          and dot can't use like the first and last symbol and also can't be repeated consecutively"
      *      }
-     *
      */
     public function store(Request $request): JsonResponse
     {
         try {
             $dto = $this->tracklistTransformerDTO->transformerDTO($request);
+
             return JsonResponse::fromJsonString(
                 $this->serializeJson($this->myTracklistInterface->storeService($dto)),
                 Response::HTTP_CREATED
             );
         } catch (\Exception $exception) {
             return JsonResponse::fromJsonString(
-                $this->serializeJson(array(
+                $this->serializeJson([
                 'success' => false,
-                'body' => $exception->getMessage()
-                )),
+                'body' => $exception->getMessage(),
+                ]),
                 Response::HTTP_BAD_REQUEST
             );
         }
@@ -300,7 +288,6 @@ class MyTracklistController extends SerializeController
 
     /**
      * @param $id
-     * @return JsonResponse
      *
      * @api {GET} /backend/api/mytracklist/{id} Show Mytracklist
      *
@@ -395,10 +382,10 @@ class MyTracklistController extends SerializeController
             );
         } catch (\Exception $exception) {
             return JsonResponse::fromJsonString(
-                $this->serializeJson(array(
+                $this->serializeJson([
                     'success' => false,
-                    'body' => $exception->getMessage()
-                )),
+                    'body' => $exception->getMessage(),
+                ]),
                 Response::HTTP_NOT_FOUND
             );
         }
@@ -406,7 +393,6 @@ class MyTracklistController extends SerializeController
 
     /**
      * @param $id
-     * @return JsonResponse
      *
      * @api {GET} /backend/api/mytracklist/{id}/edit
      * @apiName edit_mytracklist
@@ -492,7 +478,6 @@ class MyTracklistController extends SerializeController
      *          "success": false,
      *          "body": "Can not find track"
      *      {
-     *
      */
     public function edit($id): JsonResponse
     {
@@ -503,10 +488,10 @@ class MyTracklistController extends SerializeController
             );
         } catch (\Exception $exception) {
             return JsonResponse::fromJsonString(
-                $this->serializeJson(array(
+                $this->serializeJson([
                    'success' => false,
-                   'body' => $exception->getMessage()
-                )),
+                   'body' => $exception->getMessage(),
+                ]),
                 Response::HTTP_NOT_FOUND
             );
         }
@@ -514,8 +499,6 @@ class MyTracklistController extends SerializeController
 
     /**
      * @param $id
-     * @param Request $request
-     * @return JsonResponse
      *
      * @api {POST} /backend/api/mytracklist/{id}
      * @apiName update_mytracklist
@@ -607,20 +590,20 @@ class MyTracklistController extends SerializeController
     {
         try {
             $dto = $this->tracklistTransformerDTO->transformerDTO($request);
+
             return JsonResponse::fromJsonString(
                 $this->serializeJson($this->myTracklistInterface->updateService($dto, $id), Response::HTTP_CREATED)
             );
         } catch (\Exception $exception) {
-            return JsonResponse::fromJsonString($this->serializeJson(array(
+            return JsonResponse::fromJsonString($this->serializeJson([
                 'success' => false,
-                'body' => $exception->getMessage()
-            )), Response::HTTP_BAD_REQUEST);
+                'body' => $exception->getMessage(),
+            ]), Response::HTTP_BAD_REQUEST);
         }
     }
 
     /**
      * @param $id
-     * @return JsonResponse
      *
      * @api {DELETE} /backend/api/mytracklist/{id} Delete mytracklist
      *
@@ -650,7 +633,6 @@ class MyTracklistController extends SerializeController
      *          "success": false,
      *          "body": "Can not find track"
      *      {
-     *
      */
     public function delete($id): JsonResponse
     {
@@ -661,10 +643,10 @@ class MyTracklistController extends SerializeController
             );
         } catch (\Exception $exception) {
             return JsonResponse::fromJsonString(
-                $this->serializeJson(array(
+                $this->serializeJson([
                 'success' => false,
-                'body' => $exception->getMessage()
-                )),
+                'body' => $exception->getMessage(),
+                ]),
                 Response::HTTP_NOT_FOUND
             );
         }
