@@ -7,7 +7,6 @@ use Doctrine\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use App\Entity\City;
 use App\Entity\Country;
-use App\DataFixtures\CountryFixtures;
 
 class CityFixtures extends Fixture implements DependentFixtureInterface
 {

@@ -2,8 +2,6 @@
 
 namespace App\Tests\Feature\Controller;
 
-use App\Entity\User;
-use App\Entity\ApiToken;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class LoginTest extends WebTestCase
@@ -12,8 +10,8 @@ class LoginTest extends WebTestCase
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/login/email', [
-            "email" => "b.astapau@andersenlab.com",
-            "password" => "password"
+            'email' => 'b.astapau@andersenlab.com',
+            'password' => 'password',
         ]);
 
         $response = $client->getResponse();
@@ -29,8 +27,8 @@ class LoginTest extends WebTestCase
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/login/phone', [
-            "phone" => "+375291235566",
-            "password" => "password"
+            'phone' => '+375291235566',
+            'password' => 'password',
         ]);
 
         $response = $client->getResponse();

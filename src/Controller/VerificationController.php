@@ -2,14 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Entity\VerificationRequest;
 use App\Service\VerificationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -51,7 +49,7 @@ class VerificationController extends AbstractController
      *     HTTP/1.1 200 OK
      *     {
      *       "success": "true",
-     *       "body": { 
+     *       "body": {
      *           "url":"525a4dc0a3a5c198bbc05a61d3b25979"
      *       }
      *     }
@@ -59,7 +57,7 @@ class VerificationController extends AbstractController
      * @apiError {Boolean} success Should be false
      * @apiError {JSON} body Error parametrs
      * @apiError {String} body.message Error message
-     * @apiErrorExample {json}  Empty json request 
+     * @apiErrorExample {json}  Empty json request
      *     HTTP/1.1 400
      *     {
      *       "success": "false",
@@ -67,7 +65,7 @@ class VerificationController extends AbstractController
      *           "message": "Empty input"
      *       }
      *     }
-     * @apiErrorExample {json} SMTP error 
+     * @apiErrorExample {json} SMTP error
      *     HTTP/1.1 424
      *     {
      *       "success": "false",
@@ -79,61 +77,61 @@ class VerificationController extends AbstractController
     public function emailVerification(Request $request): JsonResponse
     {
         $data = [
-            'email' => $request->get('email')
+            'email' => $request->get('email'),
         ];
 
         if (empty($data['email'])) {
-            return new JsonResponse (
+            return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
-                        'message' => 'Empty input'
-                    ]
+                        'message' => 'Empty input',
+                    ],
                 ],
                 Response::HTTP_BAD_REQUEST
-            ); 
+            );
         }
         $verificationRequest = new VerificationRequest($data['email']);
         $errorsString = $this->verificationService->validate($verificationRequest);
 
         if (!empty($errorsString)) {
-            return new JsonResponse (
+            return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
-                        'message' => $errorsString
-                    ]
+                        'message' => $errorsString,
+                    ],
                 ],
                 Response::HTTP_BAD_REQUEST
-            );  
+            );
         }
 
-        $url = $_ENV['APP_HOST'] . '/backend/verify/email/';
+        $url = $_ENV['APP_HOST'].'/backend/verify/email/';
         $error = $this->verificationService->sendEmail($verificationRequest, $url);
         if ($error) {
-            return new JsonResponse (
+            return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
-                        'message' => $error->getMessage()
-                    ]
+                        'message' => $error->getMessage(),
+                    ],
                 ],
                 Response::HTTP_FAILED_DEPENDENCY
-            );   
+            );
         }
 
         $this->entityManager->persist($verificationRequest);
         $this->entityManager->flush();
 
-        return new JsonResponse (
+        return new JsonResponse(
             [
                 'success' => true,
                 'body' => [
-                    'url' => $verificationRequest->getUrl()
-                ]
+                    'url' => $verificationRequest->getUrl(),
+                ],
             ],
             Response::HTTP_CREATED
-        ); 
+        );
     }
 
     /**
@@ -151,7 +149,7 @@ class VerificationController extends AbstractController
      *     HTTP/1.1 200 OK
      *     {
      *       "success": "true",
-     *       "body": { 
+     *       "body": {
      *           "email": "b.astapau@andersenlab.com"
      *       }
      *     }
@@ -175,18 +173,17 @@ class VerificationController extends AbstractController
      *           "message": "Expired"
      *       }
      *     }
-     * 
      */
     public function verifyEmail(string $url): JsonResponse
     {
         $verificationRequest = $this->getDoctrine()->getRepository(VerificationRequest::class)->findOneBy(['url' => $url]);
         if (!$verificationRequest) {
-            return new JsonResponse (
+            return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
-                        'message' => 'Not found'
-                    ]
+                        'message' => 'Not found',
+                    ],
                 ],
                 Response::HTTP_NOT_FOUND
             );
@@ -194,12 +191,13 @@ class VerificationController extends AbstractController
         if ($verificationRequest->checkExpired()) {
             $this->entityManager->remove($verificationRequest);
             $this->entityManager->flush();
-            return new JsonResponse (
+
+            return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
-                        'message' => 'Expired'
-                    ]
+                        'message' => 'Expired',
+                    ],
                 ],
                 Response::HTTP_GONE
             );
@@ -209,12 +207,12 @@ class VerificationController extends AbstractController
         $this->entityManager->persist($verificationRequest);
         $this->entityManager->flush();
 
-        return new JsonResponse (
+        return new JsonResponse(
             [
                 'success' => true,
                 'body' => [
-                    'email' => $verificationRequest->getEmail()
-                ]
+                    'email' => $verificationRequest->getEmail(),
+                ],
             ],
             Response::HTTP_OK
         );

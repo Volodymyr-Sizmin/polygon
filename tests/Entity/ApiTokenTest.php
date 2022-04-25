@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class ApiTokenTest extends KernelTestCase
 {
     private $entityManager;
+
     public function setUp(): void
     {
         $kernel = self::bootKernel();

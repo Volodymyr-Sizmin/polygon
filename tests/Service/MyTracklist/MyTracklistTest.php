@@ -32,8 +32,8 @@ class MyTracklistTest extends WebTestCase
     {
         parent::setUp();
 
-        $this->tracklistDto     = $this->createMock(TracklistDTO::class);
-        $this->fileSystemMock   = $this->createMock(Filesystem::class);
+        $this->tracklistDto = $this->createMock(TracklistDTO::class);
+        $this->fileSystemMock = $this->createMock(Filesystem::class);
         $this->fileUploaderMock = $this->createMock(FileUploader::class);
         $this->uploadedFileMock = $this->createMock(UploadedFile::class);
 
@@ -49,7 +49,7 @@ class MyTracklistTest extends WebTestCase
                                    ->disableOriginalConstructor()
                                    ->getMock();
 
-        $this->entityManagerMock   ->expects($this->any())
+        $this->entityManagerMock->expects($this->any())
                                    ->method('getRepository')
                                    ->willReturn($this->trackRepositoryMock);
 
@@ -73,7 +73,7 @@ class MyTracklistTest extends WebTestCase
 
     public function testCreateService(): void
     {
-        $expected = array([
+        $expected = [[
             'trackType' => ['Book', 'Podcast', 'Music'],
             'genreType' => [
                 'Rock',
@@ -95,9 +95,9 @@ class MyTracklistTest extends WebTestCase
                 'Funk',
                 'Ethnic',
                 'Reggae',
-                'Lounge'
-            ]
-        ]);
+                'Lounge',
+            ],
+        ]];
 
         $testMethod = $this->myTracklistService->createService();
 
@@ -117,12 +117,11 @@ class MyTracklistTest extends WebTestCase
         $this->fileUploaderMock->expects($this->any())
                                ->method('upload')
                                ->with($this->tracklistDto->track_path)
-                               ->willReturn(new class
-                               {
-                                public function getPath()
-                                {
+                               ->willReturn(new class() {
+                                   public function getPath()
+                                   {
                                        return 'URL';
-                                }
+                                   }
                                });
 
         $track = new Track();
@@ -162,22 +161,20 @@ class MyTracklistTest extends WebTestCase
         $this->fileUploaderMock->expects($this->any())
                                ->method('upload')
                                ->with($this->tracklistDto->track_path)
-                               ->willReturn(new class
-                               {
-                                public function getPath()
-                                {
+                               ->willReturn(new class() {
+                                   public function getPath()
+                                   {
                                        return 'URL TRACK';
-                                }
+                                   }
                                });
         $this->fileUploaderMock->expects($this->any())
                                ->method('upload')
                                ->with($this->tracklistDto->cover)
-                               ->willReturn(new class
-                               {
-                                public function getPath()
-                                {
+                               ->willReturn(new class() {
+                                   public function getPath()
+                                   {
                                        return 'URL IMAGE';
-                                }
+                                   }
                                });
 
         $track = new Track();
@@ -295,17 +292,16 @@ class MyTracklistTest extends WebTestCase
         $this->fileUploaderMock->expects($this->any())
                                ->method('upload')
                                ->with($this->tracklistDto->cover)
-                               ->willReturn(new class
-                               {
-                                public function getPath()
-                                {
+                               ->willReturn(new class() {
+                                   public function getPath()
+                                   {
                                        return 'URL IMAGE';
-                                }
+                                   }
                                });
         $track->setCover($this->fileUploaderMock->upload($this->tracklistDto->cover)->getPath());
         $this->fileSystemMock->expects($this->any())
                              ->method('remove')
-                             ->with('../public/uploads/' . $track->getCover());
+                             ->with('../public/uploads/'.$track->getCover());
 
         $testMethod = $this->myTracklistService->updateService($this->tracklistDto, 1);
 
@@ -354,10 +350,10 @@ class MyTracklistTest extends WebTestCase
 
     public function testDeleteServiceSuccess(): void
     {
-         $this->trackRepositoryMock->expects($this->any())
+        $this->trackRepositoryMock->expects($this->any())
                                                 ->method('find')
                                                 ->with(1)
-                                                ->willReturn(new class {
+                                                ->willReturn(new class() {
                                                     public function getCover()
                                                     {
                                                         return 'image.img';
@@ -377,10 +373,10 @@ class MyTracklistTest extends WebTestCase
 
         $this->entityManagerMock->remove($this->trackRepositoryMock->find(1));
 
-        $expected = array(
+        $expected = [
             'success' => true,
-            'body'    => 'Track deleted successfully'
-        );
+            'body' => 'Track deleted successfully',
+        ];
 
         $testMethod = $this->myTracklistService->deleteService(1);
 

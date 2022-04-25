@@ -27,9 +27,6 @@ class MyTracklistService implements MyTracklistInterface
         $this->trackRepository = $this->entityManager->getRepository(Track::class);
     }
 
-    /**
-     * @return array
-     */
     public function indexService(): array
     {
         return $this->trackRepository->findAll();
@@ -40,7 +37,7 @@ class MyTracklistService implements MyTracklistInterface
      */
     public function createService(): array
     {
-        return array([
+        return [[
             'trackType' => ['Book', 'Podcast', 'Music'],
             'genreType' => [
                 'Rock',
@@ -62,45 +59,45 @@ class MyTracklistService implements MyTracklistInterface
                 'Funk',
                 'Ethnic',
                 'Reggae',
-                'Lounge'
-            ]
-        ]);
+                'Lounge',
+            ],
+        ]];
     }
 
     /**
      * @param \App\DTO\TracklistDTO $tracklistDTO
-     * @return Track
+     *
      * @throws \App\Exception\FileUploadException
      */
     public function storeService($tracklistDTO): Track
     {
         $track = new Track();
 
-        if ($tracklistDTO->album !== null) {
+        if (null !== $tracklistDTO->album) {
             $track->setAlbum($tracklistDTO->album);
         }
 
-        if ($tracklistDTO->cover !== null) {
+        if (null !== $tracklistDTO->cover) {
             $track->setCover($this->fileUploader->upload($tracklistDTO->cover)->getPath());
         }
 
-        if ($tracklistDTO->track_path !== null) {
+        if (null !== $tracklistDTO->track_path) {
             $track->setTrackPath($this->fileUploader->upload($tracklistDTO->track_path)->getPath());
         }
- 
-        if ($tracklistDTO->title !== null) {
+
+        if (null !== $tracklistDTO->title) {
             $track->setTitle($tracklistDTO->title);
         }
 
-        if ($tracklistDTO->author !== null) {
+        if (null !== $tracklistDTO->author) {
             $track->setAuthor($tracklistDTO->author);
         }
 
-        if ($tracklistDTO->type !== null) {
+        if (null !== $tracklistDTO->type) {
             $track->setType($tracklistDTO->type);
         }
 
-        if ($tracklistDTO->genre !== null) {
+        if (null !== $tracklistDTO->genre) {
             $track->setGenre($tracklistDTO->genre);
         }
 
@@ -111,66 +108,64 @@ class MyTracklistService implements MyTracklistInterface
     }
 
     /**
-     * @param int $id
-     * @return object
      * @throws MyTracklistException
      */
     public function showService(int $id): object
     {
-        if ($this->trackRepository->find($id) === null) {
+        if (null === $this->trackRepository->find($id)) {
             throw new MyTracklistException('Can not find track');
         }
+
         return $this->trackRepository->find($id);
     }
 
     /**
-     * @param int $id
-     * @return object
      * @throws MyTracklistException
      */
     public function editService(int $id): object
     {
-        if ($this->trackRepository->find($id) === null) {
+        if (null === $this->trackRepository->find($id)) {
             throw new MyTracklistException('Can not find track');
         }
+
         return $this->trackRepository->find($id);
     }
 
     /**
      * @param \App\DTO\TracklistDTO $tracklistDTO
-     * @param int $id
-     * @return Track
+     * @param int                   $id
+     *
      * @throws MyTracklistException
      */
     public function updateService($tracklistDTO, $id): Track
     {
-        if ($this->trackRepository->find($id) === null) {
+        if (null === $this->trackRepository->find($id)) {
             throw new MyTracklistException('Can not find track');
         }
 
         $track = $this->trackRepository->find($id);
-        if ($tracklistDTO->cover !== null) {
-            $this->fileSystem->remove('../public/uploads/' . $track->getCover());
+        if (null !== $tracklistDTO->cover) {
+            $this->fileSystem->remove('../public/uploads/'.$track->getCover());
             $track->setCover($this->fileUploader->upload($tracklistDTO->cover)->getPath());
         }
 
-        if ($tracklistDTO->album !== null) {
+        if (null !== $tracklistDTO->album) {
             $track->setAlbum($tracklistDTO->album);
         }
 
-        if ($tracklistDTO->title !== null) {
+        if (null !== $tracklistDTO->title) {
             $track->setTitle($tracklistDTO->title);
         }
 
-        if ($tracklistDTO->author !== null) {
+        if (null !== $tracklistDTO->author) {
             $track->setAuthor($tracklistDTO->author);
         }
 
-        if ($tracklistDTO->type !== null) {
+        if (null !== $tracklistDTO->type) {
             $track->setType($tracklistDTO->type);
         }
 
-        if ($tracklistDTO->genre !== null) {
+        if (null !== $tracklistDTO->genre) {
             $track->setGenre($tracklistDTO->genre);
         }
 
@@ -180,27 +175,25 @@ class MyTracklistService implements MyTracklistInterface
     }
 
     /**
-     * @param int $id
-     * @return array
      * @throws MyTracklistException
      */
     public function deleteService(int $id): array
     {
-        if ($this->trackRepository->find($id) === null) {
+        if (null === $this->trackRepository->find($id)) {
             throw new MyTracklistException('Can not find track');
         }
 
-        if ($this->trackRepository->find($id)->getCover() !== null) {
-            $this->fileSystem->remove('../public/uploads/' . $this->trackRepository->find($id)->getCover());
+        if (null !== $this->trackRepository->find($id)->getCover()) {
+            $this->fileSystem->remove('../public/uploads/'.$this->trackRepository->find($id)->getCover());
         }
-        $this->fileSystem->remove('../public/uploads/' . $this->trackRepository->find($id)->getTrackPath());
+        $this->fileSystem->remove('../public/uploads/'.$this->trackRepository->find($id)->getTrackPath());
 
         $this->entityManager->remove($this->trackRepository->find($id));
         $this->entityManager->flush();
 
-        return array(
+        return [
             'success' => true,
-            'body' => 'Track deleted successfully'
-        );
+            'body' => 'Track deleted successfully',
+        ];
     }
 }

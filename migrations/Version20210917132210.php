@@ -14,7 +14,8 @@ final class Version20210917132210 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
-        $this->addSql(<<<END
+        $this->addSql(
+            <<<END
             CREATE TABLE files
             (
                 id         INT AUTO_INCREMENT NOT NULL,
@@ -30,7 +31,8 @@ final class Version20210917132210 extends AbstractMigration
         END
         );
 
-        $this->addSql(<<<END
+        $this->addSql(
+            <<<END
             CREATE TABLE file_types
             (
                 id         INT AUTO_INCREMENT NOT NULL,
@@ -44,7 +46,8 @@ final class Version20210917132210 extends AbstractMigration
         END
         );
 
-        $this->addSql(<<<END
+        $this->addSql(
+            <<<END
             INSERT INTO file_types (name, created_at, updated_at)
             VALUES ('audio', DEFAULT, DEFAULT);
             
@@ -56,7 +59,8 @@ final class Version20210917132210 extends AbstractMigration
         END
         );
 
-        $this->addSql(<<<END
+        $this->addSql(
+            <<<END
             alter table files
             add constraint files_file_types_id_fk
             foreign key (type_id) references file_types (id)

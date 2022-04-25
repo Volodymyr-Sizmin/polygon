@@ -2,10 +2,8 @@
 
 namespace App\Tests\Feature\Service;
 
-use App\Entity\File;
 use App\Service\FileUploader;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -27,27 +25,27 @@ class FileUploaderTest extends TestCase
 
         $em = $this->createMock(EntityManager::class);
 
-        $targetDirectory = getcwd() . '/' . self::IMAGE_FOLDER;
+        $targetDirectory = getcwd().'/'.self::IMAGE_FOLDER;
         $testUpload = new FileUploader($targetDirectory, $slugger, $em);
 
-        $file = new UploadedFile($image, self::IMAGE_NAME . '.png', 'image/png', null, true);
+        $file = new UploadedFile($image, self::IMAGE_NAME.'.png', 'image/png', null, true);
 
         $testUpload->upload($file);
 
-        $files = glob(self::IMAGE_FOLDER . '/' . FileUploader::IMAGE_TYPE . '/*');
+        $files = glob(self::IMAGE_FOLDER.'/'.FileUploader::IMAGE_TYPE.'/*');
         $this->assertCount(1, $files);
     }
 
     protected function tearDown(): void
     {
-        $folder_path = self::IMAGE_FOLDER . '/' . FileUploader::IMAGE_TYPE;
-        $files = glob($folder_path . '/*');
+        $folder_path = self::IMAGE_FOLDER.'/'.FileUploader::IMAGE_TYPE;
+        $files = glob($folder_path.'/*');
         foreach ($files as $file) {
             if (is_file($file)) {
                 unlink($file);
             }
         }
-        rmdir(self::IMAGE_FOLDER . '/' . FileUploader::IMAGE_TYPE);
+        rmdir(self::IMAGE_FOLDER.'/'.FileUploader::IMAGE_TYPE);
         rmdir(self::IMAGE_FOLDER);
     }
 }

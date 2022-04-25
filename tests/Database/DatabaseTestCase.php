@@ -35,4 +35,3 @@ class DatabaseTestCase extends KernelTestCase
         $schemaTool->updateSchema($metaData);
     }
 }
-

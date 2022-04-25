@@ -11,19 +11,19 @@ use Zenstruck\Foundry\Proxy;
 /**
  * @extends ModelFactory<Track>
  *
- * @method static Track|Proxy createOne(array $attributes = [])
- * @method static Track[]|Proxy[] createMany(int $number, array|callable $attributes = [])
- * @method static Track|Proxy find(object|array|mixed $criteria)
- * @method static Track|Proxy findOrCreate(array $attributes)
- * @method static Track|Proxy first(string $sortedField = 'id')
- * @method static Track|Proxy last(string $sortedField = 'id')
- * @method static Track|Proxy random(array $attributes = [])
- * @method static Track|Proxy randomOrCreate(array $attributes = [])
- * @method static Track[]|Proxy[] all()
- * @method static Track[]|Proxy[] findBy(array $attributes)
- * @method static Track[]|Proxy[] randomSet(int $number, array $attributes = [])
- * @method static Track[]|Proxy[] randomRange(int $min, int $max, array $attributes = [])
- * @method static TrackRepository|RepositoryProxy repository()
+ * @method static      Track|Proxy createOne(array $attributes = [])
+ * @method static      Track[]|Proxy[] createMany(int $number, array|callable $attributes = [])
+ * @method static      Track|Proxy find(object|array|mixed $criteria)
+ * @method static      Track|Proxy findOrCreate(array $attributes)
+ * @method static      Track|Proxy first(string $sortedField = 'id')
+ * @method static      Track|Proxy last(string $sortedField = 'id')
+ * @method static      Track|Proxy random(array $attributes = [])
+ * @method static      Track|Proxy randomOrCreate(array $attributes = [])
+ * @method static      Track[]|Proxy[] all()
+ * @method static      Track[]|Proxy[] findBy(array $attributes)
+ * @method static      Track[]|Proxy[] randomSet(int $number, array $attributes = [])
+ * @method static      Track[]|Proxy[] randomRange(int $min, int $max, array $attributes = [])
+ * @method static      TrackRepository|RepositoryProxy repository()
  * @method Track|Proxy create(array|callable $attributes = [])
  */
 final class TrackFactory extends ModelFactory

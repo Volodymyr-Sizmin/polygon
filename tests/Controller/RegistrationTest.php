@@ -11,16 +11,16 @@ class RegistrationTest extends WebTestCase
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/registration/email', [
-            "firstName" => "",
-            "lastName" => "",
-            "userName" => "",
-            "email" => "",
-            "password" => "",
-            "confirmPassword" => ""
+            'firstName' => '',
+            'lastName' => '',
+            'userName' => '',
+            'email' => '',
+            'password' => '',
+            'confirmPassword' => '',
         ]);
         $response = $client->getResponse();
         //dd($response);
-        $this->assertSame(400,$response->getStatusCode());
+        $this->assertSame(400, $response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame(false, $responseData->success);
         $this->assertSame('Invalid e-mail Address', $responseData->body->message->email);
@@ -33,17 +33,17 @@ class RegistrationTest extends WebTestCase
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/registration/phone', [
-            "firstName" => "",
-            "lastName" => "",
-            "userName" => "",
-            "phone" => "",
-            "password" => "",
-            "confirmPassword" => ""
+            'firstName' => '',
+            'lastName' => '',
+            'userName' => '',
+            'phone' => '',
+            'password' => '',
+            'confirmPassword' => '',
         ]);
         $response = $client->getResponse();
-        $this->assertSame(400,$response->getStatusCode());
+        $this->assertSame(400, $response->getStatusCode());
         $responseData = json_decode($response->getContent());
-        $this->assertSame(false,$responseData->success);
+        $this->assertSame(false, $responseData->success);
         $this->assertSame('Must be 7 characters or more', $responseData->body->message->phone);
         $this->assertSame('Must be 2 characters or more', $responseData->body->message->firstName);
         $this->assertSame('Must be 2 characters or more', $responseData->body->message->lastName);
@@ -54,12 +54,12 @@ class RegistrationTest extends WebTestCase
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/registration/email', [
-            "firstName" => "",
-            "lastName" => "",
-            "userName" => "",
-            "email" => "b.astapau@andersenlab.com",
-            "password" => "",
-            "confirmPassword" => ""
+            'firstName' => '',
+            'lastName' => '',
+            'userName' => '',
+            'email' => 'b.astapau@andersenlab.com',
+            'password' => '',
+            'confirmPassword' => '',
         ]);
         $response = $client->getResponse();
         $this->assertSame(400, $response->getStatusCode());
@@ -72,12 +72,12 @@ class RegistrationTest extends WebTestCase
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/registration/phone', [
-            "firstName" => "",
-            "lastName" => "",
-            "userName" => "",
-            "phone" => "+375291235566",
-            "password" => "",
-            "confirmPassword" => ""
+            'firstName' => '',
+            'lastName' => '',
+            'userName' => '',
+            'phone' => '+375291235566',
+            'password' => '',
+            'confirmPassword' => '',
         ]);
         $response = $client->getResponse();
         $this->assertSame(400, $response->getStatusCode());
@@ -90,15 +90,15 @@ class RegistrationTest extends WebTestCase
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/registration/email', [
-            "firstName" => "Boris1",
-            "lastName" => "Astapau1",
-            "userName" => "b.astapau1",
-            "email" => "b.astapau@andersenlab1.com",
-            "password" => "password",
-            "confirmPassword" => "password"
+            'firstName' => 'Boris1',
+            'lastName' => 'Astapau1',
+            'userName' => 'b.astapau1',
+            'email' => 'b.astapau@andersenlab1.com',
+            'password' => 'password',
+            'confirmPassword' => 'password',
         ]);
         $response = $client->getResponse();
-        $this->assertSame(201,$response->getStatusCode());
+        $this->assertSame(201, $response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame($responseData->success, true);
         $entityManager = $client->getContainer()->get('doctrine')->getManager();
@@ -110,12 +110,12 @@ class RegistrationTest extends WebTestCase
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/registration/phone', [
-            "firstName" => "Boris2",
-            "lastName" => "Astapau2",
-            "userName" => "b.astapau2",
-            "phone" => "+375291235562",
-            "password" => "password",
-            "confirmPassword" => "password"
+            'firstName' => 'Boris2',
+            'lastName' => 'Astapau2',
+            'userName' => 'b.astapau2',
+            'phone' => '+375291235562',
+            'password' => 'password',
+            'confirmPassword' => 'password',
         ]);
         $response = $client->getResponse();
         $this->assertSame(201, $response->getStatusCode());

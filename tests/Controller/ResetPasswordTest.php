@@ -8,8 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ResetPasswordTest extends WebTestCase
 {
-
-    private function checkEmail($url): void 
+    private function checkEmail($url): void
     {
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
@@ -21,11 +20,11 @@ class ResetPasswordTest extends WebTestCase
     {
         $client = static::createClient();
         $client->jsonRequest('POST', '/api/reset/email/send', [
-            'email'=>'b.astapau@andersenlab.com', 
+            'email' => 'b.astapau@andersenlab.com',
         ]);
         $this->assertEmailCount(1);
         $response = $client->getResponse();
-        $this->assertSame(201,$response->getStatusCode());
+        $this->assertSame(201, $response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame($responseData->success, true);
         $url = '/reset/email/'.$responseData->body->url;
@@ -46,9 +45,9 @@ class ResetPasswordTest extends WebTestCase
         $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'password@notandersenlab.com']);
         $oldPassword = $user->getPassword();
         $client->jsonRequest('POST', '/api/reset/email/update', [
-            'email'=>'password@notandersenlab.com',
-            'password'=>'notpassword', 
-            'confirmPassword'=>'notpassword' 
+            'email' => 'password@notandersenlab.com',
+            'password' => 'notpassword',
+            'confirmPassword' => 'notpassword',
         ]);
         $response = $client->getResponse();
         $this->assertSame(200, $response->getStatusCode());

@@ -57,14 +57,14 @@ class VerificationService
         $pattern = "/^[^.][a-z0-9!#$%&‘*+\/^_`{|}~\=?-]+\.?[a-z0-9!#$%&‘*+\/^_`{|}~\=?-]+[^.]@[a-z0-9-]+\.[a-z]{2,3}$/";
 
         if (!preg_match($pattern, $email)) {
-
             $errorsString[] = 'Invalid email address';
         }
 
         $errors = $this->validator->validate($verificationRequest);
-        foreach($errors as $error){
+        foreach ($errors as $error) {
             $errorsString[$error->getPropertyPath()] = $error->getMessage();
         }
+
         return $errorsString;
     }
 }

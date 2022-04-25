@@ -47,5 +47,4 @@ class CountryFixtures extends Fixture
         $this->loadRussia($manager);
         $this->loadUkraine($manager);
     }
-
 }

@@ -9,7 +9,7 @@ class FileUploaderStub implements FileUploaderInterface
 {
     public function upload(UploadedFile $file)
     {
-        return new class {
+        return new class() {
             public function getPath()
             {
                 return 'image';

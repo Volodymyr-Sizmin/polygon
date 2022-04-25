@@ -10,7 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
@@ -34,6 +33,7 @@ class LoginController extends AbstractController
         $apiToken = new ApiToken($user, $remember);
         $entityManager->persist($apiToken);
         $entityManager->flush();
+
         return $apiToken->getToken();
     }
 
@@ -94,8 +94,9 @@ class LoginController extends AbstractController
         if (!$data) {
             $response = [
                 'success' => false,
-                'body' => ['message' => 'Empty input']
+                'body' => ['message' => 'Empty input'],
             ];
+
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
@@ -103,8 +104,9 @@ class LoginController extends AbstractController
         if (!$user) {
             $response = [
                 'success' => false,
-                'body' => ['message' => 'Invalid login']
+                'body' => ['message' => 'Invalid login'],
             ];
+
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
@@ -112,8 +114,9 @@ class LoginController extends AbstractController
         if (!$verified) {
             $response = [
                 'success' => false,
-                'body' => ['message' => 'Invalid login']
+                'body' => ['message' => 'Invalid login'],
             ];
+
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
@@ -121,8 +124,8 @@ class LoginController extends AbstractController
             'success' => true,
             'body' => [
                 'user_id' => $user->getId(),
-                'token' => $this->generateToken($user, $data)
-            ]
+                'token' => $this->generateToken($user, $data),
+            ],
         ]);
     }
 
@@ -184,7 +187,6 @@ class LoginController extends AbstractController
      *           "message": "Invalid verified"
      *       }
      *     }
-     *
      */
     public function phoneLogin(Request $request, UserPasswordHasherInterface $encoder): Response
     {
@@ -192,8 +194,9 @@ class LoginController extends AbstractController
         if (!$data) {
             $response = [
                 'success' => false,
-                'body' => ['message' => 'Empty input']
+                'body' => ['message' => 'Empty input'],
             ];
+
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
@@ -201,8 +204,9 @@ class LoginController extends AbstractController
         if (!$user) {
             $response = [
                 'success' => false,
-                'body' => ['message' => 'Invalid login']
+                'body' => ['message' => 'Invalid login'],
             ];
+
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
@@ -210,8 +214,9 @@ class LoginController extends AbstractController
         if (!$verified) {
             $response = [
                 'success' => false,
-                'body' => ['message' => 'Invalid login']
+                'body' => ['message' => 'Invalid login'],
             ];
+
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
@@ -219,8 +224,8 @@ class LoginController extends AbstractController
             'success' => true,
             'body' => [
                 'user_id' => $user->getId(),
-                'token' => $this->generateToken($user, $data)
-            ]
+                'token' => $this->generateToken($user, $data),
+            ],
         ]);
     }
 
@@ -255,7 +260,6 @@ class LoginController extends AbstractController
      *           "message": "Not privileged to request the resource."
      *       }
      *     }
-     *
      */
     public function logout(Request $request, ApiTokenRepository $apiTokenRepo): Response
     {
@@ -268,6 +272,7 @@ class LoginController extends AbstractController
         $entityManager->remove($apiToken);
         $entityManager->flush();
         $response = ['success' => true, 'body' => []];
+
         return new JsonResponse($response, Response::HTTP_OK);
     }
 }

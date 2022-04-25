@@ -26,7 +26,7 @@ class AccountControllerTest extends WebTestCase
         $user->setLastName('test');
         $user->setUserName('test');
         $user->setEmail('test1@test.com');
-        $user->setPassword('$2y$13$GvLkVb116kk1qDi.o4rpiuPzQtflX7pmXXhKXuk5CI9koJkA.9uQO');//hash of test
+        $user->setPassword('$2y$13$GvLkVb116kk1qDi.o4rpiuPzQtflX7pmXXhKXuk5CI9koJkA.9uQO'); //hash of test
         $this->entityManager->persist($user);
 
         $apiToken = new ApiToken($user, true);
@@ -49,10 +49,10 @@ class AccountControllerTest extends WebTestCase
 
         $responseArr = json_decode($response->getContent(), true);
 
-        $this->assertIsInt($responseArr["id"]);
-        $this->assertEquals("test", $responseArr["firstName"]);
-        $this->assertEquals("test", $responseArr["lastName"]);
-        $this->assertEquals("test", $responseArr["userName"]);
+        $this->assertIsInt($responseArr['id']);
+        $this->assertEquals('test', $responseArr['firstName']);
+        $this->assertEquals('test', $responseArr['lastName']);
+        $this->assertEquals('test', $responseArr['userName']);
     }
 
     public function testList(): void
@@ -65,16 +65,16 @@ class AccountControllerTest extends WebTestCase
         $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
 
         $responseArr = json_decode($response->getContent(), true);
-        $this->assertEquals(true, $responseArr["success"]);
-        $this->assertCount(3, $responseArr ["users"]);
+        $this->assertEquals(true, $responseArr['success']);
+        $this->assertCount(3, $responseArr['users']);
     }
 
     public function testUpdate(): void
     {
-        $this->client->jsonRequest('PUT', '/api/accounts/' . $this->user->getId(), [
-            "firstName" => "1",
-            "lastName" => "2",
-            "userName" => "3"
+        $this->client->jsonRequest('PUT', '/api/accounts/'.$this->user->getId(), [
+            'firstName' => '1',
+            'lastName' => '2',
+            'userName' => '3',
         ], [
             'HTTP_X-AUTH-TOKEN' => $this->token,
         ]);
@@ -84,29 +84,28 @@ class AccountControllerTest extends WebTestCase
         $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
 
         $responseArr = json_decode($response->getContent(), true);
-        $this->assertEquals(true, $responseArr["success"]);
-        $this->assertEquals("1", $responseArr["user"]["firstName"]);
-        $this->assertEquals("2", $responseArr["user"]["lastName"]);
-        $this->assertEquals("3", $responseArr["user"]["userName"]);
+        $this->assertEquals(true, $responseArr['success']);
+        $this->assertEquals('1', $responseArr['user']['firstName']);
+        $this->assertEquals('2', $responseArr['user']['lastName']);
+        $this->assertEquals('3', $responseArr['user']['userName']);
 
         $actualUser = $this->entityManager->find(User::class, $this->user->getId());
-        $this->assertEquals("1", $actualUser->getFirstName());
-        $this->assertEquals("2", $actualUser->getLastName());
-        $this->assertEquals("3", $actualUser->getUserName());
+        $this->assertEquals('1', $actualUser->getFirstName());
+        $this->assertEquals('2', $actualUser->getLastName());
+        $this->assertEquals('3', $actualUser->getUserName());
     }
 
     /** Try to set password for another user
-     * ! this method in used in testPasswordChange
-     * @return void
+     * ! this method in used in testPasswordChange.
      */
     private function incorrectUser(): void
     {
-        $otherUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'b.astapau@andersenlab.com' ])->getId();
+        $otherUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'b.astapau@andersenlab.com'])->getId();
 
-        $this->client->request('POST', '/api/accounts/change_pass/' . $otherUser, [
-            "oldPassword" => "test",
-            "newPassword" => "newtest",
-            "confirmPassword" => "newtest"
+        $this->client->request('POST', '/api/accounts/change_pass/'.$otherUser, [
+            'oldPassword' => 'test',
+            'newPassword' => 'newtest',
+            'confirmPassword' => 'newtest',
         ], [], [
             'HTTP_X-AUTH-TOKEN' => $this->token,
         ]);
@@ -116,15 +115,14 @@ class AccountControllerTest extends WebTestCase
     }
 
     /** Try to set invalid password
-     * ! this method in used in testPasswordChange
-     * @return void
+     * ! this method in used in testPasswordChange.
      */
     private function incorrectPassword(): void
     {
-        $this->client->request('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
-            "oldPassword" => "not test",
-            "newPassword" => "newtest",
-            "confirmPassword" => "newtest"
+        $this->client->request('POST', '/api/accounts/change_pass/'.$this->user->getId(), [
+            'oldPassword' => 'not test',
+            'newPassword' => 'newtest',
+            'confirmPassword' => 'newtest',
         ], [], [
             'HTTP_X-AUTH-TOKEN' => $this->token,
         ]);
@@ -135,15 +133,14 @@ class AccountControllerTest extends WebTestCase
     }
 
     /** Try to set new password with invalid password confirmation
-     * ! this method in used in testPasswordChange
-     * @return void
+     * ! this method in used in testPasswordChange.
      */
     private function invalidNewPassword(): void
     {
-        $this->client->request('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
-            "oldPassword" => "test",
-            "newPassword" => "n1",
-            "confirmPassword" => "newtest"
+        $this->client->request('POST', '/api/accounts/change_pass/'.$this->user->getId(), [
+            'oldPassword' => 'test',
+            'newPassword' => 'n1',
+            'confirmPassword' => 'newtest',
         ], [], [
             'HTTP_X-AUTH-TOKEN' => $this->token,
         ]);
@@ -159,10 +156,10 @@ class AccountControllerTest extends WebTestCase
         $this->incorrectPassword();
         $this->invalidNewPassword();
 
-        $this->client->request('POST', '/api/accounts/change_pass/' . $this->user->getId(), [
-             "oldPassword" => "test",
-             "newPassword" => "newtesttest",
-             "confirmPassword" => "newtesttest"
+        $this->client->request('POST', '/api/accounts/change_pass/'.$this->user->getId(), [
+             'oldPassword' => 'test',
+             'newPassword' => 'newtesttest',
+             'confirmPassword' => 'newtesttest',
         ], [], [
              'HTTP_X-AUTH-TOKEN' => $this->token,
         ]);
@@ -174,8 +171,8 @@ class AccountControllerTest extends WebTestCase
 
     public function testDelete(): void
     {
-        $this->client->jsonRequest('DELETE', '/api/accounts/' . $this->user->getId(), [], [
-            'HTTP_X-AUTH-TOKEN' => $this->token
+        $this->client->jsonRequest('DELETE', '/api/accounts/'.$this->user->getId(), [], [
+            'HTTP_X-AUTH-TOKEN' => $this->token,
         ]);
 
         $response = $this->client->getResponse();

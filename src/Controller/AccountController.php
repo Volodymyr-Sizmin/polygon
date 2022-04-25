@@ -27,7 +27,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * @IgnoreAnnotation("apiParamExample")
  * @IgnoreAnnotation("apiDescription")
  */
-
 class AccountController extends AbstractController
 {
     private ValidatorInterface $validator;
@@ -70,6 +69,7 @@ class AccountController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
         $user = $this->getUser();
+
         return $this->json([
             'id' => $user->getId(),
             'firstName' => $user->getFirstName(),
@@ -121,7 +121,7 @@ class AccountController extends AbstractController
         }
         $response = [
             'success' => true,
-            'users' => $usersPrepared
+            'users' => $usersPrepared,
         ];
 
         return new JsonResponse($response);
@@ -188,8 +188,8 @@ class AccountController extends AbstractController
                 [
                     'success' => false,
                     'body' => [
-                        'message' => 'You are not allowed to change this user`s data'
-                    ]
+                        'message' => 'You are not allowed to change this user`s data',
+                    ],
                 ],
                 Response::HTTP_FORBIDDEN
             );
@@ -197,9 +197,9 @@ class AccountController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
-        $user->setFirstName(isset($data["firstName"]) ? $data["firstName"] : $user->getFirstName());
-        $user->setLastName(isset($data["lastName"]) ? $data["lastName"] : $user->getLastName());
-        $user->setUserName(isset($data["userName"]) ? $data["userName"] : $user->getUsername());
+        $user->setFirstName(isset($data['firstName']) ? $data['firstName'] : $user->getFirstName());
+        $user->setLastName(isset($data['lastName']) ? $data['lastName'] : $user->getLastName());
+        $user->setUserName(isset($data['userName']) ? $data['userName'] : $user->getUsername());
 
         $entityManager->persist($user);
         $entityManager->flush();
@@ -211,11 +211,10 @@ class AccountController extends AbstractController
         ]]);
     }
 
-    /** Validate password
+    /** Validate password.
      *
      * @param string $password password
-     * @param string $confirm password confirmation
-     * @return string|null
+     * @param string $confirm  password confirmation
      */
     private function validatePassword($password, $confirm): ?string
     {
@@ -233,6 +232,7 @@ class AccountController extends AbstractController
         if ($password !== $confirm) {
             return 'Password and confirm password don\'t match';
         }
+
         return null;
     }
 
@@ -248,6 +248,7 @@ class AccountController extends AbstractController
                 }
             }
         }
+
         return isset($message) ? $message : null;
     }
 
@@ -360,7 +361,7 @@ class AccountController extends AbstractController
      *           "message": "This password has been leaked in a data breach, it must not be used. Please use another password."
      *       }
      *     }
-     * 
+     *
      **/
     public function changePassword(User $user, Request $request, UserPasswordHasherInterface $encoder): JsonResponse
     {
@@ -371,22 +372,24 @@ class AccountController extends AbstractController
         if ($currentUser->getId() != $user->getId()) {
             $response = [
                 'success' => false,
-                'body' => ['message' => 'You are not allowed to change this user`s data']
+                'body' => ['message' => 'You are not allowed to change this user`s data'],
             ];
+
             return new JsonResponse($response, Response::HTTP_FORBIDDEN);
         }
-        
+
         $data = [
             'oldPassword' => $request->get('oldPassword'),
             'newPassword' => $request->get('newPassword'),
-            'confirmPassword' => $request->get('confirmPassword')
+            'confirmPassword' => $request->get('confirmPassword'),
         ];
 
-        if ($data['oldPassword'] === '' || $data['newPassword'] === '' || $data['confirmPassword'] === '') {
+        if ('' === $data['oldPassword'] || '' === $data['newPassword'] || '' === $data['confirmPassword']) {
             $response = [
                 'success' => false,
-                'body' => ['message' => 'Empty input']
+                'body' => ['message' => 'Empty input'],
             ];
+
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
@@ -394,26 +397,28 @@ class AccountController extends AbstractController
         if (!$verified) {
             $response = [
                 'success' => false,
-                'body' => ['message' => 'Invalid password']
+                'body' => ['message' => 'Invalid password'],
             ];
+
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
-        $password = isset($data["newPassword"]) ? $data["newPassword"] : "";
-        $confirm = isset($data["confirmPassword"]) ? $data["confirmPassword"] : "";
+        $password = isset($data['newPassword']) ? $data['newPassword'] : '';
+        $confirm = isset($data['confirmPassword']) ? $data['confirmPassword'] : '';
         $errorsString = $this->validatePassword($password, $confirm);
         if (!empty($errorsString)) {
             $response = [
                 'success' => false,
-                'body' => ['message' => $errorsString]
+                'body' => ['message' => $errorsString],
             ];
+
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
         if ($data['oldPassword'] === $password) {
             return new JsonResponse([
                 'success' => false,
-                'body' => ['message' => 'Old password and new password can\'t match']
+                'body' => ['message' => 'Old password and new password can\'t match'],
             ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -422,10 +427,10 @@ class AccountController extends AbstractController
         if (isset($message)) {
             return new JsonResponse([
                 'success' => false,
-                'body' => ['message' => $message]
+                'body' => ['message' => $message],
             ], Response::HTTP_BAD_REQUEST);
         }
-        
+
         $user->setPassword($encoder->hashPassword(
             $user,
             $password
@@ -434,6 +439,7 @@ class AccountController extends AbstractController
         $entityManager->flush();
 
         $response = ['success' => true, 'body' => []];
+
         return new JsonResponse($response, Response::HTTP_OK);
     }
 
@@ -474,8 +480,9 @@ class AccountController extends AbstractController
         if ($currentUser->getId() != $user->getId()) {
             $response = [
                 'success' => false,
-                'body' => ['message' => 'You are not allowed to delete this user`s data']
+                'body' => ['message' => 'You are not allowed to delete this user`s data'],
             ];
+
             return new JsonResponse($response, Response::HTTP_FORBIDDEN);
         }
 

@@ -7,8 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class VerificationTest extends WebTestCase
 {
-
-    private function checkEmail($url): void 
+    private function checkEmail($url): void
     {
         $this->assertEmailCount(1);
         $email = $this->getMailerMessage();
@@ -20,7 +19,7 @@ class VerificationTest extends WebTestCase
     {
         $client = static::createClient();
         $client->Request('POST', '/api/verify/email/send', [
-            "email"=>"verification@notandersenlab.com", 
+            'email' => 'verification@notandersenlab.com',
         ]);
         $response = $client->getResponse();
         $this->assertSame(201, $response->getStatusCode());

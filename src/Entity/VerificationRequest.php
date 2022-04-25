@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\VerificationRequestRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -33,10 +32,10 @@ class VerificationRequest
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(groups = {"email"}, message = "Invalid e-mail Address")
      * @Assert\Regex(
-     *      groups = {"email"}, 
-     *      pattern = "/^[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+\.{0,1}[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+@[a-zа-я0-9!#$%&`*\-=+'?{}\|~.]+[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+$/iu", 
+     *      groups = {"email"},
+     *      pattern = "/^[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+\.{0,1}[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+@[a-zа-я0-9!#$%&`*\-=+'?{}\|~.]+[a-zа-я0-9!#$%&`*\-=+'?{}\|~]+$/iu",
      *      message = "Invalid e-mail Address"
-     * )     
+     * )
      */
     private $email;
 
@@ -58,15 +57,16 @@ class VerificationRequest
         $this->expiresAt = new \DateTime('+1 day');
         $this->email = $dest;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function checkExpired(): bool
     {
         $now = new \DateTime('now');
+
         return $this->expiresAt < $now;
     }
 
@@ -129,5 +129,4 @@ class VerificationRequest
 
         return $this;
     }
-
 }

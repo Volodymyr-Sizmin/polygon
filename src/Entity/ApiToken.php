@@ -85,7 +85,8 @@ class ApiToken
         if ($this->expiresAt instanceof \DateTime) {
             return $this->expiresAt < new \DateTime('now');
         }
-            return false;
+
+        return false;
     }
 
     public function getUser(): ?User

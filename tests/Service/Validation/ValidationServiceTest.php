@@ -11,6 +11,7 @@ use App\Exception\ValidationServiceException;
 class ValidationServiceTest extends WebTestCase
 {
     private $validationService;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -147,14 +148,14 @@ and dot can\'t use like the first and last symbol and also can\'t be repeated co
     public function testPasswordExpectMessageMustBe8charactersOrMore(): void
     {
         $this->expectException(ValidationServiceException::class);
-        $this->expectExceptionMessage("Must be 8 characters or more");
+        $this->expectExceptionMessage('Must be 8 characters or more');
         $this->validationService->password('2', 8, 32);
     }
 
     public function testPasswordExpectMessageMustBe32charactersOrLess(): void
     {
         $this->expectException(ValidationServiceException::class);
-        $this->expectExceptionMessage("Must be 32 characters or less");
+        $this->expectExceptionMessage('Must be 32 characters or less');
         $this->validationService->password('1234567891234567891234567891234566', 8, 32);
     }
 
@@ -244,47 +245,47 @@ and dot can\'t use like the first and last symbol and also can\'t be repeated co
     public function testcardNumberNotCorrectSymbolsAndNot16Characters(): void
     {
         $this->expectException(ValidationServiceException::class);
-        $this->expectExceptionMessage("Wrong card number");
+        $this->expectExceptionMessage('Wrong card number');
         $this->validationService->cardNumber('adidas');
     }
 
     public function testcardNumber16CharactersButWithNotCorrectSymbols(): void
     {
         $this->expectException(ValidationServiceException::class);
-        $this->expectExceptionMessage("Wrong card number");
+        $this->expectExceptionMessage('Wrong card number');
         $this->validationService->cardNumber('123456987456321s');
     }
 
     public function testcardNumberWithGap(): void
     {
         $this->expectException(ValidationServiceException::class);
-        $this->expectExceptionMessage("Wrong card number");
+        $this->expectExceptionMessage('Wrong card number');
         $this->validationService->cardNumber('123456789 23456');
     }
 
     public function testcardNumber(): void
     {
-        self::assertSame(true, $this->validationService->cardNumber("1234567891234567"));
+        self::assertSame(true, $this->validationService->cardNumber('1234567891234567'));
     }
 
     public function testExpiryDateCardExpired(): void
     {
         $this->expectException(ValidationServiceException::class);
-        $this->expectExceptionMessage("Wrong expiry");
+        $this->expectExceptionMessage('Wrong expiry');
         $this->validationService->expiryDate('12/20');
     }
 
     public function testExpiryDateNotCorrectFormat(): void
     {
         $this->expectException(ValidationServiceException::class);
-        $this->expectExceptionMessage("Wrong expiry");
+        $this->expectExceptionMessage('Wrong expiry');
         $this->validationService->expiryDate('1220');
     }
 
     public function testExpiryDateNotCorrectSymbols(): void
     {
         $this->expectException(ValidationServiceException::class);
-        $this->expectExceptionMessage("Wrong expiry");
+        $this->expectExceptionMessage('Wrong expiry');
         $this->validationService->expiryDate('12:20');
     }
 
@@ -304,12 +305,12 @@ and dot can\'t use like the first and last symbol and also can\'t be repeated co
     {
         $this->expectException(ValidationServiceException::class);
         $this->expectExceptionMessage('Wrong cvc number');
-        $this->validationService->cvc("5555");
+        $this->validationService->cvc('5555');
     }
 
     public function testCvc(): void
     {
-        self::assertSame(true, $this->validationService->cvc("555"));
+        self::assertSame(true, $this->validationService->cvc('555'));
     }
 
     public function testCardholderNameNotEnoughCharacters(): void
