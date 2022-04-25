@@ -38,7 +38,11 @@
         "preferred-install": {
             "*": "dist"
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "symfony/flex": true,
+            "symfony/runtime": true
+        }
     },
     "autoload": {
         "psr-4": {
@@ -67,7 +71,9 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "phpcs": "phpcs --standard=PSR12"
+        "phpcs": "phpcs --standard=PSR12",
+        "php-cs-fixer": "@php vendor/bin/php-cs-fixer fix --dry-run --diff --show-progress=dots --verbose",
+        "fix-cs": "@php  vendor/bin/php-cs-fixer fix --diff --show-progress=dots --verbose"
     },
     "conflict": {
         "symfony/symfony": "*"
