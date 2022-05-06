@@ -160,6 +160,9 @@
     "laminas/laminas-code": {
         "version": "4.4.2"
     },
+    "liip/test-fixtures-bundle": {
+        "version": "2.1.1"
+    },
     "myclabs/deep-copy": {
         "version": "1.10.2"
     },
@@ -560,6 +563,9 @@
     "symfony/string": {
         "version": "v5.3.7"
     },
+    "symfony/templating": {
+        "version": "v5.3.14"
+    },
     "symfony/translation": {
         "version": "5.3",
         "recipe": {
@@ -575,6 +581,22 @@
     },
     "symfony/translation-contracts": {
         "version": "v2.4.0"
+    },
+    "symfony/twig-bridge": {
+        "version": "v5.3.14"
+    },
+    "symfony/twig-bundle": {
+        "version": "5.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "5.3",
+            "ref": "ce42aa769cc2edfd9246e5647a3a967afe6387ca"
+        },
+        "files": [
+            "config/packages/twig.yaml",
+            "templates/base.html.twig"
+        ]
     },
     "symfony/validator": {
         "version": "4.3",
@@ -600,6 +622,9 @@
     },
     "theseer/tokenizer": {
         "version": "1.2.1"
+    },
+    "twig/twig": {
+        "version": "v3.3.10"
     },
     "webmozart/assert": {
         "version": "1.10.0"
