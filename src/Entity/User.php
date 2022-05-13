@@ -35,9 +35,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *      minMessage = "Your email symbol number must be at least 3 characters long", groups={"registration"},
      *      maxMessage = "Your email symbol number cannot be longer than 50 characters", groups={"registration"}
      * )
-
      */
-
     private $email;
 
     /**
@@ -72,11 +70,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *     message="Your password must contain only numbers and be 6 numbers long", groups={"code"}
      * )
      */
-
     private $code;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text")
      * * @Assert\NotBlank(groups={"token"})
      */
     private $token;
@@ -209,7 +206,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->token;
     }
 
-    public function setToken(string $token): self
+    public function setToken($token): self
     {
         $this->token = $token;
 

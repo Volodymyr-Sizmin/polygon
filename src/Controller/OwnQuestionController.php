@@ -32,24 +32,21 @@ class OwnQuestionController extends AbstractController
         $errors = $validator->validate($user, null, ['quest']);
 
         if (count($errors) > 0) {
-
             $errorsStringPass = (string) $errors;
 
-            return new JsonResponse (
+            return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
-                        'message' => $errorsStringPass
-                    ]
+                        'message' => $errorsStringPass,
+                    ],
                 ],
                 Response::HTTP_BAD_REQUEST);
         }
 
-
         $em->persist($user);
         $em->flush();
         $response = ['success' => true, 'body' => ['Ok']];
-
 
         return new JsonResponse($response, Response::HTTP_CREATED);
     }

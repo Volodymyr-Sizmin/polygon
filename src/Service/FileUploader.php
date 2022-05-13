@@ -4,11 +4,11 @@ namespace App\Service;
 
 use App\Entity\File;
 use App\Exception\FileUploadException;
+use App\Interfaces\FileUploaderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use App\Interfaces\FileUploaderInterface;
 
 class FileUploader implements FileUploaderInterface
 {
@@ -48,26 +48,27 @@ class FileUploader implements FileUploaderInterface
         $this->slugger = $slugger;
         $this->em = $em;
     }
+
     /**
-     * return url address of file
+     * return url address of file.
      */
     public function upload(UploadedFile $file)
     {
         if ($file->getSize() > self::MAX_FILE_SIZE || !$file->getSize()) {
-            throw new FileUploadException('Max allowed file size is: ' . self::MAX_FILE_SIZE . ' byte.');
+            throw new FileUploadException('Max allowed file size is: '.self::MAX_FILE_SIZE.' byte.');
         }
 
         $ext = $file->guessExtension();
         if (is_null($ext) || !isset(self::ALLOWED_TYPES[$ext])) {
-            throw new FileUploadException($ext . ' extension is not allowed');
+            throw new FileUploadException($ext.' extension is not allowed');
         }
 
         $fileType = self::ALLOWED_TYPES[$ext];
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($originalFilename);
-        $fileName = md5($safeFilename) . '-' . uniqid() . '.' . $ext;
+        $fileName = md5($safeFilename).'-'.uniqid().'.'.$ext;
 
-        $dir = $this->getTargetDirectory() . '/' . $fileType;
+        $dir = $this->getTargetDirectory().'/'.$fileType;
         try {
             $file->move($dir, $fileName);
         } catch (FileException $e) {
@@ -77,7 +78,7 @@ class FileUploader implements FileUploaderInterface
         $file = new File();
         $file->setFilename($originalFilename);
         $file->setTypeId(self::FILE_TYPES[$fileType]);
-        $file->setUrl(self::ALLOWED_TYPES[$ext] . '/' . $fileName);
+        $file->setUrl(self::ALLOWED_TYPES[$ext].'/'.$fileName);
         $file->setCreatedAt(new \DateTime('NOW'));
         $file->setUpdatedAt(new \DateTime('NOW'));
 

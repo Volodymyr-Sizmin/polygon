@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -11,12 +10,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PasswordController extends AbstractController
 {
-
     protected $password;
     private $encoder;
 
@@ -37,12 +34,12 @@ class PasswordController extends AbstractController
         $data['confirm_password'] = $request->get('confirm_password');
 
         if ($data['password'] !== $data['confirm_password']) {
-            return new JsonResponse (
+            return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
-                        'message' => 'Passwords do not match'
-                    ]
+                        'message' => 'Passwords do not match',
+                    ],
                 ],
                 Response::HTTP_BAD_REQUEST
             );
@@ -52,24 +49,21 @@ class PasswordController extends AbstractController
         $user = $entityManager->getRepository(User::class)->findOneBy(['token' => $data['token']]);
 
         if (!$user) {
-            throw $this->createNotFoundException(
-                'No user found for token '.$data['token']
-            );
+            throw $this->createNotFoundException('No user found for token '.$data['token']);
         }
 
         $user->setPassword($data['password']);
         $errors = $validatorPass->validate($user, null, ['password']);
 
         if (count($errors) > 0) {
-
             $errorsStringPass = (string) $errors;
 
-            return new JsonResponse (
+            return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
-                        'message' => $errorsStringPass
-                    ]
+                        'message' => $errorsStringPass,
+                    ],
                 ],
                 Response::HTTP_BAD_REQUEST);
         }
@@ -80,15 +74,14 @@ class PasswordController extends AbstractController
         ));
         $entityManager->flush();
 
-        return new JsonResponse (
+        return new JsonResponse(
             [
                 'success' => true,
                 'body' => [
-                    'message' => 'Password saved'
-                ]
+                    'message' => 'Password saved',
+                ],
             ],
             200
         );
     }
-
 }

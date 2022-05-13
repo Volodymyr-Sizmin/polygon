@@ -5,18 +5,15 @@ namespace App\Service;
 use App\Entity\File;
 use App\Entity\User;
 use App\Exception\FileUploadException;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 class ProfileService
 {
     private const PROFILE_PHOTO = [
         'size' => 5242880,
         'height' => 100,
-        'width' => 100
+        'width' => 100,
     ];
 
     private $em;
@@ -28,9 +25,8 @@ class ProfileService
         $this->fileUploader = $fileUploader;
     }
 
-    /** Validate Profile Photo
+    /** Validate Profile Photo.
      *
-     * @param UploadedFile $photo
      * @return string[]|bool
      */
     public function validateProfilePhoto(UploadedFile $photo)
@@ -51,10 +47,8 @@ class ProfileService
         return true;
     }
 
-    /** Upload Profile Photo
+    /** Upload Profile Photo.
      *
-     * @param User $user
-     * @param UploadedFile $photo
      * @return string[]|bool
      */
     public function uploadProfilePhoto(User $user, UploadedFile $photo)
@@ -75,9 +69,10 @@ class ProfileService
         return true;
     }
 
-    /** Get Profile Photo
+    /** Get Profile Photo.
      *
      * @param User $user Instance of User
+     *
      * @return string[]|File $profilePhoto Error message or File
      */
     public function getProfilePhoto(User $user)
@@ -92,9 +87,8 @@ class ProfileService
         return $profilePhoto;
     }
 
-    /** Delete Profile Photo
+    /** Delete Profile Photo.
      *
-     * @param User $user
      * @return string[]|bool Error message or True
      */
     public function deleteProfilePhoto(User $user)

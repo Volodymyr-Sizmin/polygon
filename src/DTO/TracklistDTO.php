@@ -1,8 +1,9 @@
 <?php
+
 namespace App\DTO;
 
-class TracklistDTO {
-
+class TracklistDTO
+{
     public $cover;
 
     public $title;
@@ -20,6 +21,6 @@ class TracklistDTO {
     public $created_at;
 
     public $update_at;
-    
+
     public $playlist_id;
 }

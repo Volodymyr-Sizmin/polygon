@@ -2,14 +2,8 @@
 
 namespace App\Tests\Controller;
 
-use App\DataFixtures\RegistrationFixtures;
 use App\Entity\User;
-use App\Tests\AppBundle\DatabasePrimer;
-use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use GuzzleHttp\Client;
-use GuzzleHttp;
-use Symfony\Component\HttpFoundation\Request;
 
 class RegistrationTest extends WebTestCase
 {
@@ -23,25 +17,20 @@ class RegistrationTest extends WebTestCase
 
     public function testEmptyEmailegistration(): void
     {
-
         $data = [
-            "email" => ""
+            'email' => '',
         ];
         $this->client->jsonRequest('POST', 'api/auth/sendemail', $data);
         $response = $this->client->getResponse();
 
-        $this->assertSame(400,$response->getStatusCode());
+        $this->assertSame(400, $response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame(false, $responseData->success);
-        //$this->assertSame('Must be 10 characters or more', $responseData->body->message->phone);
     }
 
     /**
-     * @param array $data
-     * @param int $expectedCode
      * @dataProvider userDataProvider
      */
-
     public function testEmailRegistration(array $data, int $expectedCode): void
     {
         $this->client->jsonRequest('POST', 'api/auth/sendemail', $data);
@@ -50,15 +39,13 @@ class RegistrationTest extends WebTestCase
         $this->assertSame($expectedCode, $response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame(true, $responseData->success);
-        //$this->assertSame('This value is already used.', $responseData->body->message->phone);
     }
 
     public function testRegisterAndFindEmail(): void
     {
         $dataReg = [
-                "email" => "magnet@and.com"
+                'email' => 'magnet@and.com',
         ];
-
 
         $this->client->jsonRequest('POST', 'api/auth/sendemail', $dataReg);
 
@@ -74,11 +61,8 @@ class RegistrationTest extends WebTestCase
     }
 
     /**
-     * @param array $dataNewRegistration
-     * @param int $expectedCode
      * @dataProvider mailDataProvider
      */
-
     public function testUsedEmailRegistration1(array $dataNewRegistration, int $expectedCode): void
     {
         $this->client->jsonRequest('POST', 'api/auth/sendemail', $dataNewRegistration);
@@ -89,29 +73,27 @@ class RegistrationTest extends WebTestCase
         $this->assertSame(false, $responseData->success);
     }
 
-
     public function userDataProvider()
     {
         return [
             [
                 [
                     'email' => 'andersenlab@aa.com',
-
                 ],
-                201
+                201,
             ],
             [
                 [
-                    'email' => 'magnet@and.com'
+                    'email' => 'magnet@and.com',
                 ],
-                201
+                201,
             ],
             [
                 [
-                    'email' => 'andersen@aa.com'
+                    'email' => 'andersen@aa.com',
                 ],
-                201
-            ]
+                201,
+            ],
         ];
     }
 
@@ -120,11 +102,10 @@ class RegistrationTest extends WebTestCase
         return [
             [
             [
-                'email' => '1aa@aa.com'
+                'email' => '1aa@aa.com',
             ],
-                400
-            ]
+                400,
+            ],
         ];
     }
 }
-

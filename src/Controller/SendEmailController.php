@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Firebase\JWT\JWT;
 use Symfony\Bridge\Twig\Mime\BodyRenderer;
@@ -20,46 +21,38 @@ use Twig\Loader\FilesystemLoader;
 
 class SendEmailController extends AbstractController
 {
-
     protected $email;
+    protected $tokenService;
+
+    public function __construct(TokenService $tokenService)
+    {
+        $this->tokenService = $tokenService;
+    }
+
     /**
      * @Route("/api/auth/sendemail", name="email", methods={"POST"})
      */
     public function sendEmail(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator)
     {
-        $data= json_decode($request->getContent(), true);
+        $data = json_decode($request->getContent(), true);
 
-        //$data['email'] = $request->get('email');
-//        dd($user)
-
-        if (empty($data['email']))
-        {
-            return new JsonResponse (
+        if (empty($data['email'])) {
+            return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
-                        'message' => 'Empty input'
-                    ]
+                        'message' => 'Empty input',
+                    ],
                 ],
                 Response::HTTP_BAD_REQUEST
             );
         }
-        //dd($doctrine->getRepository(User::class)->find($data['email']));
-//        if (($data['email']) == $doctrine->getRepository(User::class)->find($data['email']))
-//        {
-//            return new JsonResponse (
-//                [
-//                    'success' => false,
-//                    'body' => [
-//                        'message' => 'Your email has already been used'
-//                    ]
-//                ],
-//                Response::HTTP_BAD_REQUEST
-//            );
-//        }
+
         $data['code'] = rand(100000, 999999);
 
-        $token = JWT::encode($data, '%env(resolve:JWT_SECRET)%', 'HS256');
+        // $token = JWT::encode($data, '%env(resolve:JWT_SECRET_KEY)%', 'HS256');
+
+        $token = $this->tokenService->createToken($data);
 
         $user = new User();
 
@@ -72,12 +65,12 @@ class SendEmailController extends AbstractController
         if (count($errors) > 0) {
             $errorsString = (string) $errors;
 
-            return new JsonResponse (
+            return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
-                        'message' => $errorsString
-                    ]
+                        'message' => $errorsString,
+                    ],
                 ],
                 Response::HTTP_BAD_REQUEST);
         }
@@ -93,7 +86,7 @@ class SendEmailController extends AbstractController
             ->htmlTemplate('index.html.twig')
             ->context([
                 'code' => $data['code'],
-                'token' => $token
+                'token' => $token,
             ]);
 
         $loader = new FilesystemLoader('/');
@@ -109,7 +102,6 @@ class SendEmailController extends AbstractController
         $mailer = new Mailer($transport);
         $mailer->send($emailForSend);
         $response = ['success' => true, 'message' => ['Email has come']];
-
 
         return new JsonResponse($response, Response::HTTP_CREATED);
     }

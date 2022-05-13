@@ -3,16 +3,16 @@
 namespace App\DataFixtures;
 
 use App\Entity\User;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
 
 class RegistrationFixtures extends Fixture
 {
-    const REFERENCE = 'user';
+    public const REFERENCE = 'user';
+
     public function load(ObjectManager $manager)
     {
-
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 20; ++$i) {
             $user = new User();
             $user->setEmail($i.'aa@aa.com');
             $user->setToken(mt_rand(1000000, 9999999));

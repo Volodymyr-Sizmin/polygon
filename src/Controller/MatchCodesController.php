@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class MatchCodesController extends AbstractController
 {
     protected $code;
+
     /**
      * @Route("/api/auth/code", name="code", methods={"POST"})
      */
@@ -28,39 +29,37 @@ class MatchCodesController extends AbstractController
         $matchingCode = $repository->findOneBy(['code' => $data['code']]);
 
         if (!isset($matchingCode)) {
-            return new JsonResponse (
+            return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
-                        'message' => 'Empty input'
-                    ]
+                        'message' => 'Empty input',
+                    ],
                 ],
                 Response::HTTP_BAD_REQUEST
             );
         }
 
         if ($matchingCode->getCode() != $data['code']) {
-            return new JsonResponse (
+            return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
-                        'message' => 'Введенный код не совпадает с присланным на почтовый ящик'
-                    ]
+                        'message' => 'Введенный код не совпадает с присланным на почтовый ящик',
+                    ],
                 ],
                 Response::HTTP_BAD_REQUEST
             );
         }
 
-        return new JsonResponse (
+        return new JsonResponse(
             [
                 'success' => true,
                 'body' => [
-                    'message' => 'Codes match'
-                ]
+                    'message' => 'Codes match',
+                ],
             ],
             200
         );
     }
 }
-
-

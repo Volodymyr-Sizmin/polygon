@@ -3,17 +3,15 @@
 namespace App\EventSubscriber;
 
 use Doctrine\ORM\EntityManagerInterface;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 
 class RequestSubscriber implements EventSubscriberInterface
 {
-     /**
+    /**
      * @var EntityManagerInterface
      */
     private $entityManager;
-    
 
     private $methods = ['POST', 'PUT', 'PATCH', 'DELETE'];
 
@@ -27,8 +25,7 @@ class RequestSubscriber implements EventSubscriberInterface
     {
         $conn = $this->entityManager->getConnection();
         $method = $event->getRequest()->getMethod();
-        if (in_array($method,$this->methods))
-        {
+        if (in_array($method, $this->methods)) {
             $conn->beginTransaction();
         }
     }

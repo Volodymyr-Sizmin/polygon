@@ -3,7 +3,6 @@
 namespace App\EventSubscriber;
 
 use Doctrine\ORM\EntityManagerInterface;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
@@ -29,16 +28,16 @@ class ResponseSubscriber implements EventSubscriberInterface
         $response = $event->getResponse();
         $conn = $this->entityManager->getConnection();
         $responseCode = $response->getStatusCode();
-        $method = $event->getRequest()->getMethod(); 
-        if (in_array($method,$this->methods))
-        {
-            if (!in_array($responseCode,$this->allowedCodes)){
+        $method = $event->getRequest()->getMethod();
+        if (in_array($method, $this->methods)) {
+            if (!in_array($responseCode, $this->allowedCodes)) {
                 $conn->rollback();
+
                 return;
-            }  
+            }
             $conn->commit();
-        } 
-        echo " ";
+        }
+        echo ' ';
     }
 
     public static function getSubscribedEvents()
