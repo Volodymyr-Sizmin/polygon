@@ -79,7 +79,11 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "phpcs": "phpcs --standard=PSR12"
+        "phpcs": "phpcs --standard=PSR12",
+        "php-cs-fixer": "@php vendor/bin/php-cs-fixer fix --dry-run --diff --show-progress=dots --verbose",
+        "fix-cs": "@php  vendor/bin/php-cs-fixer fix --diff --show-progress=dots --verbose",
+        "tests": "@php vendor/bin/phpunit --verbose",
+        "tests-ci": "@php vendor/bin/phpunit --coverage-text --colors=never"
     },
     "conflict": {
         "symfony/symfony": "*"
