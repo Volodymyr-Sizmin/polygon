@@ -2,9 +2,7 @@
 
 namespace App\Service;
 
-use App\Entity\User;
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 
 class TokenService
 {
@@ -17,7 +15,8 @@ class TokenService
         $public_key = openssl_pkey_get_public($public_key_pem);
 
         $jwt = JWT::encode($data, $private_key, 'RS256');
-        $decoded = JWT::decode($jwt, new Key($public_key, 'RS256'));
+
+        return $jwt;
     }
 
     public function fetchToken($user)

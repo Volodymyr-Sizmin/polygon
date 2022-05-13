@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
-use Firebase\JWT\JWT;
 use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -49,8 +48,6 @@ class SendEmailController extends AbstractController
         }
 
         $data['code'] = rand(100000, 999999);
-
-        // $token = JWT::encode($data, '%env(resolve:JWT_SECRET_KEY)%', 'HS256');
 
         $token = $this->tokenService->createToken($data);
 
