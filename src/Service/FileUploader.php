@@ -4,11 +4,11 @@ namespace App\Service;
 
 use App\Entity\File;
 use App\Exception\FileUploadException;
+use App\Interfaces\FileUploaderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use App\Interfaces\FileUploaderInterface;
 
 class FileUploader implements FileUploaderInterface
 {
