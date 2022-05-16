@@ -84,7 +84,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\Regex(
      *     pattern="/\w{1,40}|d{1,10}|\s|\?|\!/", groups={"quest"},
      *     match=true, groups={"quest"},
-     *     message="Your question must contain only numbers and be 6 numbers long", groups={"quest"}
+     *     message="Your question is invalid", groups={"quest"}
      * )
      */
     private $question;
@@ -95,7 +95,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\Regex(
      *     pattern="/\w{1,40}|d{1,10}|\s|\?|\!/", groups={"quest"},
      *     match=true, groups={"quest"},
-     *     message="Your answer must contain only numbers and be 6 numbers long", groups={"quest"}
+     *     message="Your answer is invalid", groups={"quest"}
      * )
      */
     private $answer;
