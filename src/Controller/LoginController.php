@@ -4,12 +4,14 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Service\TokenService;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class LoginController extends AbstractController
 {
@@ -23,7 +25,7 @@ class LoginController extends AbstractController
     /**
      * @Route("/api/auth/login", name="login", methods={"POST"})
      */
-    public function emailLogin(Request $request, UserPasswordHasherInterface $encoder): Response
+    public function emailLogin(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $encoder): Response
     {
         $data = json_decode($request->getContent(), true);
         if (!$data) {
@@ -35,7 +37,9 @@ class LoginController extends AbstractController
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
-        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+        $entityManager = $doctrine->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+
         if (!$user) {
             $response = [
                 'success' => false,

@@ -29,9 +29,9 @@ class PasswordController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $data['token'] = $request->get('token');
-        $data['password'] = $request->get('password');
-        $data['confirm_password'] = $request->get('confirm_password');
+//        $data['token'] = $request->get('token');
+//        $data['password'] = $request->get('password');
+//        $data['confirm_password'] = $request->get('confirm_password');
 
         if ($data['password'] !== $data['confirm_password']) {
             return new JsonResponse(
@@ -53,7 +53,7 @@ class PasswordController extends AbstractController
         }
 
         $user->setPassword($data['password']);
-        $errors = $validatorPass->validate($user, null, ['password']);
+        $errors = $validatorPass->validate($user, null, 'password');
 
         if (count($errors) > 0) {
             $errorsStringPass = (string) $errors;

@@ -48,14 +48,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(groups={"password"})
      * @Assert\Regex(
-     *     pattern="/[a-z|A-Z|1-9|\?|\#|\.|\@]+/", groups={"password"},
+     *     pattern="/^\w{5,50}\d{1,50}/", groups={"password"},
      *     match=true, groups={"password"},
-     *     message="Your password must contain only letters and numbers", groups={"password"}
+     *     message="Your password must contain letters and numbers", groups={"password"}
      * )
      * @Assert\Length(
-     *      min = 5, groups={"password"},
+     *      min = 6, groups={"password"},
      *      max = 50, groups={"password"},
-     *      minMessage = "Your password must be at least 5 characters long", groups={"password"},
+     *      minMessage = "Your password must be at least 6 characters long", groups={"password"},
      *      maxMessage = "Your password cannot be longer than 50 characters", groups={"password"}
      * )
      */
