@@ -2,6 +2,7 @@ set $cors '';
 if ($http_origin ~ '^https?://(localhost|10.10.15.183)') {
         set $cors 'true';
 }
+set $cors 'true';
 
 if ($cors = 'true') {
         add_header 'Access-Control-Allow-Origin' "$http_origin" always;
