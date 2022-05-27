@@ -65,7 +65,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(groups={"code"})
      * @Assert\Regex(
-     *     pattern="/[1-9]{6}/", groups={"code"},
+     *     pattern="/[0-9]{6}/", groups={"code"},
      *     match=true, groups={"code"},
      *     message="Your password must contain only numbers and be 6 numbers long", groups={"code"}
      * )
@@ -99,6 +99,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * )
      */
     private $answer;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank(groups={"passport"})
+     * @Assert\Regex(
+     *     pattern="/[a-zA-Z]{2,26}|\s|[0-9]{1,33}/", groups={"passport"},
+     *     match=true, groups={"passport"},
+     *     message="Your id is invalid", groups={"passport"}
+     * )
+     * @Assert\Length(
+     *      min = 5, groups={"passport"},
+     *      max = 50, groups={"passport"},
+     *      minMessage = "Your id must be at least 5 characters long", groups={"passport"},
+     *      maxMessage = "Your id cannot be longer than 50 characters", groups={"passport"}
+     * )
+     */
+    private $passport_id;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank(groups={"name"})
+     * @Assert\Regex(
+     *     pattern="/[A-Za-z]{1,33}|\'|\-|\s/", groups={"name"},
+     *     match=true, groups={"name"},
+     *     message="Your name is invalid", groups={"name"}
+     * )
+     */
+    private $FirstName;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank(groups={"name"})
+     * @Assert\Regex(
+     *     pattern="/[A-Za-z]{1,33}|\'|\-|\s/", groups={"name"},
+     *     match=true, groups={"name"},
+     *     message="Your name is invalid", groups={"name"}
+     * )
+     */
+    private $LastName;
 
     public function getId(): ?int
     {
@@ -233,6 +272,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAnswer(string $answer): self
     {
         $this->answer = $answer;
+
+        return $this;
+    }
+
+    public function getPassportId(): ?string
+    {
+        return $this->passport_id;
+    }
+
+    public function setPassportId(?string $passport_id): self
+    {
+        $this->passport_id = $passport_id;
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->FirstName;
+    }
+
+    public function setFirstName(?string $FirstName): self
+    {
+        $this->FirstName = $FirstName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->LastName;
+    }
+
+    public function setLastName(?string $LastName): self
+    {
+        $this->LastName = $LastName;
 
         return $this;
     }
