@@ -26,22 +26,7 @@ class NonClientRegisterController extends AbstractController
         $user->setLastName($data['LastName']);
         $user->setPassportId($data['PassId']);
 
-        $errors = $validator->validate($user, null, ['name']);
-
-        if (count($errors) > 0) {
-            $errorsStringPass = (string) $errors;
-
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'body' => [
-                        'message' => $errorsStringPass,
-                    ],
-                ],
-                Response::HTTP_BAD_REQUEST);
-        }
-
-        $errors = $validator->validate($user, null, ['passport']);
+        $errors = $validator->validate($user, null, ['name', 'passport']);
 
         if (count($errors) > 0) {
             $errorsStringPass = (string) $errors;

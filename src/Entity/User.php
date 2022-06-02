@@ -139,6 +139,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $LastName;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $reset_code;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -308,6 +313,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastName(?string $LastName): self
     {
         $this->LastName = $LastName;
+
+        return $this;
+    }
+
+    public function getResetCode(): ?string
+    {
+        return $this->reset_code;
+    }
+
+    public function setResetCode(?string $reset_code): self
+    {
+        $this->reset_code = $reset_code;
 
         return $this;
     }
