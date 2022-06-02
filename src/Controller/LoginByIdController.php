@@ -11,9 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class LoginController extends AbstractController
+class LoginByIdController extends AbstractController
 {
     protected $tokenService;
 
@@ -23,9 +22,9 @@ class LoginController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/login", name="login", methods={"POST"})
+     * @Route("/api/auth/loginid", name="loginid", methods={"POST"})
      */
-    public function emailLogin(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $encoder): Response
+    public function idLogin(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $encoder): Response
     {
         $data = json_decode($request->getContent(), true);
         if (!$data) {
@@ -38,7 +37,7 @@ class LoginController extends AbstractController
         }
 
         $entityManager = $doctrine->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+        $user = $entityManager->getRepository(User::class)->findOneBy(['passport_id' => $data['passport_id']]);
 
         if (!$user) {
             $response = [
