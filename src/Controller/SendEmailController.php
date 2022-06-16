@@ -43,26 +43,30 @@ class SendEmailController extends AbstractController
                         'message' => 'Empty input',
                     ],
                 ],
-                Response::HTTP_BAD_REQUEST
-            );
+                    Response::HTTP_BAD_REQUEST
+                );
         }
+        $repository = $doctrine->getRepository(User::class);
 
-        $data['code'] = rand(100000, 999999);
+        $matchingEmail = $repository->findOneBy(['email' => $data['email']]);
 
-        $token = $this->tokenService->createToken($data);
+        if (empty($matchingEmail)) {
+            $data['code'] = rand(100000, 999999);
 
-        $user = new User();
+            $token = $this->tokenService->createToken($data);
 
-        $user->setEmail($data['email']);
-        $user->setCode($data['code']);
-        $user->setToken($token);
+            $user = new User();
 
-        $errors = $validator->validate($user, null, 'registration');
+            $user->setEmail($data['email']);
+            $user->setCode($data['code']);
+            $user->setToken($token);
 
-        if (count($errors) > 0) {
-            $errorsString = (string) $errors;
+            $errors = $validator->validate($user, null, 'registration');
 
-            return new JsonResponse(
+            if (count($errors) > 0) {
+                $errorsString = (string) $errors;
+
+                return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
@@ -70,13 +74,13 @@ class SendEmailController extends AbstractController
                     ],
                 ],
                 Response::HTTP_BAD_REQUEST);
-        }
+            }
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($user);
-        $em->flush();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
 
-        $emailForSend = (new TemplatedEmail())
+            $emailForSend = (new TemplatedEmail())
             ->from('admin@polybank.com')
             ->to($data['email'])
             ->subject('Your verification code')
@@ -86,20 +90,31 @@ class SendEmailController extends AbstractController
                 'token' => $token,
             ]);
 
-        $loader = new FilesystemLoader('/');
+            $loader = new FilesystemLoader('/');
 
-        $twigEnv = new Environment($loader);
+            $twigEnv = new Environment($loader);
 
-        $twigBodyRenderer = new BodyRenderer($twigEnv);
+            $twigBodyRenderer = new BodyRenderer($twigEnv);
 
-        $twigBodyRenderer->render($emailForSend);
+            $twigBodyRenderer->render($emailForSend);
 
-        $dsn = 'smtp://mailhog:1025';
-        $transport = Transport::fromDsn($dsn);
-        $mailer = new Mailer($transport);
-        $mailer->send($emailForSend);
-        $response = ['success' => true, 'message' => ['Email has come']];
+            $dsn = 'smtp://mailhog:1025';
+            $transport = Transport::fromDsn($dsn);
+            $mailer = new Mailer($transport);
+            $mailer->send($emailForSend);
+            $response = ['success' => true, 'message' => ['Email has come']];
 
-        return new JsonResponse($response, Response::HTTP_CREATED);
+            return new JsonResponse($response, Response::HTTP_CREATED);
+        } elseif ($matchingEmail->getEmail() === $data['email']) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'A user with this email has already been registered in the system. Please call the number +7 XXX XXXX XXXX or contact the nearest bank office.',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
     }
 }

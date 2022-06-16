@@ -4,12 +4,14 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity("email")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -22,7 +24,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-
      * @Assert\NotBlank(groups={"registration"})
      * @Assert\Regex(
      *     pattern="/^[a-z]{3,25}|[1-9]{1,4}\@[a-z]{1,10}\.[a-z]{1,4}/", groups={"registration"},
