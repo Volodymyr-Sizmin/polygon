@@ -4,6 +4,6 @@ doctrine:
     memory:  true
     charset: UTF8
     host: localhost
-    dbname: api
+    dbname: test
     user: api-user
     password: api-user-password

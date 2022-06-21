@@ -49,7 +49,6 @@ class SendEmailController extends AbstractController
         $repository = $doctrine->getRepository(User::class);
 
         $matchingEmail = $repository->findOneBy(['email' => $data['email']]);
-
         if (empty($matchingEmail)) {
             $data['code'] = rand(100000, 999999);
 
