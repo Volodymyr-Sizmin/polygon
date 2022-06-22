@@ -33,17 +33,17 @@ class ResetPasswordController extends AbstractController
         $data['confirm_password'] = $request->get('confirm_password');
         $data['token'] = $request->get('token');
 
-//        if ($data['password'] !== $data['confirm_password']) {
-//            return new JsonResponse(
-//                [
-//                    'success' => false,
-//                    'body' => [
-//                        'message' => 'Passwords do not match',
-//                    ],
-//                ],
-//                Response::HTTP_BAD_REQUEST
-//            );
-//        }
+        if ($data['password'] !== $data['confirm_password']) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Passwords do not match',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
 
         $entityManager = $doctrine->getManager();
         $user = $entityManager->getRepository(User::class)->findOneBy(['token' => $data['token']]);

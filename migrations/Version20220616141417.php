@@ -19,7 +19,6 @@ final class Version20220616141417 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $table = $schema->getTable('user');
         $table->addColumn('code', 'string', [
             'length' => 255,
@@ -60,13 +59,18 @@ final class Version20220616141417 extends AbstractMigration
             'unsigned' => 0,
             'notnull' => 0,
         ]);
-
-        // $this->addSql('ALTER TABLE user ADD passport_id VARCHAR(255) DEFAULT NULL, ADD first_name VARCHAR(255) DEFAULT NULL, ADD last_name VARCHAR(255) DEFAULT NULL, ADD reset_code VARCHAR(255) DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE user DROP passport_id, DROP first_name, DROP last_name, DROP reset_code');
+        $table = $schema->getTable('user');
+        $table->dropColumn('code');
+        $table->dropColumn('token');
+        $table->dropColumn('question');
+        $table->dropColumn('answer');
+        $table->dropColumn('passport_id');
+        $table->dropColumn('first_name');
+        $table->dropColumn('last_name');
+        $table->dropColumn('reset_code');
     }
 }
