@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Environment;
@@ -61,7 +60,7 @@ class ResetController extends AbstractController
         $errors = $validator->validate($user, null, 'code');
 
         if (count($errors) > 0) {
-            $errorsString = (string)$errors;
+            $errorsString = (string) $errors;
 
             return new JsonResponse(
                 [

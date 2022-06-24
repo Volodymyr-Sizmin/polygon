@@ -29,18 +29,6 @@ class MatchCodesController extends AbstractController
 
         $matchingCode = $repository->findOneBy(['token' => $data['token']]);
 
-        if (!isset($matchingCode)) {
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'body' => [
-                        'message' => 'Empty input',
-                    ],
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-
         if ($matchingCode->getCode() != $data['code']) {
             return new JsonResponse(
                 [

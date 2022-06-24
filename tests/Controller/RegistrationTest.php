@@ -102,7 +102,7 @@ class RegistrationTest extends WebTestCase
         return [
             [
             [
-                'email' => '1aa@aa.com',
+                'email' => 'alex1@aa.com',
             ],
                 400,
             ],

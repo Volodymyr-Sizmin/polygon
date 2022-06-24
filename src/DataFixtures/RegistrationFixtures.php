@@ -14,9 +14,9 @@ class RegistrationFixtures extends Fixture
     {
         for ($i = 0; $i < 20; ++$i) {
             $user = new User();
-            $user->setEmail($i.'aa@aa.com');
+            $user->setEmail('alex'.$i.'@aa.com');
             $user->setToken(mt_rand(1000000, 9999999));
-            $user->setPassword('Hello'.$i);
+            $user->setPassword('Hello Alex'.$i);
             $manager->persist($user);
         }
 
