@@ -23,8 +23,8 @@ final class Version20220516123916 extends AbstractMigration
         $table->addColumn('email', 'string', [
             'length' => 255,
         ]);
-        $table->addColumn('roles', 'integer', [
-            'unsigned' => 0,
+        $table->addColumn('roles', 'json', [
+            'unsigned' => 1,
             'notnull' => 0,
         ]);
         $table->addColumn('password', 'string', [
