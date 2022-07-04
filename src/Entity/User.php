@@ -145,6 +145,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $reset_code;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\NotBlank(groups={"pin"})
+     * @Assert\Regex(
+     *     pattern="/^\d{6}$/", groups={"pin"},
+     *     match=true, groups={"pin"},
+     *     message="Your pin is invalid", groups={"pin"}
+     * )
+     *  * @Assert\Length(
+     *      min = 6, groups={"pin"},
+     *      max = 6, groups={"pin"},
+     *      minMessage = "Your pin must be at least 6 characters long", groups={"pin"},
+     *      maxMessage = "Your pin cannot be longer than 6 characters", groups={"pin"}
+     * )
+     */
+    private $pin;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $reset_pin;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -326,6 +348,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setResetCode(?string $reset_code): self
     {
         $this->reset_code = $reset_code;
+
+        return $this;
+    }
+
+    public function getPin(): ?int
+    {
+        return $this->pin;
+    }
+
+    public function setPin(?int $pin): self
+    {
+        $this->pin = $pin;
+
+        return $this;
+    }
+
+    public function getResetPin(): ?int
+    {
+        return $this->reset_pin;
+    }
+
+    public function setResetPin(?int $reset_pin): self
+    {
+        $this->reset_pin = $reset_pin;
 
         return $this;
     }
