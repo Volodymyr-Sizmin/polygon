@@ -1,21 +1,7 @@
 version: '3'
 
 services:
-  database:
-    container_name: tools-database
-#    user: ${DOCKER_USER_ID}:${DOCKER_USER_GROUP_ID}
-    build:
-      context: ./tools/database
-    environment:
-      - MYSQL_DATABASE=${DATABASE_NAME}
-      - MYSQL_USER=${DATABASE_USER}
-      - MYSQL_PASSWORD=${DATABASE_USER_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
-    ports:
-      - "${DATABASE_PORT}:3306"
-    volumes:
-      - ./tools/database/data:/var/lib/mysql
-
+  #TODO: fix api-docs service
   api-docs: 
     container_name: tools-apidoc
     build:
@@ -52,8 +38,6 @@ services:
         - DOCKER_USER=${DOCKER_USER}
         - DOCKER_USER_ID=${DOCKER_USER_ID}
         - DOCKER_USER_GROUP_ID=${DOCKER_USER_GROUP_ID}
-    depends_on:
-      - database
     volumes:
       - /home/d.rusakov/symfony-api:/var/www/backend
       - ~/.ssh:/home/${DOCKER_USER}/.ssh
@@ -80,4 +64,3 @@ services:
         ports:
             - "8025:8025"
             - "1025:1025"
-
