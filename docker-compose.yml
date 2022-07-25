@@ -1,7 +1,6 @@
 version: '3'
 
 services:
-  #TODO: fix api-docs service
   api-docs: 
     container_name: tools-apidoc
     build:
