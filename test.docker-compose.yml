@@ -1,0 +1,6 @@
+version: '3.7'
+services:
+ polygon-test:
+  image: nexus-docker.andersenlab.dev/polygon-backend:test
+  container_name: polygon-backend-test
+  restart: always
