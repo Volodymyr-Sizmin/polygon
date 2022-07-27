@@ -28,6 +28,8 @@ services:
       - symfony-api
     links:
       - symfony-api
+    networks:
+      - backend
 
   symfony-api:
     container_name: symfony-api
