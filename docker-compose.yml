@@ -28,7 +28,9 @@ services:
       - symfony-api
     links:
       - symfony-api
-
+    networks:
+      - backend
+      
   symfony-api:
     container_name: symfony-api
     build:
@@ -41,6 +43,8 @@ services:
       - /home/d.rusakov/symfony-api:/var/www/backend
       - ~/.ssh:/home/${DOCKER_USER}/.ssh
       - ~/.composer:/home/${DOCKER_USER}/.composer
+    networks:
+      - backend
 
   react-client:
     container_name: react-client
@@ -64,3 +68,7 @@ services:
         ports:
             - "8025:8025"
             - "1025:1025"
+
+networks:
+  backend:
+    name: backend
