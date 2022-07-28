@@ -75,7 +75,7 @@ class SendEmailController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
             }
 
-            $em = $this->getDoctrine()->getManager();
+            $em = $doctrine->getManager();
             $em->persist($user);
             $em->flush();
 
