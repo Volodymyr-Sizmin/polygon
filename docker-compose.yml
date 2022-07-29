@@ -46,19 +46,19 @@ services:
     networks:
       - backend
 
-  react-client:
-    container_name: react-client
-    build:
-      context: ./react-client
-    depends_on:
-      - symfony-api
-    volumes:
-      - /home/d.rusakov/polygon_backend/react-client:/var/www/frontend
-      - ~/.ssh:/home/${DOCKER_USER}/.ssh
-    networks:
-      - backend
-    ports:
-      - "${REACT_CLIENT_PORT}:3000"
+#  react-client:
+#    container_name: react-client
+#    build:
+#      context: ./react-client
+#    depends_on:
+#      - symfony-api
+#    volumes:
+#      - /home/d.rusakov/polygon_backend/react-client:/var/www/frontend
+#      - ~/.ssh:/home/${DOCKER_USER}/.ssh
+#    networks:
+#      - backend
+#    ports:
+#      - "${REACT_CLIENT_PORT}:3000"
  
  # mailer service
   mailer:
