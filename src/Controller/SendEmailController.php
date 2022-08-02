@@ -101,7 +101,12 @@ class SendEmailController extends AbstractController
             $transport = Transport::fromDsn($dsn);
             $mailer = new Mailer($transport);
             $mailer->send($emailForSend);
-            $response = ['success' => true, 'message' => ['Email has come']];
+            $response = [
+                'success' => true, 'body' => [
+                'message' => 'Email has come',
+                'token' => $token
+                ]
+            ];
 
             return new JsonResponse($response, Response::HTTP_CREATED);
         } elseif ($matchingEmail->getEmail() === $data['email']) {
@@ -110,7 +115,6 @@ class SendEmailController extends AbstractController
                     'success' => false,
                     'body' => [
                         'message' => 'A user with this email has already been registered in the system. Please call the number +7 XXX XXXX XXXX or contact the nearest bank office.',
-                        'token' => $this->tokenService->fetchToken($matchingEmail)
                     ],
                 ],
                 Response::HTTP_BAD_REQUEST
