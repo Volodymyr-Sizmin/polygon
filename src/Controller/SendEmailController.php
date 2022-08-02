@@ -110,6 +110,7 @@ class SendEmailController extends AbstractController
                     'success' => false,
                     'body' => [
                         'message' => 'A user with this email has already been registered in the system. Please call the number +7 XXX XXXX XXXX or contact the nearest bank office.',
+                        'token' => $this->tokenService->fetchToken($matchingEmail)
                     ],
                 ],
                 Response::HTTP_BAD_REQUEST
