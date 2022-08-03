@@ -20,7 +20,7 @@ services:
  
  # mailer service
   mailer-prod:
-    container_name: mailhog
+    container_name: mailhog-prod
     image: mailhog/mailhog
     restart: always
     logging:
