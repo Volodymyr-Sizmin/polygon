@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+#  api-docs: 
+#    container_name: tools-apidoc
+#    build:
+#      context: ./tools/apidoc
+#    volumes:
+#      - /home/d.rusakov/symfony-api:/project-root
+
+  api-server-prod:
+    container_name: tools-api-server-prod
+    image: nexus-docker.andersenlab.dev/polygon-backend:prod
+    ports:
+      - "9002:80"
+    volumes:
+        - /opt/prod/logs:/var/log/nginx
+    networks:
+      - backend-prod
+ 
+ # mailer service
+  mailer-prod:
+    container_name: mailhog
+    image: mailhog/mailhog
+    restart: always
+    logging:
+        driver: "none"
+    networks:
+      - backend-prod
+    ports:
+      - "8026:8025"
+      - "1026:1025"
+
+networks:
+  backend-prod:
+    driver: bridge

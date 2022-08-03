@@ -101,7 +101,12 @@ class SendEmailController extends AbstractController
             $transport = Transport::fromDsn($dsn);
             $mailer = new Mailer($transport);
             $mailer->send($emailForSend);
-            $response = ['success' => true, 'message' => ['Email has come']];
+            $response = [
+                'success' => true, 'body' => [
+                'message' => 'Email has come',
+                'token' => $token
+                ]
+            ];
 
             return new JsonResponse($response, Response::HTTP_CREATED);
         } elseif ($matchingEmail->getEmail() === $data['email']) {
