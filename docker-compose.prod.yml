@@ -16,12 +16,14 @@ services:
       - "9001:9001"
     volumes:
         - /opt/prod/logs:/var/log/nginx
-    depends-on:
+    depends_on:
       - symfony-api-prod
     networks:
       - backend-prod
 
   symfony-api-prod:
+    environment:
+      - DOCKER_USER="a.fetissov"
     container_name: symfony-api-prod
     image: nexus-docker.andersenlab.dev/polygon-backend:symfony-prod
     volumes:
