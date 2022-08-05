@@ -17,7 +17,7 @@ services:
     volumes:
         - /opt/prod/logs:/var/log/nginx
     depends_on:
-      - symfony-api-prod
+      - symfony-api
     networks:
       - backend-prod
 
