@@ -12,9 +12,22 @@ services:
     container_name: tools-api-server-prod
     image: nexus-docker.andersenlab.dev/polygon-backend:prod
     ports:
-      - "9002:80"
+      - "11100:80"
+      - "19001:19001"
     volumes:
         - /opt/prod/logs:/var/log/nginx
+    depends-on:
+      - symfony-api-prod
+    networks:
+      - backend-prod
+
+  symfony-api-prod:
+    container_name: symfony-api-prod
+    image: nexus-docker.andersenlab.dev/polygon-backend:symfony-prod
+    volumes:
+      - /home/${DOCKER_USER}/.composer:/home/${DOCKER_USER}/.composer
+    ports:
+      - "19000:19000"
     networks:
       - backend-prod
  
@@ -28,8 +41,8 @@ services:
     networks:
       - backend-prod
     ports:
-      - "8026:8025"
-      - "1026:1025"
+      - "18025:8025"
+      - "11025:1025"
 
 networks:
   backend-prod:
