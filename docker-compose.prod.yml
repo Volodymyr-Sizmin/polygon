@@ -21,10 +21,10 @@ services:
     networks:
       - backend-prod
 
-  symfony-api-prod:
+  symfony-api:
     environment:
       - DOCKER_USER="a.fetissov"
-    container_name: symfony-api-prod
+    container_name: symfony-api
     image: nexus-docker.andersenlab.dev/polygon-backend:symfony-prod
     volumes:
       - /home/${DOCKER_USER}/.composer:/home/${DOCKER_USER}/.composer
@@ -34,8 +34,8 @@ services:
       - backend-prod
  
  # mailer service
-  mailer-prod:
-    container_name: mailhog-prod
+  mailer:
+    container_name: mailhog
     image: mailhog/mailhog
     restart: always
     logging:
