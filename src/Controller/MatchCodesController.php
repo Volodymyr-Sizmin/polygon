@@ -25,21 +25,20 @@ class MatchCodesController extends AbstractController
         $data['code'] = $request->get('code');
         $data['token'] = $request->get('token');
 
-        $repository = $doctrine->getRepository(User::class);
+        $entityManager = $doctrine->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['token' => $data['token']]);
 
-        $matchingCode = $repository->findOneBy(['token' => $data['token']]);
-
-//        if ($matchingCode->getCode() != $data['code']) {
-//            return new JsonResponse(
-//                [
-//                    'success' => false,
-//                    'body' => [
-//                        'message' => 'Введенный код не совпадает с присланным на почтовый ящик',
-//                    ],
-//                ],
-//                Response::HTTP_BAD_REQUEST
-//            );
-//        }
+        if ($user->getCode() != $data['code']) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Введенный код не совпадает с присланным на почтовый ящик',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
 
         return new JsonResponse(
             [
