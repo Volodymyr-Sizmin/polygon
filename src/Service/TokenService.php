@@ -14,9 +14,17 @@ class TokenService
 
         $public_key = openssl_pkey_get_public($public_key_pem);
 
-        $jwt = JWT::encode($data, $private_key, 'RS256');
+        $now_seconds = time();
+        $payload = array(
+            "iss" => $data,
+            "iat" => $now_seconds,
+            "exp" => $now_seconds+(60*60)
+        );
+        return JWT::encode($payload, $private_key, "RS256");
 
-        return $jwt;
+        //$jwt = JWT::encode($data, $private_key, 'RS256');
+
+        //return $jwt;
     }
 
     public function fetchToken($user)

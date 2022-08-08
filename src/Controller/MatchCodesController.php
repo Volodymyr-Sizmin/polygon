@@ -25,11 +25,10 @@ class MatchCodesController extends AbstractController
         $data['code'] = $request->get('code');
         $data['token'] = $request->get('token');
 
-        $repository = $doctrine->getRepository(User::class);
+        $entityManager = $doctrine->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['token' => $data['token']]);
 
-        $matchingCode = $repository->findOneBy(['token' => $data['token']]);
-
-        if ($matchingCode->getCode() != $data['code']) {
+        if ($user->getCode() != $data['code']) {
             return new JsonResponse(
                 [
                     'success' => false,
