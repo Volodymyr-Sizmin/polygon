@@ -1,0 +1,79 @@
+version: '3'
+
+services:
+  api-docs: 
+    container_name: tools-apidoc
+    build:
+      context: ./tools/apidoc
+    volumes:
+      - /home/d.rusakov/symfony-api:/project-root
+    depends_on:
+      - symfony-api
+
+  api-server:
+    container_name: tools-api-server
+    image: nginx:latest
+    ports:
+      - "${DOCKER_NGINX_PORT}:80"
+      # Add the port for Xdebug here
+      - "9001:9001"
+    volumes:
+        - /home/d.rusakov/symfony-api:/var/www/backend
+        - /home/d.rusakov/polygon_backend/react-client:/var/www/frontend
+        - ./tools/nginx/conf.d/:/etc/nginx/conf.d
+        - ./tools/logs/nginx:/var/log/nginx
+        - ./tools/nginx/nginx.conf:/etc/nginx/nginx.conf
+        - ./tools/nginx/sites:/etc/nginx/sites-available
+    depends_on:
+      - symfony-api
+    links:
+      - symfony-api
+    networks:
+      - backend
+      
+  symfony-api:
+    container_name: symfony-api
+    build:
+      context: ../symfony-api
+      dockerfile: ../docker/backend.dockerfile
+      args:
+        - DOCKER_USER=${DOCKER_USER}
+        - DOCKER_USER_ID=${DOCKER_USER_ID}
+        - DOCKER_USER_GROUP_ID=${DOCKER_USER_GROUP_ID}
+    volumes:
+      - /home/d.rusakov/symfony-api:/var/www/backend
+      - ~/.ssh:/home/${DOCKER_USER}/.ssh
+      - ~/.composer:/home/${DOCKER_USER}/.composer
+    networks:
+      - backend
+
+  react-client:
+    container_name: react-client
+    build:
+      context: ./react-client
+    depends_on:
+      - symfony-api
+    volumes:
+      - /home/d.rusakov/polygon_backend/react-client:/var/www/frontend
+      - ~/.ssh:/home/${DOCKER_USER}/.ssh
+    networks:
+      - backend
+    ports:
+      - "${REACT_CLIENT_PORT}:3000"
+ 
+ # mailer service
+  mailer:
+    container_name: mailhog
+    image: mailhog/mailhog
+    restart: always
+    logging:
+        driver: "none"
+    networks:
+      - backend
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
+networks:
+  backend:
+    driver: bridge
