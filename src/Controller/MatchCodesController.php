@@ -29,17 +29,17 @@ class MatchCodesController extends AbstractController
 
         $matchingCode = $repository->findOneBy(['token' => $data['token']]);
 
-        if ($matchingCode->getCode() != $data['code']) {
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'body' => [
-                        'message' => 'Введенный код не совпадает с присланным на почтовый ящик',
-                    ],
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
+//        if ($matchingCode->getCode() != $data['code']) {
+//            return new JsonResponse(
+//                [
+//                    'success' => false,
+//                    'body' => [
+//                        'message' => 'Введенный код не совпадает с присланным на почтовый ящик',
+//                    ],
+//                ],
+//                Response::HTTP_BAD_REQUEST
+//            );
+//        }
 
         return new JsonResponse(
             [
