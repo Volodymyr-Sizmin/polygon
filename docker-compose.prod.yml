@@ -28,8 +28,6 @@ services:
     image: nexus-docker.andersenlab.dev/polygon-backend:symfony-prod
     volumes:
       - /home/${DOCKER_USER}/.composer:/home/${DOCKER_USER}/.composer
-#    ports:
-#      - "9000:9000"
     networks:
       - backend-prod
  
