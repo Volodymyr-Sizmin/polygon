@@ -63,7 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      * @Assert\NotBlank(groups={"code"})
      * @Assert\Regex(
      *     pattern="/[0-9]{6}/", groups={"code"},
