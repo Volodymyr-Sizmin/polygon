@@ -18,7 +18,7 @@ class TokenService
         $payload = array(
             "iss" => $data,
             "iat" => $now_seconds,
-            "exp" => $now_seconds+(60*60)
+            "exp" => $now_seconds+(60)
         );
         return JWT::encode($payload, $private_key, "RS256");
 

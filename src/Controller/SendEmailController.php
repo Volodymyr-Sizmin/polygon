@@ -35,6 +35,7 @@ class SendEmailController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
+
         if (empty($data['email'])) {
             return new JsonResponse(
                 [
@@ -49,7 +50,6 @@ class SendEmailController extends AbstractController
 
         $entityManager = $doctrine->getManager();
         $matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-
         if (empty($matchingEmail)) {
             $data['code'] = rand(100000, 999999);
 
