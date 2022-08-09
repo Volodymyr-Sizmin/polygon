@@ -20,7 +20,7 @@ final class Version20220616141417 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $table = $schema->getTable('user');
-        $table->addColumn('code', 'string', [
+        $table->addColumn('code', 'integer', [
             'length' => 255,
             'unsigned' => 0,
             'notnull' => 0,
