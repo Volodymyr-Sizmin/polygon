@@ -24,7 +24,6 @@ class RequestSubscriber implements EventSubscriberInterface
     public function onKernelRequest(RequestEvent $event): void
     {
         $conn = $this->entityManager->getConnection();
-        dd($conn);
         $method = $event->getRequest()->getMethod();
         if (in_array($method, $this->methods)) {
             $conn->beginTransaction();
