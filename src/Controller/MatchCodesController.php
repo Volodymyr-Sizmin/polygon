@@ -21,7 +21,7 @@ class MatchCodesController extends AbstractController
     public function matchCodes(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator)
     {
         $data = json_decode($request->getContent(), true);
-
+        dd($data);
         $entityManager = $doctrine->getManager();
         $user = $entityManager->getRepository(User::class)->findOneBy(['token' => $data['token']]);
 
