@@ -34,8 +34,8 @@ services:
   symfony-api:
     container_name: symfony-api
     build:
-      context: ../../../symfony-api
-      dockerfile: ../../../docker/backend.dockerfile
+      context: /home/d.rusakov/symfony-api
+      dockerfile: /home/d.rusakov/docker/backend.dockerfile
       args:
         - DOCKER_USER=${DOCKER_USER}
         - DOCKER_USER_ID=${DOCKER_USER_ID}
