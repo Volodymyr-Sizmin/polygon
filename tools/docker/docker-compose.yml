@@ -50,7 +50,7 @@ services:
   react-client:
     container_name: react-client
     build:
-      context: ./react-client
+      context: ../../react-client
     depends_on:
       - symfony-api
     volumes:
