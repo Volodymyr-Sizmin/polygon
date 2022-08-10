@@ -13,12 +13,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MatchCodesController extends AbstractController
 {
-    protected $code;
-
     /**
      * @Route("/api/auth/code", name="code", methods={"POST"})
      */
-    public function matchCodes(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator)
+    public function matchCodes(Request $request, ManagerRegistry $doctrine)
     {
         $data = json_decode($request->getContent(), true);
 
@@ -48,3 +46,4 @@ class MatchCodesController extends AbstractController
         );
     }
 }
+
