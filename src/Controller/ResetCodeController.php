@@ -21,7 +21,7 @@ class ResetCodeController extends AbstractController
     public function matchResetCodes(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator)
     {
         $data = json_decode($request->getContent(), true);
-        dd($data);
+
         $repository = $doctrine->getRepository(User::class);
 
         $matchingCode = $repository->findOneBy(['token' => $data['token']]);
