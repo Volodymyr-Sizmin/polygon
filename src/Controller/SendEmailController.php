@@ -35,7 +35,6 @@ class SendEmailController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-
         if (empty($data['email'])) {
             return new JsonResponse(
                 [
@@ -53,7 +52,10 @@ class SendEmailController extends AbstractController
         if (empty($matchingEmail)) {
             $data['code'] = rand(100000, 999999);
 
-            $token = $this->tokenService->createToken($data);
+            $dataEmail = $data['email'];
+            $dataCode = $data['code'];
+
+            $token = $this->tokenService->createToken($dataEmail, $dataCode);
 
             $user = new User();
 
