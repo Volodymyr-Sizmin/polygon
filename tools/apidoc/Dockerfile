@@ -6,7 +6,7 @@ USER node
 
 RUN mkdir -p /home/node/apidoc
 WORKDIR /home/node/apidoc
-ADD ../../*apidoc* .
+ADD . .
 RUN npm install --only=prod -g apidoc
 
 CMD ["apidoc", "-i /project-root/", "-o /project-root/apidocs"]
