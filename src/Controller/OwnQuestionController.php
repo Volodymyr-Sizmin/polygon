@@ -22,7 +22,7 @@ class OwnQuestionController extends AbstractController
 //        $data['token'] = $request->get('token');
 //        $data['question'] = $request->get('question');
 //        $data['answer'] = $request->get('answer');
-
+        dd($data);
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository(User::class)->findOneBy(['token' => $data['token']]);
 
