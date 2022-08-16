@@ -29,10 +29,6 @@ class ResetPasswordController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $data['password'] = $request->get('password');
-        $data['confirm_password'] = $request->get('confirm_password');
-        $data['token'] = $request->get('token');
-
         if ($data['password'] !== $data['confirm_password']) {
             return new JsonResponse(
                 [
