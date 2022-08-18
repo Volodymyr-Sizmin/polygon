@@ -20,8 +20,21 @@ class NonClientRegisterController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository(User::class)->findOneBy(['token' => $data['token']]);
+        $userId = $em->getRepository(User::class)->findBy(['passport_id' => $data['PassId']]);
 
+        if (!empty($userId)) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Hello. A user with this Id has already been registered in the system. Please call the number +7 XXX XXXX XXXX or contact the nearest bank office.',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        $user = $em->getRepository(User::class)->findOneBy(['email' => $data['email']]);
         $user->setFirstName($data['FirstName']);
         $user->setLastName($data['LastName']);
         $user->setPassportId($data['PassId']);
