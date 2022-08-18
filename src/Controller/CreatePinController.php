@@ -87,7 +87,7 @@ class CreatePinController extends AbstractController
         }
 
         $entityManager = $doctrine->getManager();
-        $matchingPin = $entityManager->getRepository(User::class)->findOneBy(['token' => $data['token']]);
+        $matchingPin = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
 
         if (!$matchingPin) {
             $response = [

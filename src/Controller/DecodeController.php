@@ -28,7 +28,7 @@ class DecodeController extends AbstractController
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
-        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['token' => $data['token']]);
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $data['email']]);
         if (!$user) {
             $response = [
                 'success' => false,
