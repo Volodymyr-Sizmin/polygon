@@ -42,10 +42,10 @@ class PasswordController extends AbstractController
         }
 
         $entityManager = $doctrine->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['token' => $data['token']]);
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
 
         if (!$user) {
-            throw $this->createNotFoundException('No user found for token '.$data['token']);
+            throw $this->createNotFoundException('No user found for token '.$data['email']);
         }
 
         $user->setPassword($data['password']);

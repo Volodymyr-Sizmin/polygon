@@ -21,7 +21,7 @@ class MatchCodesController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $entityManager = $doctrine->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['token' => $data['token']]);
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
 
         if ($user->getCode() != $data['code']) {
             return new JsonResponse(

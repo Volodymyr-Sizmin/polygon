@@ -20,7 +20,7 @@ class OwnQuestionController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository(User::class)->findOneBy(['token' => $data['token']]);
+        $user = $em->getRepository(User::class)->findOneBy(['email' => $data['email']]);
 
         $user->setQuestion($data['question']);
         $user->setAnswer($data['answer']);

@@ -24,7 +24,7 @@ class ResetCodeController extends AbstractController
 
         $repository = $doctrine->getRepository(User::class);
 
-        $matchingCode = $repository->findOneBy(['token' => $data['token']]);
+        $matchingCode = $repository->findOneBy(['email' => $data['email']]);
 
         if (!isset($matchingCode)) {
             return new JsonResponse(
