@@ -45,7 +45,7 @@ class ResetPasswordController extends AbstractController
         $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
 
         if (!$user) {
-            throw $this->createNotFoundException('No user found for token '.$data['email']);
+            throw $this->createNotFoundException('No user found for email '.$data['email']);
         }
 
         $user->setPassword($data['password']);

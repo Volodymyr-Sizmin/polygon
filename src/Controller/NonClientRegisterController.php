@@ -54,8 +54,8 @@ class NonClientRegisterController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
         }
 
-        $em->persist($user);
-        $em->flush();
+//        $em->persist($user);
+//        $em->flush();
         $response = ['success' => true, 'body' => [
             'message' => [
                 'Ok',

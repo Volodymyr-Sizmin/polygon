@@ -78,9 +78,9 @@ class SendEmailController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
             }
 
-            $em = $doctrine->getManager();
-            $em->persist($user);
-            $em->flush();
+//            $em = $doctrine->getManager();
+//            $em->persist($user);
+//            $em->flush();
 
             $emailForSend = (new TemplatedEmail())
             ->from('admin@polybank.com')

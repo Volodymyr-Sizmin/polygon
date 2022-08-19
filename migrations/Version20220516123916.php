@@ -41,6 +41,5 @@ final class Version20220516123916 extends AbstractMigration
         $table->dropColumn('email');
         $table->dropColumn('roles');
         $table->dropColumn('password');
-        $table->dropColumn('answer');
     }
 }

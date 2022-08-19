@@ -68,7 +68,7 @@ class PasswordController extends AbstractController
             $user,
             $data['password']
         ));
-        $entityManager->flush();
+//        $entityManager->flush();
 
         return new JsonResponse(
             [
