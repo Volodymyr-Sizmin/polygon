@@ -40,8 +40,8 @@ class OwnQuestionController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
         }
 
-        $em->persist($user);
-        $em->flush();
+//        $em->persist($user);
+//        $em->flush();
         $response = ['success' => true, 'body' => ['Ok']];
 
         return new JsonResponse($response, Response::HTTP_CREATED);
