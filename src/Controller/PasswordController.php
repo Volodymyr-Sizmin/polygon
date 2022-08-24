@@ -2,11 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,21 +14,27 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class PasswordController extends AbstractController
 {
     protected $password;
-    private $encoder;
+    private $requestStack;
 
-    public function __construct(UserPasswordHasherInterface $encoder)
+    public function __construct(RequestStack $requestStack)
     {
-        $this->encoder = $encoder;
+        $this->requestStack = $requestStack;
     }
 
     /**
      * @Route("/api/auth/password", name="password", methods={"POST"})
      */
-    public function passwordMatch(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass)
+    public function passwordMatch(Request $request, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher)
     {
         $data = json_decode($request->getContent(), true);
 
-        if ($data['password'] !== $data['confirm_password']) {
+        $session = $this->requestStack->getSession();
+
+        $session->set('password', $data['password']);
+        $sesPass = $session->get('password');
+        $sesEmail = $session->get('email');
+
+        if ($sesPass !== $data['confirm_password']) {
             return new JsonResponse(
                 [
                     'success' => false,
@@ -41,14 +46,20 @@ class PasswordController extends AbstractController
             );
         }
 
-        $entityManager = $doctrine->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-
-        if (!$user) {
-            throw $this->createNotFoundException('No user found for token '.$data['email']);
+        if ($sesEmail !== $data['email']) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Emails do not match',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
-        $user->setPassword($data['password']);
+        $user = $session->get('user');
+
         $errors = $validatorPass->validate($user, null, 'password');
 
         if (count($errors) > 0) {
@@ -64,20 +75,21 @@ class PasswordController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
         }
 
-        $user->setPassword($this->encoder->hashPassword(
+        $hashedPassword = $passwordHasher->hashPassword(
             $user,
-            $data['password']
-        ));
-//        $entityManager->flush();
+            $sesPass
+        );
+
+        $session->set('password', $hashedPassword);
 
         return new JsonResponse(
-            [
-                'success' => true,
-                'body' => [
-                    'message' => 'Password saved',
-                ],
-            ],
-            200
-        );
+    [
+        'success' => true,
+        'body' => [
+            'message' => 'Password saved',
+        ],
+    ],
+    200
+);
     }
 }

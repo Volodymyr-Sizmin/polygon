@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Tue Jul 26 11:47:07 2022
+# Make data base, printed on Tue Aug 23 13:43:54 2022
 
 # Variables
 
@@ -45,7 +45,7 @@ XDG_DATA_DIRS = /usr/share/plasma:/usr/share/gnome:/usr/local/share:/usr/share:/
 # automatic
 %F = $(notdir $%)
 # environment
-VSCODE_CODE_CACHE_PATH = /home/aleksei/.config/Code/CachedData/3b889b090b5ad5793f524b5d1d39fda662b96a2a
+VSCODE_CODE_CACHE_PATH = /home/aleksei/.config/Code/CachedData/e4503b30fc78200f846c62cf8091b76ff5547662
 # environment
 XDG_SESSION_PATH = /org/freedesktop/DisplayManager/Session1
 # environment
@@ -71,7 +71,7 @@ PAM_KWALLET5_LOGIN = /run/user/1000/kwallet5.socket
 # environment
 MFLAGS = -pqrR
 # environment
-SSH_AUTH_SOCK = /tmp/ssh-XXXXXX03moby/agent.3693
+SSH_AUTH_SOCK = /tmp/ssh-XXXXXXnQsC5V/agent.2425
 # default
 .SHELLFLAGS := -c
 # environment
@@ -87,13 +87,13 @@ MAKEFILE_LIST := Makefile
 # automatic
 @F = $(notdir $@)
 # environment
-VSCODE_PID = 21402
+VSCODE_PID = 21070
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/aleksei:@/tmp/.ICE-unix/3976,unix/aleksei:/tmp/.ICE-unix/3976
+SESSION_MANAGER = local/aleksei:@/tmp/.ICE-unix/2704,unix/aleksei:/tmp/.ICE-unix/2704
 # automatic
 *F = $(notdir $*)
 # environment
@@ -119,7 +119,7 @@ MAKELEVEL := 0
 # default
 MAKE = $(MAKE_COMMAND)
 # environment
-PATH = /home/aleksei/.local/bin:/home/aleksei/bin:/home/aleksei/.cache/activestate/bin:/home/aleksei/.komodoide/12.0/XRE/state/bin:/home/aleksei/.local/bin:/home/aleksei/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PATH = /home/aleksei/.local/bin:/home/aleksei/bin:/home/aleksei/.composer/vendor/bin:/home/aleksei/.config/composer/vendor/bin:/home/aleksei/.cache/activestate/bin:/home/aleksei/.komodoide/12.0/XRE/state/bin:/home/aleksei/.local/bin:/home/aleksei/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
 # default
 MAKEFILES := 
 # environment
@@ -163,7 +163,7 @@ XDG_VTNR = 1
 # makefile
 .DEFAULT_GOAL := tests
 # environment
-SYSTEMD_EXEC_PID = 3671
+SYSTEMD_EXEC_PID = 2403
 # environment
 DISPLAY = :0
 # environment
@@ -175,7 +175,7 @@ KDE_SESSION_UID = 1000
 # environment
 LC_MEASUREMENT = be_BY.UTF-8
 # environment
-SSH_AGENT_PID = 3756
+SSH_AGENT_PID = 2488
 # environment
 _ = /usr/share/code/code
 # environment
@@ -197,7 +197,7 @@ QT_IM_MODULE = ibus
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # environment
-VSCODE_IPC_HOOK = /run/user/1000/vscode-3d377c9f-1.69.2-main.sock
+VSCODE_IPC_HOOK = /run/user/1000/vscode-3d377c9f-1.70.2-main.sock
 # environment
 XDG_SESSION_ID = 3
 # environment
@@ -229,9 +229,9 @@ LC_IDENTIFICATION = be_BY.UTF-8
 
 # Directories
 
-# . (device 66306, inode 3945018): 33 files, no impossibilities.
+# . (device 66306, inode 3945018): 34 files, no impossibilities.
 
-# 33 files, no impossibilities in 1 directories.
+# 34 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -279,6 +279,9 @@ all:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
+ 
+make: *** No rule to make target 'all'.  Stop.
+
 
 # files hash-table stats:
 # Load=6/1024=1%, Rehash=0, Collisions=0/19=0%
@@ -288,14 +291,12 @@ all:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 39 / storage = 379 B / avg = 9 B
-# current buf: size = 8162 B / used = 379 B / count = 39 / avg = 9 B
+# strcache buffers: 1 (0) / strings = 40 / storage = 393 B / avg = 9 B
+# current buf: size = 8162 B / used = 393 B / count = 40 / avg = 9 B
 
-# strcache performance: lookups = 49 / hit rate = 20%
+# strcache performance: lookups = 50 / hit rate = 20%
 # hash-table stats:
-# Load=39/8192=0%, Rehash=0, Collisions=0/49=0%
-# Finished Make data base on Tue Jul 26 11:47:07 2022
+# Load=40/8192=0%, Rehash=0, Collisions=0/50=0%
+# Finished Make data base on Tue Aug 23 13:43:54 2022
 
  
-make: *** No rule to make target 'all'.  Stop.
-

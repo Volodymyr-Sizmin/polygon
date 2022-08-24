@@ -10,6 +10,7 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
@@ -20,12 +21,13 @@ use Twig\Loader\FilesystemLoader;
 
 class SendEmailController extends AbstractController
 {
-    protected $email;
     protected $tokenService;
+    private $requestStack;
 
-    public function __construct(TokenService $tokenService)
+    public function __construct(TokenService $tokenService, RequestStack $requestStack)
     {
         $this->tokenService = $tokenService;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -34,6 +36,10 @@ class SendEmailController extends AbstractController
     public function sendEmail(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator)
     {
         $data = json_decode($request->getContent(), true);
+
+        $session = $this->requestStack->getSession();
+        $session->set('email', $data['email']);
+        $sesEmail = $session->get('email');
 
         if (empty($data['email'])) {
             return new JsonResponse(
@@ -52,6 +58,8 @@ class SendEmailController extends AbstractController
         if (empty($matchingEmail)) {
             $data['code'] = rand(100000, 999999);
 
+            $session->set('code', $data['code']);
+
             $dataEmail = $data['email'];
             $dataCode = $data['code'];
 
@@ -59,9 +67,7 @@ class SendEmailController extends AbstractController
 
             $user = new User();
 
-            $user->setEmail($data['email']);
-            $user->setCode($data['code']);
-            $user->setToken($token);
+            $session->set('user', $user);
 
             $errors = $validator->validate($user, null, 'registration');
 
@@ -78,13 +84,9 @@ class SendEmailController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
             }
 
-//            $em = $doctrine->getManager();
-//            $em->persist($user);
-//            $em->flush();
-
             $emailForSend = (new TemplatedEmail())
             ->from('admin@polybank.com')
-            ->to($data['email'])
+            ->to($sesEmail)
             ->subject('Your verification code')
             ->htmlTemplate('index.html.twig')
             ->context([
@@ -107,8 +109,8 @@ class SendEmailController extends AbstractController
             $response = [
                 'success' => true, 'body' => [
                 'message' => 'Email has come',
-                'token' => $token
-                ]
+                'token' => $token,
+                ],
             ];
 
             return new JsonResponse($response, Response::HTTP_CREATED);

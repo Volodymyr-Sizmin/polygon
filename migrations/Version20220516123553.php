@@ -23,7 +23,7 @@ final class Version20220516123553 extends AbstractMigration
         $table->addColumn('id', 'integer', [
             'autoincrement' => 1,
             'notnull' => 1,
-            'unsigned' => 1
+            'unsigned' => 1,
         ]);
         $table->setPrimaryKey(['id']);
     }

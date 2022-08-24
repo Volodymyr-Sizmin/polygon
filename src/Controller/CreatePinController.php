@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -65,7 +64,7 @@ class CreatePinController extends AbstractController
         return new JsonResponse([
             'success' => true,
             'body' => [
-                'message' => "Pin code created",
+                'message' => 'Pin code created',
             ],
         ]);
     }
@@ -73,7 +72,6 @@ class CreatePinController extends AbstractController
     /**
      * @Route("/api/auth/confpin", name="confirmpin", methods={"POST"})
      */
-
     public function confPin(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator)
     {
         $data = json_decode($request->getContent(), true);
@@ -109,6 +107,7 @@ class CreatePinController extends AbstractController
                 Response::HTTP_BAD_REQUEST
             );
         }
+
         return new JsonResponse(
             [
                 'success' => true,

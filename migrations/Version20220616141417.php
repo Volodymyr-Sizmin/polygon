@@ -25,11 +25,7 @@ final class Version20220616141417 extends AbstractMigration
             'unsigned' => 0,
             'notnull' => 0,
         ]);
-        $table->addColumn('token', 'text', [
-            'length' => 510,
-            'unsigned' => 0,
-            'notnull' => 0,
-        ]);
+
         $table->addColumn('question', 'string', [
             'length' => 255,
             'unsigned' => 0,

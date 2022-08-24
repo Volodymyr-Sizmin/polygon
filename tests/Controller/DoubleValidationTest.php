@@ -25,7 +25,7 @@ class DoubleValidationTest extends WebTestCase
         $this->assertSame(400, $response->getStatusCode());
         $responseData = json_decode($response->getContent());
         $this->assertSame(false, $responseData->success);
-        $this->assertSame('A user with this email has already been registered in the system. Please call the number +7 XXX XXXX XXXX or contact the nearest bank office.', $responseData->body->message);
+        $this->assertSame('Hello. A user with this email has already been registered in the system. Please call the number +7 XXX XXXX XXXX or contact the nearest bank office.', $responseData->body->message);
     }
 
     public function userDataProvider()

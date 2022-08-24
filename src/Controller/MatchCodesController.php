@@ -2,17 +2,23 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MatchCodesController extends AbstractController
 {
+    private $requestStack;
+
+    public function __construct(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
+    }
+
     /**
      * @Route("/api/auth/code", name="code", methods={"POST"})
      */
@@ -20,10 +26,11 @@ class MatchCodesController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $entityManager = $doctrine->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['code' => $data['code']]);
+        $session = $this->requestStack->getSession();
 
-        if ($user->getCode() != $data['code']) {
+        $sesCode = $session->get('code');
+
+        if ($sesCode != $data['code']) {
             return new JsonResponse(
                 [
                     'success' => false,
@@ -46,4 +53,3 @@ class MatchCodesController extends AbstractController
         );
     }
 }
-
