@@ -34,6 +34,18 @@ class PasswordController extends AbstractController
         $sesPass = $session->get('password');
         $sesEmail = $session->get('email');
 
+        if (empty($sesPass)) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Empty input',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
         if ($sesPass !== $data['confirm_password']) {
             return new JsonResponse(
                 [
@@ -90,6 +102,6 @@ class PasswordController extends AbstractController
         ],
     ],
     200
-    );
+        );
     }
 }

@@ -27,6 +27,18 @@ class OwnQuestionController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
+        if (empty($data)) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Empty input',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
         $session = $this->requestStack->getSession();
 
         $session->set('question', $data['question']);

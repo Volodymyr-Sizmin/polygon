@@ -32,6 +32,18 @@ class SaveRegisterDataController extends AbstractController
         $sesAnswer = $session->get('answer');
         $zero = 0;
 
+        if (empty($sesEmail && $sesCode && $sesPass && $sesQuest && $sesAnswer)) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Empty input',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
         $user = $session->get('user');
 
         $user->setEmail($sesEmail);

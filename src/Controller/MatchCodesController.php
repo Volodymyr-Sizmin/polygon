@@ -30,6 +30,18 @@ class MatchCodesController extends AbstractController
 
         $sesCode = $session->get('code');
 
+        if (empty($sesCode)) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Empty input',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
         if ($sesCode != $data['code']) {
             return new JsonResponse(
                 [

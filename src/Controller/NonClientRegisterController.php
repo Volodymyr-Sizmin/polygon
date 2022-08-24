@@ -27,6 +27,18 @@ class NonClientRegisterController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
+        if (empty($data['email']) &&$data ['FirstName'] && $data['LastName'] && $data['PassId']) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Empty input',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
         $session = $this->requestStack->getSession();
 
         $session->set('firstName', $data['FirstName']);
