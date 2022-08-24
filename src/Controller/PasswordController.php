@@ -90,6 +90,6 @@ class PasswordController extends AbstractController
         ],
     ],
     200
-);
+    );
     }
 }
