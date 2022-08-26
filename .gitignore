@@ -8,6 +8,7 @@
 /var/
 /vendor/
 /apidocs/
+/.vscode
 
 ###< symfony/framework-bundle ###
 .idea/
