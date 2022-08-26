@@ -94,7 +94,7 @@ class ResetPinController extends AbstractController
         $errors = $validator->validate($user, null, 'code');
 
         if (count($errors) > 0) {
-            $errorsString = (string)$errors;
+            $errorsString = (string) $errors;
 
             return new JsonResponse(
                 [

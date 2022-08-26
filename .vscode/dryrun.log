@@ -1,9 +1,0 @@
-make --dry-run --always-make --keep-going --print-directory
-make: Entering directory '/home/aleksei/Desktop/Banking/manager/symfony-api'
-php bin/console doctrine:database:drop --force || true
-php bin/console doctrine:database:create
-bin/console doctrine:schema:create
-php bin/console doctrine:fixtures:load -n --append
-php bin/phpunit 
-make: Leaving directory '/home/aleksei/Desktop/Banking/manager/symfony-api'
- 

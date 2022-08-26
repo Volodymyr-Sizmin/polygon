@@ -24,7 +24,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Assert\NotBlank(groups={"registration"})
      * @Assert\Regex(
      *     pattern="/^[a-z]{3,25}|[1-9]{1,4}\@[a-z]{1,10}\.[a-z]{1,4}/", groups={"registration"},
      *     match=true, groups={"registration"},
@@ -47,7 +46,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(groups={"password"})
      * @Assert\Regex(
      *     pattern="/^\w{5,50}\d{1,50}/", groups={"password"},
      *     match=true, groups={"password"},
@@ -80,8 +78,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $token;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(groups={"quest"})
+     * @ORM\Column(type="string", length=255)
      * @Assert\Regex(
      *     pattern="/\w{1,40}|d{1,10}|\s|\?|\!/", groups={"quest"},
      *     match=true, groups={"quest"},
@@ -92,7 +89,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(groups={"quest"})
      * @Assert\Regex(
      *     pattern="/\w{1,40}|d{1,10}|\s|\?|\!/", groups={"quest"},
      *     match=true, groups={"quest"},
@@ -103,7 +99,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(groups={"passport"})
      * @Assert\Regex(
      *     pattern="/[a-zA-Z]{2,26}|\s|[0-9]{1,33}/", groups={"passport"},
      *     match=true, groups={"passport"},
@@ -120,7 +115,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(groups={"name"})
      * @Assert\Regex(
      *     pattern="/[A-Za-z]{1,33}|\'|\-|\s/", groups={"name"},
      *     match=true, groups={"name"},
@@ -131,7 +125,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank(groups={"name"})
      * @Assert\Regex(
      *     pattern="/[A-Za-z]{1,33}|\'|\-|\s/", groups={"name"},
      *     match=true, groups={"name"},

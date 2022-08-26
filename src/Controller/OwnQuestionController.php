@@ -6,12 +6,20 @@ use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class OwnQuestionController extends AbstractController
 {
+    private $requestStack;
+
+    public function __construct(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
+    }
+
     /**
      * @Route("/api/auth/quest", name="question", methods={"POST"})
      */
@@ -19,11 +27,26 @@ class OwnQuestionController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+        if (empty($data)) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Empty input',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
 
-        $user->setQuestion($data['question']);
-        $user->setAnswer($data['answer']);
+        $session = $this->requestStack->getSession();
+
+        $session->set('question', $data['question']);
+        $session->set('answer', $data['answer']);
+
+        $user = new User();
+
+        $session->set('user', $user);
 
         $errors = $validator->validate($user, null, ['quest']);
 
@@ -40,8 +63,6 @@ class OwnQuestionController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
         }
 
-//        $em->persist($user);
-//        $em->flush();
         $response = ['success' => true, 'body' => ['Ok']];
 
         return new JsonResponse($response, Response::HTTP_CREATED);

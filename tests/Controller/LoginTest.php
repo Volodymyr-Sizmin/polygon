@@ -28,7 +28,7 @@ class LoginTest extends WebTestCase
 
         $userRepository = static::getContainer()->get(UserRepository::class);
 
-        $testUser = $userRepository->findOneByEmail('alexbr@aa.com');
+        $testUser = $userRepository->findOneByEmail('alex1@aa.com');
 
         $this->client->loginUser($testUser);
 
@@ -41,7 +41,7 @@ class LoginTest extends WebTestCase
             [
                 [
                     'email' => 'alexbr@aa.com',
-                    'password' => '12345',
+                    'password' => 'Hello Alex1',
                 ],
                 200,
             ],
