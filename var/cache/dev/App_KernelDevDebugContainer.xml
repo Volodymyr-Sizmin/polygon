@@ -20,6 +20,7 @@
       <parameter key="StofDoctrineExtensionsBundle">Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle</parameter>
       <parameter key="TwigBundle">Symfony\Bundle\TwigBundle\TwigBundle</parameter>
       <parameter key="LiipTestFixturesBundle">Liip\TestFixturesBundle\LiipTestFixturesBundle</parameter>
+      <parameter key="SncRedisBundle">Snc\RedisBundle\SncRedisBundle</parameter>
     </parameter>
     <parameter key="kernel.bundles_metadata" type="collection">
       <parameter key="FrameworkBundle" type="collection">
@@ -65,6 +66,10 @@
       <parameter key="LiipTestFixturesBundle" type="collection">
         <parameter key="path">/var/www/backend/vendor/liip/test-fixtures-bundle/src</parameter>
         <parameter key="namespace">Liip\TestFixturesBundle</parameter>
+      </parameter>
+      <parameter key="SncRedisBundle" type="collection">
+        <parameter key="path">/var/www/backend/vendor/snc/redis-bundle/src</parameter>
+        <parameter key="namespace">Snc\RedisBundle</parameter>
       </parameter>
     </parameter>
     <parameter key="kernel.charset">UTF-8</parameter>
@@ -234,6 +239,16 @@
     <parameter key="liip_test_fixtures.cache_db.sqlite">null</parameter>
     <parameter key="liip_test_fixtures.keep_database_and_schema">false</parameter>
     <parameter key="liip_test_fixtures.cache_metadata">true</parameter>
+    <parameter key="snc_redis.client.class">Predis\Client</parameter>
+    <parameter key="snc_redis.client_options.class">Predis\Configuration\Options</parameter>
+    <parameter key="snc_redis.connection_parameters.class">Predis\Connection\Parameters</parameter>
+    <parameter key="snc_redis.connection_factory.class">Snc\RedisBundle\Client\Predis\Connection\ConnectionFactory</parameter>
+    <parameter key="snc_redis.connection_wrapper.class">Snc\RedisBundle\Client\Predis\Connection\ConnectionWrapper</parameter>
+    <parameter key="snc_redis.phpredis_client.class">Redis</parameter>
+    <parameter key="snc_redis.phpredis_clusterclient.class">RedisCluster</parameter>
+    <parameter key="snc_redis.logger.class">Snc\RedisBundle\Logger\RedisLogger</parameter>
+    <parameter key="snc_redis.data_collector.class">Snc\RedisBundle\DataCollector\RedisDataCollector</parameter>
+    <parameter key="snc_redis.monolog_handler.class">Monolog\Handler\RedisHandler</parameter>
     <parameter key="maker.compatible_check.doctrine.supports_attributes">true</parameter>
     <parameter key="console.command.ids" type="collection"/>
   </parameters>
@@ -1611,6 +1626,7 @@
           <argument>/var/www/backend/vendor/stof/doctrine-extensions-bundle/src/translations</argument>
           <argument>/var/www/backend/vendor/symfony/twig-bundle/translations</argument>
           <argument>/var/www/backend/vendor/liip/test-fixtures-bundle/src/translations</argument>
+          <argument>/var/www/backend/vendor/snc/redis-bundle/src/translations</argument>
         </argument>
         <argument key="cache_vary" type="collection">
           <argument key="scanned_directories" type="collection">
@@ -1628,6 +1644,7 @@
             <argument>vendor/stof/doctrine-extensions-bundle/src/translations</argument>
             <argument>vendor/symfony/twig-bundle/translations</argument>
             <argument>vendor/liip/test-fixtures-bundle/src/translations</argument>
+            <argument>vendor/snc/redis-bundle/src/translations</argument>
           </argument>
         </argument>
       </argument>
@@ -4634,6 +4651,14 @@
         <argument>!Security</argument>
       </call>
       <call method="addPath">
+        <argument>/var/www/backend/vendor/snc/redis-bundle/src/Resources/views</argument>
+        <argument>SncRedis</argument>
+      </call>
+      <call method="addPath">
+        <argument>/var/www/backend/vendor/snc/redis-bundle/src/Resources/views</argument>
+        <argument>!SncRedis</argument>
+      </call>
+      <call method="addPath">
         <argument>/var/www/backend/templates</argument>
       </call>
       <call method="addPath">
@@ -4811,6 +4836,49 @@
       <call method="add">
         <argument type="service" id="Liip\TestFixturesBundle\Services\DatabaseTools\PHPCRDatabaseTool"/>
       </call>
+    </service>
+    <service id="snc_redis.logger" class="Snc\RedisBundle\Logger\RedisLogger">
+      <tag name="monolog.logger" channel="snc_redis"/>
+      <argument type="service" id="logger" on-invalid="null"/>
+    </service>
+    <service id="snc_redis.data_collector" class="Snc\RedisBundle\DataCollector\RedisDataCollector">
+      <tag name="data_collector" id="redis" template="@SncRedis/Collector/redis.html.twig"/>
+      <argument type="service" id="snc_redis.logger"/>
+    </service>
+    <service id="Snc\RedisBundle\Command\RedisQueryCommand" class="Snc\RedisBundle\Command\RedisQueryCommand">
+      <tag name="console.command" command="redis:query"/>
+      <tag name="container.no_preload"/>
+      <argument type="service" id=".service_locator.Xbsa8iG"/>
+      <argument>null</argument>
+      <argument>null</argument>
+      <call method="setName">
+        <argument>redis:query</argument>
+      </call>
+    </service>
+    <service id="Snc\RedisBundle\Logger\RedisCallInterceptor" class="Snc\RedisBundle\Logger\RedisCallInterceptor">
+      <argument type="service" id="snc_redis.logger"/>
+      <argument type="service" id="debug.stopwatch" on-invalid="null"/>
+    </service>
+    <service id="snc_redis.phpredis_factory" class="Snc\RedisBundle\Factory\PhpredisClientFactory">
+      <argument type="service" id="Snc\RedisBundle\Logger\RedisCallInterceptor"/>
+      <argument type="service">
+        <service class="ProxyManager\Configuration">
+          <call method="setGeneratorStrategy">
+            <argument type="service">
+              <service class="ProxyManager\GeneratorStrategy\FileWriterGeneratorStrategy">
+                <argument type="service">
+                  <service class="ProxyManager\FileLocator\FileLocator">
+                    <argument>/var/www/backend/var/cache/dev</argument>
+                  </service>
+                </argument>
+              </service>
+            </argument>
+          </call>
+          <call method="setProxiesTargetDir">
+            <argument>/var/www/backend/var/cache/dev</argument>
+          </call>
+        </service>
+      </argument>
     </service>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\CreatePinController" class="App\Controller\CreatePinController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\CreatePinController" class="App\Controller\CreatePinController" autowire="true" abstract="true"/>
@@ -5645,6 +5713,10 @@
         <argument key="security.token_storage" type="service_closure" id="security.token_storage"/>
       </argument>
     </service>
+    <service id=".service_locator.Xbsa8iG" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection"/>
+    </service>
     <service id="debug.event_dispatcher.inner" class="Symfony\Component\EventDispatcher\EventDispatcher"/>
     <service id="debug.controller_resolver.inner" class="Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver">
       <argument type="service" id="service_container"/>
@@ -6101,7 +6173,7 @@
     </service>
     <service id="console.command_loader" class="Symfony\Component\Console\CommandLoader\ContainerCommandLoader" public="true">
       <tag name="container.no_preload"/>
-      <argument type="service" id=".service_locator.7K_b48A"/>
+      <argument type="service" id=".service_locator.1wbwZSH"/>
       <argument type="collection">
         <argument key="about">console.command.about</argument>
         <argument key="assets:install">console.command.assets_install</argument>
@@ -6170,6 +6242,7 @@
         <argument key="doctrine:fixtures:load">doctrine.fixtures_load_command</argument>
         <argument key="debug:twig">twig.command.debug</argument>
         <argument key="lint:twig">twig.command.lint</argument>
+        <argument key="redis:query">Snc\RedisBundle\Command\RedisQueryCommand</argument>
         <argument key="make:auth">maker.auto_command.make_auth</argument>
         <argument key="make:command">maker.auto_command.make_command</argument>
         <argument key="make:controller">maker.auto_command.make_controller</argument>
@@ -6197,7 +6270,7 @@
         <argument key="make:story">maker.auto_command.make_story</argument>
       </argument>
     </service>
-    <service id=".service_locator.7K_b48A" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.1wbwZSH" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="console.command.about" type="service_closure" id=".console.command.about.lazy"/>
@@ -6267,6 +6340,7 @@
         <argument key="doctrine.fixtures_load_command" type="service_closure" id="doctrine.fixtures_load_command"/>
         <argument key="twig.command.debug" type="service_closure" id=".twig.command.debug.lazy"/>
         <argument key="twig.command.lint" type="service_closure" id=".twig.command.lint.lazy"/>
+        <argument key="Snc\RedisBundle\Command\RedisQueryCommand" type="service_closure" id="Snc\RedisBundle\Command\RedisQueryCommand"/>
         <argument key="maker.auto_command.make_auth" type="service_closure" id=".maker.auto_command.make_auth.lazy"/>
         <argument key="maker.auto_command.make_command" type="service_closure" id=".maker.auto_command.make_command.lazy"/>
         <argument key="maker.auto_command.make_controller" type="service_closure" id=".maker.auto_command.make_controller.lazy"/>
