@@ -5,7 +5,9 @@
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
-/var/
+/var/cache/test
+/var/log
+/var/test.sqlite
 /vendor/
 /apidocs/
 /.vscode
