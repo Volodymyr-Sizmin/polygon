@@ -43,7 +43,8 @@
         "symfony/translation": "5.3.*",
         "symfony/twig-bundle": "5.3.*",
         "symfony/validator": "5.3.*",
-        "symfony/yaml": "5.3.*"
+        "symfony/yaml": "5.3.*",
+      "ext-redis": "*"
     },
     "config": {
         "optimize-autoloader": true,

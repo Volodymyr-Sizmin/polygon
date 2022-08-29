@@ -199,18 +199,6 @@
     "php-cs-fixer/diff": {
         "version": "v2.0.2"
     },
-    "phpdocumentor/reflection-common": {
-        "version": "2.2.0"
-    },
-    "phpdocumentor/reflection-docblock": {
-        "version": "5.2.2"
-    },
-    "phpdocumentor/type-resolver": {
-        "version": "1.4.0"
-    },
-    "phpspec/prophecy": {
-        "version": "1.14.0"
-    },
     "phpunit/php-code-coverage": {
         "version": "9.2.7"
     },
@@ -652,9 +640,6 @@
     },
     "twig/twig": {
         "version": "v3.3.10"
-    },
-    "webmozart/assert": {
-        "version": "1.10.0"
     },
     "zenstruck/assert": {
         "version": "v1.0.0"
