@@ -10,6 +10,7 @@
         "ext-json": "*",
         "ext-openssl": "*",
         "ext-pdo": "*",
+        "ext-redis": "*",
         "composer/package-versions-deprecated": "1.11.99.3",
         "doctrine/annotations": "^1.13",
         "doctrine/doctrine-bundle": "^2.4",
@@ -19,6 +20,7 @@
         "firebase/php-jwt": "^6.1",
         "guzzlehttp/guzzle": "^7.4",
         "lexik/jwt-authentication-bundle": "^2.15",
+        "predis/predis": "^2.0",
         "sensio/framework-extra-bundle": "^6.1",
         "stof/doctrine-extensions-bundle": "^1.7",
         "symfony/config": "5.4.7",
@@ -43,8 +45,7 @@
         "symfony/translation": "5.3.*",
         "symfony/twig-bundle": "5.3.*",
         "symfony/validator": "5.3.*",
-        "symfony/yaml": "5.3.*",
-        "ext-redis": "*"
+        "symfony/yaml": "5.3.*"
     },
     "config": {
         "optimize-autoloader": true,
