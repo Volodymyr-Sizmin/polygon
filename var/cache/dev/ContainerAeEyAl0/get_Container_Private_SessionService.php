@@ -2,6 +2,7 @@
 
 namespace ContainerAeEyAl0;
 
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Symfony\Component\DependencyInjection\Argument\RewindableGenerator;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 
@@ -27,9 +28,7 @@ class get_Container_Private_SessionService extends App_KernelDevDebugContainer
         include_once \dirname(__DIR__, 4).'/vendor/symfony/http-foundation/Session/SessionBagInterface.php';
         include_once \dirname(__DIR__, 4).'/vendor/symfony/http-foundation/Session/Storage/MetadataBag.php';
 
-        $a = new \Redis();
-        $a->connect($container->getEnv('REDIS_HOST'), $container->getEnv('int:REDIS_PORT'));
-
+        $a = RedisAdapter::createConnection('redis://eu4HbLV#n62il&i9@10.10.14.22:6379');
         return $container->services['.container.private.session'] = (new \Symfony\Component\HttpFoundation\Session\SessionFactory(($container->services['request_stack'] ?? ($container->services['request_stack'] = new \Symfony\Component\HttpFoundation\RequestStack())), new \Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorageFactory($container->parameters['session.storage.options'], new \Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler($a, ['ttl' => 600]), new \Symfony\Component\HttpFoundation\Session\Storage\MetadataBag('_sf2_meta', 0), true), [0 => ($container->privates['session_listener'] ?? $container->getSessionListenerService()), 1 => 'onSessionUsage']))->createSession();
     }
 }

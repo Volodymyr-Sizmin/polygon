@@ -22,7 +22,6 @@
         "lexik/jwt-authentication-bundle": "^2.15",
         "predis/predis": "^2.0",
         "sensio/framework-extra-bundle": "^6.1",
-        "snc/redis-bundle": "^4.3",
         "stof/doctrine-extensions-bundle": "^1.7",
         "symfony/config": "5.4.7",
         "symfony/console": "5.4.7",
