@@ -25,7 +25,7 @@ class get_Container_Private_SessionService extends App_KernelDevDebugContainer
         include_once \dirname(__DIR__, 4).'/vendor/symfony/http-foundation/Session/SessionBagInterface.php';
         include_once \dirname(__DIR__, 4).'/vendor/symfony/http-foundation/Session/Storage/MetadataBag.php';
 
-//        $a = new \Redis();
+        //$a = new Redis();
 //        //$a->connect($container->getEnv('REDIS_HOST'), $container->getEnv('int:REDIS_PORT'));
 //        $a->connect('10.10.14.22', 6379);
 //        //$a->auth(1);
