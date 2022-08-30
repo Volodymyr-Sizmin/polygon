@@ -27,7 +27,7 @@ class NonClientRegisterController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (empty($data['email']) &&$data ['FirstName'] && $data['LastName'] && $data['PassId']) {
+        if (empty($data['email']) && $data ['FirstName'] && $data['LastName'] && $data['PassId']) {
             return new JsonResponse(
                 [
                     'success' => false,
@@ -46,7 +46,7 @@ class NonClientRegisterController extends AbstractController
         $session->set('passId', $data['PassId']);
 
         $em = $this->getDoctrine()->getManager();
-        $userId = $em->getRepository(User::class)->findOneBy(['passport_id' => $data['PassId']]);
+        $userId = $em->getRepository(User::class)->findBy(['passport_id' => $data['PassId']]);
 
         if (!empty($userId)) {
             return new JsonResponse(
@@ -54,6 +54,20 @@ class NonClientRegisterController extends AbstractController
                     'success' => false,
                     'body' => [
                         'message' => 'Hello. A user with this Id has already been registered in the system. Please call the number +7 XXX XXXX XXXX or contact the nearest bank office.',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        $userEmail = $em->getRepository(User::class)->findBy(['email' => $data['email']]);
+
+        if (!empty($userEmail)) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Hello. A user with this email has already been registered in the system. Please call the number +7 XXX XXXX XXXX or contact the nearest bank office.',
                     ],
                 ],
                 Response::HTTP_BAD_REQUEST
