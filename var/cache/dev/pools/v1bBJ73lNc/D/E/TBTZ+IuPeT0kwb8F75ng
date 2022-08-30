@@ -1,0 +1,3 @@
+<?php //App%255CController%255CPasswordController
+
+return [PHP_INT_MAX, []];

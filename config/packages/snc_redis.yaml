@@ -1,0 +1,6 @@
+snc_redis:
+    clients:
+        session:
+            type: predis
+            alias: session
+            dsn: 'redis://eu4HbLV#n62il&i9@10.10.14.22:6379'
