@@ -38,10 +38,6 @@ class SendEmailController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        dd(1);
-
-        $cache = new FilesystemAdapter();
-
         $session = $this->requestStack->getSession();
         $session->set('email', $data['email']);
         $sesEmail = $session->get('email');
