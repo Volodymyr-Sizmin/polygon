@@ -46,7 +46,7 @@ class NonClientRegisterController extends AbstractController
         $session->set('passId', $data['PassId']);
 
         $em = $this->getDoctrine()->getManager();
-        $userId = $em->getRepository(User::class)->findBy(['passport_id' => $data['PassId']]);
+        $userId = $em->getRepository(User::class)->findOneBy(['passport_id' => $data['PassId']]);
 
         if (!empty($userId)) {
             return new JsonResponse(
