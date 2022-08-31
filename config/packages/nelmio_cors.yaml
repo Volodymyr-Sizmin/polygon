@@ -1,0 +1,13 @@
+nelmio_cors:
+    defaults:
+        origin_regex: true
+        allow_origin: [ '*' ]
+        allow_headers: [ '*' ]
+        allow_methods: [ 'POST', 'PUT', 'GET', 'DELETE' ]
+        max_age: 3600
+    paths:
+        '^/code':
+            allow_origin: [ '*' ]
+            allow_headers: [ '*' ]
+            allow_methods: [ 'POST', 'PUT', 'GET', 'DELETE' ]
+            max_age: 3600
