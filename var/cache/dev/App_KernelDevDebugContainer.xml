@@ -20,6 +20,7 @@
       <parameter key="StofDoctrineExtensionsBundle">Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle</parameter>
       <parameter key="TwigBundle">Symfony\Bundle\TwigBundle\TwigBundle</parameter>
       <parameter key="LiipTestFixturesBundle">Liip\TestFixturesBundle\LiipTestFixturesBundle</parameter>
+      <parameter key="NelmioCorsBundle">Nelmio\CorsBundle\NelmioCorsBundle</parameter>
     </parameter>
     <parameter key="kernel.bundles_metadata" type="collection">
       <parameter key="FrameworkBundle" type="collection">
@@ -65,6 +66,10 @@
       <parameter key="LiipTestFixturesBundle" type="collection">
         <parameter key="path">/var/www/backend/vendor/liip/test-fixtures-bundle/src</parameter>
         <parameter key="namespace">Liip\TestFixturesBundle</parameter>
+      </parameter>
+      <parameter key="NelmioCorsBundle" type="collection">
+        <parameter key="path">/var/www/backend/vendor/nelmio/cors-bundle</parameter>
+        <parameter key="namespace">Nelmio\CorsBundle</parameter>
       </parameter>
     </parameter>
     <parameter key="kernel.charset">UTF-8</parameter>
@@ -232,6 +237,37 @@
     <parameter key="liip_test_fixtures.cache_db.sqlite">null</parameter>
     <parameter key="liip_test_fixtures.keep_database_and_schema">false</parameter>
     <parameter key="liip_test_fixtures.cache_metadata">true</parameter>
+    <parameter key="nelmio_cors.map" type="collection">
+      <parameter key="^/" type="collection"/>
+    </parameter>
+    <parameter key="nelmio_cors.defaults" type="collection">
+      <parameter key="allow_origin" type="collection">
+        <parameter>%env(CORS_ALLOW_ORIGIN)%</parameter>
+      </parameter>
+      <parameter key="allow_credentials">false</parameter>
+      <parameter key="allow_headers" type="collection">
+        <parameter>content-type</parameter>
+        <parameter>authorization</parameter>
+      </parameter>
+      <parameter key="expose_headers" type="collection">
+        <parameter>Link</parameter>
+      </parameter>
+      <parameter key="allow_methods" type="collection">
+        <parameter>GET</parameter>
+        <parameter>OPTIONS</parameter>
+        <parameter>POST</parameter>
+        <parameter>PUT</parameter>
+        <parameter>PATCH</parameter>
+        <parameter>DELETE</parameter>
+      </parameter>
+      <parameter key="max_age">3600</parameter>
+      <parameter key="hosts" type="collection"/>
+      <parameter key="origin_regex">true</parameter>
+      <parameter key="forced_allow_origin_value">null</parameter>
+    </parameter>
+    <parameter key="nelmio_cors.cors_listener.class">Nelmio\CorsBundle\EventListener\CorsListener</parameter>
+    <parameter key="nelmio_cors.options_resolver.class">Nelmio\CorsBundle\Options\Resolver</parameter>
+    <parameter key="nelmio_cors.options_provider.config.class">Nelmio\CorsBundle\Options\ConfigProvider</parameter>
     <parameter key="maker.compatible_check.doctrine.supports_attributes">true</parameter>
     <parameter key="console.command.ids" type="collection"/>
   </parameters>
@@ -1600,6 +1636,7 @@
           <argument>/var/www/backend/vendor/stof/doctrine-extensions-bundle/src/translations</argument>
           <argument>/var/www/backend/vendor/symfony/twig-bundle/translations</argument>
           <argument>/var/www/backend/vendor/liip/test-fixtures-bundle/src/translations</argument>
+          <argument>/var/www/backend/vendor/nelmio/cors-bundle/translations</argument>
         </argument>
         <argument key="cache_vary" type="collection">
           <argument key="scanned_directories" type="collection">
@@ -1617,6 +1654,7 @@
             <argument>vendor/stof/doctrine-extensions-bundle/src/translations</argument>
             <argument>vendor/symfony/twig-bundle/translations</argument>
             <argument>vendor/liip/test-fixtures-bundle/src/translations</argument>
+            <argument>vendor/nelmio/cors-bundle/translations</argument>
           </argument>
         </argument>
       </argument>
@@ -1884,6 +1922,30 @@
         <argument type="collection">
           <argument type="service_closure" id="security.context_listener.0"/>
           <argument>onKernelResponse</argument>
+        </argument>
+        <argument>0</argument>
+      </call>
+      <call method="addListener">
+        <argument>kernel.request</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="nelmio_cors.cors_listener"/>
+          <argument>onKernelRequest</argument>
+        </argument>
+        <argument>250</argument>
+      </call>
+      <call method="addListener">
+        <argument>kernel.response</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="nelmio_cors.cors_listener"/>
+          <argument>onKernelResponse</argument>
+        </argument>
+        <argument>0</argument>
+      </call>
+      <call method="addListener">
+        <argument>kernel.response</argument>
+        <argument type="collection">
+          <argument type="service_closure" id="nelmio_cors.cacheable_response_vary_listener"/>
+          <argument>onResponse</argument>
         </argument>
         <argument>0</argument>
       </call>
@@ -4828,6 +4890,27 @@
       <call method="add">
         <argument type="service" id="Liip\TestFixturesBundle\Services\DatabaseTools\PHPCRDatabaseTool"/>
       </call>
+    </service>
+    <service id="nelmio_cors.cors_listener" class="Nelmio\CorsBundle\EventListener\CorsListener">
+      <tag name="kernel.event_listener" event="kernel.request" method="onKernelRequest" priority="250"/>
+      <tag name="kernel.event_listener" event="kernel.response" method="onKernelResponse" priority="0"/>
+      <tag name="container.hot_path"/>
+      <tag name="container.hot_path"/>
+      <argument type="service" id="nelmio_cors.options_resolver"/>
+    </service>
+    <service id="nelmio_cors.options_resolver" class="Nelmio\CorsBundle\Options\Resolver">
+      <argument type="collection">
+        <argument type="service" id="nelmio_cors.options_provider.config"/>
+      </argument>
+    </service>
+    <service id="nelmio_cors.options_provider.config" class="Nelmio\CorsBundle\Options\ConfigProvider">
+      <tag name="nelmio_cors.options_provider" priority="-1"/>
+      <argument>%nelmio_cors.map%</argument>
+      <argument>%nelmio_cors.defaults%</argument>
+    </service>
+    <service id="nelmio_cors.cacheable_response_vary_listener" class="Nelmio\CorsBundle\EventListener\CacheableResponseVaryListener">
+      <tag name="kernel.event_listener" event="kernel.response" method="onResponse"/>
+      <tag name="container.hot_path"/>
     </service>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\CreatePinController" class="App\Controller\CreatePinController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\CreatePinController" class="App\Controller\CreatePinController" autowire="true" abstract="true"/>
