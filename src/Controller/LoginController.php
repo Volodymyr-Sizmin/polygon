@@ -49,6 +49,17 @@ class LoginController extends AbstractController
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
+        $userPas = $entityManager->getRepository(User::class)->findOneBy(['password' => $data['password']]);
+
+        if (empty($userPas)) {
+            $response = [
+                'success' => false,
+                'body' => ["'message' => 'Password doesn't exist'"],
+            ];
+
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
+        }
+
         $verified = $encoder->isPasswordValid($user, $data['password']);
         if (!$verified) {
             $response = [
