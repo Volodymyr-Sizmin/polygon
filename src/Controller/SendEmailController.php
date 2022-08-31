@@ -115,7 +115,7 @@ class SendEmailController extends AbstractController
             ];
 
             return new JsonResponse($response, Response::HTTP_CREATED);
-        } elseif ($matchingEmail->getEmail() === $data['email']) {
+        } else {
             return new JsonResponse(
                 [
                     'success' => false,
