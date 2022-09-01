@@ -52,3 +52,6 @@ services:
         arguments:
             - '%env(SESSION_DATABASE_URL)%'
             - { 'ttl': 600 }
+
+    Symfony\Component\HttpFoundation\Response:
+        autowire: true

@@ -8,7 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -34,13 +34,14 @@ class SendEmailController extends AbstractController
     /**
      * @Route("/api/auth/sendemail", name="email", methods={"POST"})
      */
-    public function sendEmail(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator)
+    public function sendEmail(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator, Response $response)
     {
         $data = json_decode($request->getContent(), true);
 
         $session = $this->requestStack->getSession();
         $session->set('email', $data['email']);
         $sesEmail = $session->get('email');
+        $sessId = $session->getId();
 
         if (empty($data['email'])) {
             return new JsonResponse(
@@ -107,14 +108,19 @@ class SendEmailController extends AbstractController
             $transport = Transport::fromDsn($dsn);
             $mailer = new Mailer($transport);
             $mailer->send($emailForSend);
-            $response = [
+
+            $cookie = new Cookie('PHPSESSID', $sessId);
+
+            $response->headers->setCookie($cookie);
+            $responseEmail = [
                 'success' => true, 'body' => [
                 'message' => 'Email has come',
                 'token' => $token,
+                'cookie' => $response
                 ],
             ];
 
-            return new JsonResponse($response, Response::HTTP_CREATED);
+            return new JsonResponse($responseEmail, Response::HTTP_CREATED);
         } else {
             return new JsonResponse(
                 [

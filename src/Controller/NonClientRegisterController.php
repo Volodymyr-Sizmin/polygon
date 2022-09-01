@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -23,7 +24,7 @@ class NonClientRegisterController extends AbstractController
     /**
      * @Route("/api/auth/nonclient", name="nonclient", methods={"POST"})
      */
-    public function nonClientRegister(Request $request, ValidatorInterface $validator)
+    public function nonClientRegister(Request $request, ValidatorInterface $validator, Response $response)
     {
         $data = json_decode($request->getContent(), true);
 
@@ -45,6 +46,12 @@ class NonClientRegisterController extends AbstractController
         $session->set('lastName', $data['LastName']);
         $session->set('passId', $data['PassId']);
 
+        $sessId = $session->getId();
+
+        $cookie = new Cookie('PHPSESSID', $sessId);
+
+        $response->headers->setCookie($cookie);
+
         $em = $this->getDoctrine()->getManager();
         $userId = $em->getRepository(User::class)->findBy(['passport_id' => $data['PassId']]);
 
@@ -54,6 +61,7 @@ class NonClientRegisterController extends AbstractController
                     'success' => false,
                     'body' => [
                         'message' => 'Hello. A user with this Id has already been registered in the system. Please call the number +7 XXX XXXX XXXX or contact the nearest bank office.',
+                        'cookie' => $response
                     ],
                 ],
                 Response::HTTP_BAD_REQUEST
