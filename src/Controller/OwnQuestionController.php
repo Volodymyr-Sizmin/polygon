@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -23,7 +24,7 @@ class OwnQuestionController extends AbstractController
     /**
      * @Route("/api/auth/quest", name="question", methods={"POST"})
      */
-    public function yourQuestion(Request $request, ValidatorInterface $validator)
+    public function yourQuestion(Request $request, ValidatorInterface $validator, Response $response)
     {
         $data = json_decode($request->getContent(), true);
 
@@ -44,6 +45,12 @@ class OwnQuestionController extends AbstractController
         $session->set('question', $data['question']);
         $session->set('answer', $data['answer']);
 
+        $sessId = $session->getId();
+
+        $cookie = new Cookie('PHPSESSID', $sessId);
+
+        $response->headers->setCookie($cookie);
+
         $user = new User();
 
         $session->set('user', $user);
@@ -63,8 +70,14 @@ class OwnQuestionController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
         }
 
-        $response = ['success' => true, 'body' => ['Ok']];
+        $responseQuest = [
+            'success' => true,
+            'body' => [
+                'message' => 'Ok',
+                'cookie' => $response
+            ]
+        ];
 
-        return new JsonResponse($response, Response::HTTP_CREATED);
+        return new JsonResponse($responseQuest, Response::HTTP_CREATED);
     }
 }

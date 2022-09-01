@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -24,7 +25,7 @@ class PasswordController extends AbstractController
     /**
      * @Route("/api/auth/password", name="password", methods={"POST"})
      */
-    public function passwordMatch(Request $request, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher)
+    public function passwordMatch(Request $request, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher, Response $response)
     {
         $data = json_decode($request->getContent(), true);
 
@@ -33,6 +34,12 @@ class PasswordController extends AbstractController
         $session->set('password', $data['password']);
         $sesPass = $session->get('password');
         $sesEmail = $session->get('email');
+
+        $sessId = $session->getId();
+
+        $cookie = new Cookie('PHPSESSID', $sessId);
+
+        $response->headers->setCookie($cookie);
 
         if (empty($sesPass)) {
             return new JsonResponse(
@@ -99,6 +106,7 @@ class PasswordController extends AbstractController
         'success' => true,
         'body' => [
             'message' => 'Password saved',
+            'cookie' => $response
         ],
     ],
     200

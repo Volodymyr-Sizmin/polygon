@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -22,13 +23,18 @@ class MatchCodesController extends AbstractController
     /**
      * @Route("/api/auth/code", name="code", methods={"POST"})
      */
-    public function matchCodes(Request $request, ManagerRegistry $doctrine)
+    public function matchCodes(Request $request, ManagerRegistry $doctrine, Response $response)
     {
         $data = json_decode($request->getContent(), true);
 
         $session = $this->requestStack->getSession();
-
         $sesCode = $session->get('code');
+
+        $sessId = $session->getId();
+
+        $cookie = new Cookie('PHPSESSID', $sessId);
+
+        $response->headers->setCookie($cookie);
 
         if (empty($sesCode)) {
             return new JsonResponse(
@@ -59,6 +65,7 @@ class MatchCodesController extends AbstractController
                 'success' => true,
                 'body' => [
                     'message' => 'Codes match',
+                    'cookie' => $response
                 ],
             ],
             200
