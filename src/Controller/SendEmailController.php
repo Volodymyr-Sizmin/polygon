@@ -43,6 +43,13 @@ class SendEmailController extends AbstractController
         $sesEmail = $session->get('email');
         $sessId = $session->getId();
 
+        if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 300)) {
+            // last request was more than 30 minutes ago
+            session_unset();     // unset $_SESSION variable for the run-time
+            session_destroy();   // destroy session data in storage
+        }
+        $_SESSION['LAST_ACTIVITY'] = time();
+
         if (empty($data['email'])) {
             return new JsonResponse(
                 [
@@ -116,7 +123,8 @@ class SendEmailController extends AbstractController
                 'success' => true, 'body' => [
                 'message' => 'Email has come',
                 'token' => $token,
-                'cookie' => $response
+                'cookie' => $response,
+                'session ID' => $sessId
                 ],
             ];
 
