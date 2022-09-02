@@ -44,7 +44,10 @@ class MatchCodesController extends AbstractController
             );
         }
 
-        $matchingCode->setCounter(2);
+        $matchingCounter = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+        $counter = $matchingCounter->getCounter();
+        $matchingCounter->setCounter($counter + 1);
+
         $entityManager->persist($matchingCode);
         $entityManager->flush();
 

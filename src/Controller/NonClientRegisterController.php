@@ -87,10 +87,12 @@ class NonClientRegisterController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
         }
 
+        $counter = $userEmail->getCounter();
+
         $userEmail->setFirstName($data['FirstName']);
         $userEmail->setLastName($data['LastName']);
         $userEmail->setPassportId($data['PassId']);
-        $userEmail->setCounter(5);
+        $userEmail->setCounter($counter + 1);
 
         $em->persist($userEmail);
         $em->flush();
