@@ -43,8 +43,6 @@ class SendEmailController extends AbstractController
         $sesEmail = $session->get('email');
         $sessId = $session->getId();
 
-        dd(1);
-
         if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 300)) {
             // last request was more than 30 minutes ago
             session_unset();     // unset $_SESSION variable for the run-time
