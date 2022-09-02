@@ -54,9 +54,11 @@ class OwnQuestionController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
         }
 
+        $counter = $matchingEmail->getCounter();
+
         $matchingEmail->setQuestion($data['question']);
         $matchingEmail->setAnswer($data['answer']);
-        $matchingEmail->setCounter(4);
+        $matchingEmail->setCounter($counter + 1);
 
         $entityManager->persist($matchingEmail);
         $entityManager->flush();

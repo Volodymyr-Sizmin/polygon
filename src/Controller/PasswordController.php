@@ -71,8 +71,10 @@ class PasswordController extends AbstractController
             $data['password']
         );
 
+        $counter = $matchingPass->getCounter();
+
         $matchingPass->setPassword($hashedPassword);
-        $matchingPass->setCounter(3);
+        $matchingPass->setCounter($counter + 1);
 
         $entityManager->persist($matchingPass);
         $entityManager->flush();
