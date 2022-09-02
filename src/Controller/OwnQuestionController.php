@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,17 +15,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class OwnQuestionController extends AbstractController
 {
-    private $requestStack;
-
-    public function __construct(RequestStack $requestStack)
-    {
-        $this->requestStack = $requestStack;
-    }
-
     /**
      * @Route("/api/auth/quest", name="question", methods={"POST"})
      */
-    public function yourQuestion(Request $request, ValidatorInterface $validator, Response $response)
+    public function yourQuestion(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator, Response $response)
     {
         $data = json_decode($request->getContent(), true);
 
@@ -40,20 +34,10 @@ class OwnQuestionController extends AbstractController
             );
         }
 
-        $session = $this->requestStack->getSession();
-
-        $session->set('question', $data['question']);
-        $session->set('answer', $data['answer']);
-
-        $sessId = $session->getId();
-
-        $cookie = new Cookie('PHPSESSID', $sessId);
-
-        $response->headers->setCookie($cookie);
+        $entityManager = $doctrine->getManager();
+        $matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
 
         $user = new User();
-
-        $session->set('user', $user);
 
         $errors = $validator->validate($user, null, ['quest']);
 
@@ -70,11 +54,17 @@ class OwnQuestionController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
         }
 
+        $matchingEmail->setQuestion($data['question']);
+        $matchingEmail->setAnswer($data['answer']);
+        $matchingEmail->setCounter(4);
+
+        $entityManager->persist($matchingEmail);
+        $entityManager->flush();
+
         $responseQuest = [
             'success' => true,
             'body' => [
-                'message' => 'Ok',
-                'cookie' => $response
+                'message' => 'Ok'
             ]
         ];
 

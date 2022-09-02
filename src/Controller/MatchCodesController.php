@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
+use Firebase\JWT\JWT;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,28 +29,10 @@ class MatchCodesController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $session = $this->requestStack->getSession();
-        $sesCode = $session->get('code');
+        $entityManager = $doctrine->getManager();
+        $matchingCode = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
 
-        $sessId = $session->getId();
-
-        $cookie = new Cookie('PHPSESSID', $sessId);
-
-        $response->headers->setCookie($cookie);
-
-        if (empty($sesCode)) {
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'body' => [
-                        'message' => 'Empty input',
-                    ],
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-
-        if ($sesCode != $data['code']) {
+        if ($matchingCode->getCode() != $data['code']) {
             return new JsonResponse(
                 [
                     'success' => false,
@@ -59,6 +43,10 @@ class MatchCodesController extends AbstractController
                 Response::HTTP_BAD_REQUEST
             );
         }
+
+        $matchingCode->setCounter(2);
+        $entityManager->persist($matchingCode);
+        $entityManager->flush();
 
         return new JsonResponse(
             [
