@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\TokenService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,6 +13,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class DecodeController extends AbstractController
 {
     protected $tokenService;
+
+    public function __construct(TokenService $tokenService)
+    {
+        $this->tokenService = $tokenService;
+    }
 
     /**
      * @Route("/api/auth/decode", name="decode", methods={"POST"})
@@ -27,26 +33,6 @@ class DecodeController extends AbstractController
 
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
-
-        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-        if (!$user) {
-            $response = [
-                'success' => false,
-                'body' => ['message' => 'Invalid login'],
-            ];
-
-            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
-        }
-        $gotEmail = $user->getEmail();
-
-        return new JsonResponse(
-            [
-                'success' => true,
-                'body' => [
-                    'message' => $gotEmail,
-                ],
-            ],
-            200
-        );
+        return new JsonResponse($this->tokenService->decodeToken($data['token']));
     }
 }

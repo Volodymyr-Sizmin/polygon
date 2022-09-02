@@ -71,11 +71,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $code;
 
-    /**
-     * @ORM\Column(type="text")
-     * * @Assert\NotBlank(groups={"token"})
-     */
-    private $token;
+//    /**
+//     * @ORM\Column(type="text")
+//     * * @Assert\NotBlank(groups={"token"})
+//     */
+//    private $token;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -159,6 +159,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="integer", nullable=true)
      */
     private $reset_pin;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $counter;
 
     public function getId(): ?int
     {
@@ -365,6 +370,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setResetPin(?int $reset_pin): self
     {
         $this->reset_pin = $reset_pin;
+
+        return $this;
+    }
+
+    public function getCounter(): ?int
+    {
+        return $this->counter;
+    }
+
+    public function setCounter(?int $counter): self
+    {
+        $this->counter = $counter;
 
         return $this;
     }

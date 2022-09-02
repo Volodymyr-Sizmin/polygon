@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,34 +16,17 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PasswordController extends AbstractController
 {
-    protected $password;
-    private $requestStack;
-
-    public function __construct(RequestStack $requestStack)
-    {
-        $this->requestStack = $requestStack;
-    }
-
     /**
      * @Route("/api/auth/password", name="password", methods={"POST"})
      */
-    public function passwordMatch(Request $request, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher, Response $response)
+    public function passwordMatch(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher, Response $response)
     {
         $data = json_decode($request->getContent(), true);
 
-        $session = $this->requestStack->getSession();
+        $entityManager = $doctrine->getManager();
+        $matchingPass = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
 
-        $session->set('password', $data['password']);
-        $sesPass = $session->get('password');
-        $sesEmail = $session->get('email');
-
-        $sessId = $session->getId();
-
-        $cookie = new Cookie('PHPSESSID', $sessId);
-
-        $response->headers->setCookie($cookie);
-
-        if (empty($sesPass)) {
+        if (empty($matchingPass)) {
             return new JsonResponse(
                 [
                     'success' => false,
@@ -53,7 +38,7 @@ class PasswordController extends AbstractController
             );
         }
 
-        if ($sesPass !== $data['confirm_password']) {
+        if ($data['password'] !== $data['confirm_password']) {
             return new JsonResponse(
                 [
                     'success' => false,
@@ -65,20 +50,7 @@ class PasswordController extends AbstractController
             );
         }
 
-        if ($sesEmail !== $data['email']) {
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'body' => [
-                        'message' => 'Emails do not match',
-                    ],
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-
-        $user = $session->get('user');
-
+        $user = new User();
         $errors = $validatorPass->validate($user, null, 'password');
 
         if (count($errors) > 0) {
@@ -96,10 +68,14 @@ class PasswordController extends AbstractController
 
         $hashedPassword = $passwordHasher->hashPassword(
             $user,
-            $sesPass
+            $data['password']
         );
 
-        $session->set('password', $hashedPassword);
+        $matchingPass->setPassword($hashedPassword);
+        $matchingPass->setCounter(3);
+
+        $entityManager->persist($matchingPass);
+        $entityManager->flush();
 
         return new JsonResponse(
     [

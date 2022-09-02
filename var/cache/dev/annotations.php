@@ -70,6 +70,8 @@ return [[
 '[C]App%5CController%5CCreatePinController%23confPin' => 1,
 'App%5CController%5CDecodeController' => 0,
 '[C]App%5CController%5CDecodeController' => 1,
+'App%5CController%5CDecodeController%23__construct' => 0,
+'[C]App%5CController%5CDecodeController%23__construct' => 1,
 'App%5CController%5CDecodeController%23decodeJwtToken' => 4,
 '[C]App%5CController%5CDecodeController%23decodeJwtToken' => 1,
 'App%5CController%5CDecodeController%24tokenService' => 0,
@@ -1218,7 +1220,7 @@ return [[
 ], [
 
 0 => [],
-1 => 1662106144,
+1 => 1662123826,
 2 => static function () {
     return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
         $o = [

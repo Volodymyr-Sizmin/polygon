@@ -23,32 +23,27 @@ use Twig\Loader\FilesystemLoader;
 class SendEmailController extends AbstractController
 {
     protected $tokenService;
-    private $requestStack;
 
     public function __construct(TokenService $tokenService, RequestStack $requestStack)
     {
         $this->tokenService = $tokenService;
-        $this->requestStack = $requestStack;
     }
 
     /**
      * @Route("/api/auth/sendemail", name="email", methods={"POST"})
      */
-    public function sendEmail(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator, Response $response)
+    public function sendEmail(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator)
     {
         $data = json_decode($request->getContent(), true);
 
-        $session = $this->requestStack->getSession();
-        $session->set('email', $data['email']);
-        $sesEmail = $session->get('email');
-        $sessId = $session->getId();
+        $entityManager = $doctrine->getManager();
+        $matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+        if(!empty($matchingEmail) and ($matchingEmail->getCounter()) < 4){
+            $entityManager->remove($matchingEmail);
+            $entityManager->flush();
 
-        if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 300)) {
-            // last request was more than 30 minutes ago
-            session_unset();     // unset $_SESSION variable for the run-time
-            session_destroy();   // destroy session data in storage
+            return new JsonResponse(['body' => ['message' => 'Try to enter email once again']], Response::HTTP_CREATED);
         }
-        $_SESSION['LAST_ACTIVITY'] = time();
 
         if (empty($data['email'])) {
             return new JsonResponse(
@@ -62,12 +57,10 @@ class SendEmailController extends AbstractController
                 );
         }
 
-        $entityManager = $doctrine->getManager();
-        $matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+//        $entityManager = $doctrine->getManager();
+//        $matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
         if (empty($matchingEmail)) {
             $data['code'] = rand(100000, 999999);
-
-            $session->set('code', $data['code']);
 
             $dataEmail = $data['email'];
             $dataCode = $data['code'];
@@ -76,7 +69,12 @@ class SendEmailController extends AbstractController
 
             $user = new User();
 
-            $session->set('user', $user);
+            $user->setCode($data['code']);
+            $user->setEmail($data['email']);
+            $user->setCounter(1);
+
+            $entityManager->persist($user);
+            $entityManager->flush();
 
             $errors = $validator->validate($user, null, 'registration');
 
@@ -95,7 +93,7 @@ class SendEmailController extends AbstractController
 
             $emailForSend = (new TemplatedEmail())
             ->from('admin@polybank.com')
-            ->to($sesEmail)
+            ->to($data['email'])
             ->subject('Your verification code')
             ->htmlTemplate('index.html.twig')
             ->context([
@@ -116,15 +114,10 @@ class SendEmailController extends AbstractController
             $mailer = new Mailer($transport);
             $mailer->send($emailForSend);
 
-            $cookie = new Cookie('PHPSESSID', $sessId);
-
-            $response->headers->setCookie($cookie);
             $responseEmail = [
                 'success' => true, 'body' => [
                 'message' => 'Email has come',
                 'token' => $token,
-                'cookie' => $response,
-                'session ID' => $sessId
                 ],
             ];
 
