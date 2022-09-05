@@ -2,56 +2,80 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SaveRegisterDataController extends AbstractController
 {
-    private $requestStack;
+    protected $tokenService;
 
-    public function __construct(RequestStack $requestStack)
+    public function __construct(TokenService $tokenService)
     {
-        $this->requestStack = $requestStack;
+        $this->tokenService = $tokenService;
     }
 
     /**
      * @Route("/api/auth/savedata", name="savedata", methods={"POST"})
      */
-    public function savedata(Request $request, ManagerRegistry $doctrine): Response
+    public function savedata(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher): Response
     {
-        $session = $this->requestStack->getSession();
-        $sesEmail = $session->get('email');
-        $sesCode = $session->get('code');
-        $sesPass = $session->get('password');
-        $sesQuest = $session->get('question');
-        $sesAnswer = $session->get('answer');
-        $zero = 0;
+        $data = json_decode($request->getContent(), true);
 
-        if (empty($sesEmail && $sesCode && $sesPass && $sesQuest && $sesAnswer)) {
+        $token = $this->tokenService->decodeToken($data['token']);
+        $matchCode = implode(['code' => $token->params['1']->code]);
+        $matchEmail = implode(['email' => $token->params['0']->email]);
+        $password = implode(['email' => $token->params['2']->password]);
+        $dataQuest = implode(['Question' => $token->params['3']->question]);
+        $dataAnswer = implode(['answer' => $token->params['4']->answer]);
+
+//        if (empty($sesEmail && $sesCode && $sesPass && $sesQuest && $sesAnswer)) {
+//            return new JsonResponse(
+//                [
+//                    'success' => false,
+//                    'body' => [
+//                        'message' => 'Empty input',
+//                    ],
+//                ],
+//                Response::HTTP_BAD_REQUEST
+//            );
+//        }
+
+        $user = new User();
+
+        $errors = $validatorPass->validate($user, null, 'password');
+
+        if (count($errors) > 0) {
+            $errorsStringPass = (string) $errors;
+
             return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
-                        'message' => 'Empty input',
+                        'message' => $errorsStringPass,
                     ],
                 ],
-                Response::HTTP_BAD_REQUEST
-            );
+                Response::HTTP_BAD_REQUEST);
         }
 
-        $user = $session->get('user');
+        $hashedPass = $passwordHasher->hashPassword(
+            $user,
+            $password
+        );
 
-        $user->setEmail($sesEmail);
-        $user->setCode($sesCode);
-        $user->setPassword($sesPass);
-        $user->setQuestion($sesQuest);
-        $user->setAnswer($sesAnswer);
-        $user->setToken($zero);
+        $user->setEmail($matchEmail);
+        $user->setCode($matchCode);
+        $user->setPassword($hashedPass);
+        $user->setQuestion($dataQuest);
+        $user->setAnswer($dataAnswer);
 
         $em = $doctrine->getManager();
         $em->persist($user);

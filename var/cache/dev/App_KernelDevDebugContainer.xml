@@ -278,6 +278,22 @@
       <tag name="controller.service_arguments"/>
       <tag name="routing.route_loader"/>
     </service>
+    <service id="App\Controller\ClientPasswordController" class="App\Controller\ClientPasswordController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <argument type="service" id="App\Service\TokenService"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.GNc8e5B.App\Controller\ClientPasswordController"/>
+      </call>
+    </service>
+    <service id="App\Controller\ClientQuestionController" class="App\Controller\ClientQuestionController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <argument type="service" id="App\Service\TokenService"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.GNc8e5B.App\Controller\ClientQuestionController"/>
+      </call>
+    </service>
     <service id="App\Controller\CreatePinController" class="App\Controller\CreatePinController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
@@ -319,7 +335,7 @@
     <service id="App\Controller\MatchCodesController" class="App\Controller\MatchCodesController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
-      <argument type="service" id="request_stack"/>
+      <argument type="service" id="App\Service\TokenService"/>
       <call method="setContainer">
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\MatchCodesController"/>
       </call>
@@ -327,7 +343,7 @@
     <service id="App\Controller\NonClientRegisterController" class="App\Controller\NonClientRegisterController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
-      <argument type="service" id="request_stack"/>
+      <argument type="service" id="App\Service\TokenService"/>
       <call method="setContainer">
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\NonClientRegisterController"/>
       </call>
@@ -335,6 +351,7 @@
     <service id="App\Controller\OwnQuestionController" class="App\Controller\OwnQuestionController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
+      <argument type="service" id="App\Service\TokenService"/>
       <call method="setContainer">
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\OwnQuestionController"/>
       </call>
@@ -342,6 +359,7 @@
     <service id="App\Controller\PasswordController" class="App\Controller\PasswordController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
+      <argument type="service" id="App\Service\TokenService"/>
       <call method="setContainer">
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\PasswordController"/>
       </call>
@@ -379,7 +397,7 @@
     <service id="App\Controller\SaveNonBankClientDataController" class="App\Controller\SaveNonBankClientDataController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
-      <argument type="service" id="request_stack"/>
+      <argument type="service" id="App\Service\TokenService"/>
       <call method="setContainer">
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\SaveNonBankClientDataController"/>
       </call>
@@ -387,7 +405,7 @@
     <service id="App\Controller\SaveRegisterDataController" class="App\Controller\SaveRegisterDataController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
-      <argument type="service" id="request_stack"/>
+      <argument type="service" id="App\Service\TokenService"/>
       <call method="setContainer">
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\SaveRegisterDataController"/>
       </call>
@@ -396,7 +414,6 @@
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
       <argument type="service" id="App\Service\TokenService"/>
-      <argument type="service" id="request_stack"/>
       <call method="setContainer">
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\SendEmailController"/>
       </call>
@@ -4916,6 +4933,12 @@
       <tag name="kernel.event_listener" event="kernel.response" method="onResponse"/>
       <tag name="container.hot_path"/>
     </service>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ClientPasswordController" class="App\Controller\ClientPasswordController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ClientPasswordController" class="App\Controller\ClientPasswordController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\ClientPasswordController" class="App\Controller\ClientPasswordController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ClientQuestionController" class="App\Controller\ClientQuestionController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ClientQuestionController" class="App\Controller\ClientQuestionController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\ClientQuestionController" class="App\Controller\ClientQuestionController" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\CreatePinController" class="App\Controller\CreatePinController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\CreatePinController" class="App\Controller\CreatePinController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\CreatePinController" class="App\Controller\CreatePinController" autowire="true" autoconfigure="true" abstract="true"/>
@@ -5317,6 +5340,23 @@
         <argument key="loader" type="service_closure" id=".errored..service_locator.KfbR3DY.Symfony\Component\Config\Loader\LoaderInterface"/>
       </argument>
     </service>
+    <service id=".service_locator.4ICwA1R" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="doctrine" type="service_closure" id="doctrine"/>
+        <argument key="passwordHasher" type="service_closure" id="security.user_password_hasher"/>
+        <argument key="response" type="service_closure" id="Symfony\Component\HttpFoundation\Response"/>
+        <argument key="validatorPass" type="service_closure" id="validator"/>
+      </argument>
+    </service>
+    <service id=".service_locator.4Y2hPXE" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="doctrine" type="service_closure" id="doctrine"/>
+        <argument key="response" type="service_closure" id="Symfony\Component\HttpFoundation\Response"/>
+        <argument key="validator" type="service_closure" id="validator"/>
+      </argument>
+    </service>
     <service id=".service_locator.EhNGjzf" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -5346,23 +5386,6 @@
         <argument key="response" type="service_closure" id="Symfony\Component\HttpFoundation\Response"/>
       </argument>
     </service>
-    <service id=".service_locator.4Y2hPXE" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator"/>
-      <argument type="collection">
-        <argument key="doctrine" type="service_closure" id="doctrine"/>
-        <argument key="response" type="service_closure" id="Symfony\Component\HttpFoundation\Response"/>
-        <argument key="validator" type="service_closure" id="validator"/>
-      </argument>
-    </service>
-    <service id=".service_locator.4ICwA1R" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator"/>
-      <argument type="collection">
-        <argument key="doctrine" type="service_closure" id="doctrine"/>
-        <argument key="passwordHasher" type="service_closure" id="security.user_password_hasher"/>
-        <argument key="response" type="service_closure" id="Symfony\Component\HttpFoundation\Response"/>
-        <argument key="validatorPass" type="service_closure" id="validator"/>
-      </argument>
-    </service>
     <service id=".service_locator.wkLA6hh" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -5376,9 +5399,19 @@
         <argument key="doctrine" type="service_closure" id="doctrine"/>
       </argument>
     </service>
-    <service id=".service_locator.N653wKH" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.Su4SoZ6" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
+        <argument key="doctrine" type="service_closure" id="doctrine"/>
+        <argument key="passwordHasher" type="service_closure" id="security.user_password_hasher"/>
+        <argument key="validatorPass" type="service_closure" id="validator"/>
+      </argument>
+    </service>
+    <service id=".service_locator.2ROBLUU" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="App\Controller\ClientPasswordController::passwordMatch" type="service_closure" id=".service_locator.4ICwA1R"/>
+        <argument key="App\Controller\ClientQuestionController::yourQuestion" type="service_closure" id=".service_locator.4Y2hPXE"/>
         <argument key="App\Controller\CreatePinController::confPin" type="service_closure" id=".service_locator.EhNGjzf"/>
         <argument key="App\Controller\CreatePinController::createPin" type="service_closure" id=".service_locator.EhNGjzf"/>
         <argument key="App\Controller\LoginByIdController::idLogin" type="service_closure" id=".service_locator.mIQa0gx"/>
@@ -5394,8 +5427,8 @@
         <argument key="App\Controller\ResetPinController::matchPin" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ResetPinController::receivePin" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ResetPinController::recieveId" type="service_closure" id=".service_locator.EhNGjzf"/>
-        <argument key="App\Controller\SaveNonBankClientDataController::savedata" type="service_closure" id=".service_locator.T7xmfzk"/>
-        <argument key="App\Controller\SaveRegisterDataController::savedata" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\SaveNonBankClientDataController::savedata" type="service_closure" id=".service_locator.Su4SoZ6"/>
+        <argument key="App\Controller\SaveRegisterDataController::savedata" type="service_closure" id=".service_locator.Su4SoZ6"/>
         <argument key="App\Controller\SendEmailController::sendEmail" type="service_closure" id=".service_locator.EhNGjzf"/>
         <argument key="App\Kernel::loadRoutes" type="service_closure" id=".service_locator.KfbR3DY"/>
         <argument key="App\Kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.KfbR3DY"/>
@@ -5403,6 +5436,8 @@
         <argument key="kernel::loadRoutes" type="service_closure" id=".service_locator.KfbR3DY"/>
         <argument key="kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.KfbR3DY"/>
         <argument key="kernel::terminate" type="service_closure" id=".service_locator.KfwZsne"/>
+        <argument key="App\Controller\ClientPasswordController:passwordMatch" type="service_closure" id=".service_locator.4ICwA1R"/>
+        <argument key="App\Controller\ClientQuestionController:yourQuestion" type="service_closure" id=".service_locator.4Y2hPXE"/>
         <argument key="App\Controller\CreatePinController:confPin" type="service_closure" id=".service_locator.EhNGjzf"/>
         <argument key="App\Controller\CreatePinController:createPin" type="service_closure" id=".service_locator.EhNGjzf"/>
         <argument key="App\Controller\LoginByIdController:idLogin" type="service_closure" id=".service_locator.mIQa0gx"/>
@@ -5418,8 +5453,8 @@
         <argument key="App\Controller\ResetPinController:matchPin" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ResetPinController:receivePin" type="service_closure" id=".service_locator.T7xmfzk"/>
         <argument key="App\Controller\ResetPinController:recieveId" type="service_closure" id=".service_locator.EhNGjzf"/>
-        <argument key="App\Controller\SaveNonBankClientDataController:savedata" type="service_closure" id=".service_locator.T7xmfzk"/>
-        <argument key="App\Controller\SaveRegisterDataController:savedata" type="service_closure" id=".service_locator.T7xmfzk"/>
+        <argument key="App\Controller\SaveNonBankClientDataController:savedata" type="service_closure" id=".service_locator.Su4SoZ6"/>
+        <argument key="App\Controller\SaveRegisterDataController:savedata" type="service_closure" id=".service_locator.Su4SoZ6"/>
         <argument key="App\Controller\SendEmailController:sendEmail" type="service_closure" id=".service_locator.EhNGjzf"/>
         <argument key="kernel:loadRoutes" type="service_closure" id=".service_locator.KfbR3DY"/>
         <argument key="kernel:registerContainerConfiguration" type="service_closure" id=".service_locator.KfbR3DY"/>
@@ -5568,6 +5603,18 @@
         <argument key="session" type="service_closure" id=".session.deprecated" on-invalid="ignore"/>
         <argument key="twig" type="service_closure" id="twig" on-invalid="ignore"/>
       </argument>
+    </service>
+    <service id=".service_locator.GNc8e5B.App\Controller\ClientPasswordController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ClientPasswordController"/>
+      <argument>App\Controller\ClientPasswordController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.GNc8e5B" method="withContext"/>
+    </service>
+    <service id=".service_locator.GNc8e5B.App\Controller\ClientQuestionController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\ClientQuestionController"/>
+      <argument>App\Controller\ClientQuestionController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.GNc8e5B" method="withContext"/>
     </service>
     <service id=".service_locator.GNc8e5B.App\Controller\CreatePinController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\CreatePinController"/>
@@ -5802,12 +5849,12 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
-      <argument type="service" id=".service_locator.N653wKH"/>
+      <argument type="service" id=".service_locator.2ROBLUU"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
-      <argument type="service" id=".service_locator.N653wKH"/>
+      <argument type="service" id=".service_locator.2ROBLUU"/>
     </service>
     <service id=".doctrine.orm.default_metadata_driver.inner" class="Doctrine\Persistence\Mapping\Driver\MappingDriverChain">
       <call method="addDriver">
@@ -6570,7 +6617,7 @@
     <service id="Twig\Environment" alias="twig"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.gSv9zYw" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.N653wKH"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.2ROBLUU"/>
     <service id="session" alias=".session.do-not-use" public="true">
       <deprecated package="symfony/framework-bundle" version="5.3">The "%alias_id%" service and "SessionInterface" alias are deprecated, use "$requestStack-&gt;getSession()" instead.</deprecated>
     </service>
@@ -6578,10 +6625,11 @@
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id="Psr\Log\LoggerInterface" alias="logger"/>
     <service id=".service_locator.0GV1BZZ" alias=".service_locator.gSv9zYw"/>
-    <service id=".service_locator.ph0ZeRZ" alias=".service_locator.SRxqn0Y"/>
-    <service id=".service_locator.jrMekjb" alias=".service_locator.4Y2hPXE"/>
     <service id=".service_locator.NDQb4gk" alias=".service_locator.4ICwA1R"/>
-    <service id=".service_locator.EVGBG1u" alias=".service_locator.N653wKH"/>
+    <service id=".service_locator.jrMekjb" alias=".service_locator.4Y2hPXE"/>
+    <service id=".service_locator.ph0ZeRZ" alias=".service_locator.SRxqn0Y"/>
+    <service id=".service_locator.egn84eH" alias=".service_locator.Su4SoZ6"/>
+    <service id=".service_locator.CPTMBJQ" alias=".service_locator.2ROBLUU"/>
     <service id=".service_locator.wKF4yn1" alias=".service_locator.19_mNxd"/>
     <service id=".service_locator.7NGWde." alias=".service_locator.XZDWDyX"/>
     <service id=".service_locator.O24_MAy" alias=".service_locator.yY.p4P7"/>
@@ -6603,14 +6651,15 @@
     <service id="doctrine.orm.default_metadata_driver" alias=".doctrine.orm.default_metadata_driver"/>
     <service id=".service_locator.JFdQdiT" alias=".service_locator.KfwZsne"/>
     <service id=".service_locator.JBAFp66" alias=".service_locator.KfbR3DY"/>
+    <service id=".service_locator.ZR.BGQn" alias=".service_locator.4ICwA1R"/>
+    <service id=".service_locator.T3_.euw" alias=".service_locator.4Y2hPXE"/>
     <service id=".service_locator.a779dfs" alias=".service_locator.EhNGjzf"/>
     <service id=".service_locator.5uYVyXJ" alias=".service_locator.mIQa0gx"/>
     <service id=".service_locator.6wPFGbs" alias=".service_locator.SRxqn0Y"/>
     <service id=".service_locator.MifgFNi" alias=".service_locator.T83jifu"/>
-    <service id=".service_locator.T3_.euw" alias=".service_locator.4Y2hPXE"/>
-    <service id=".service_locator.ZR.BGQn" alias=".service_locator.4ICwA1R"/>
     <service id=".service_locator.mmbpznm" alias=".service_locator.wkLA6hh"/>
     <service id=".service_locator.T8.TLJR" alias=".service_locator.T7xmfzk"/>
+    <service id=".service_locator.oHJo.M4" alias=".service_locator.Su4SoZ6"/>
     <service id=".service_locator.smJsCNt" alias=".service_locator.GNc8e5B"/>
     <service id=".service_locator.qStIMoR" alias=".service_locator.BeKsceL"/>
     <service id=".service_locator.aa1PbBb" alias=".service_locator.nLgZj7R"/>

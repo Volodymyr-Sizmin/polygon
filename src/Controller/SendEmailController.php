@@ -24,7 +24,7 @@ class SendEmailController extends AbstractController
 {
     protected $tokenService;
 
-    public function __construct(TokenService $tokenService, RequestStack $requestStack)
+    public function __construct(TokenService $tokenService)
     {
         $this->tokenService = $tokenService;
     }
@@ -37,13 +37,13 @@ class SendEmailController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $entityManager = $doctrine->getManager();
-        $matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-        if(!empty($matchingEmail) and ($matchingEmail->getCounter()) < 5){
-            $entityManager->remove($matchingEmail);
-            $entityManager->flush();
-
-            return new JsonResponse(['body' => ['message' => 'Try to enter email once again']], Response::HTTP_CREATED);
-        }
+//        $matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+//        if(!empty($matchingEmail) and ($matchingEmail->getCounter()) < 5){
+//            $entityManager->remove($matchingEmail);
+//            $entityManager->flush();
+//
+//            return new JsonResponse(['body' => ['message' => 'Try to enter email once again']], Response::HTTP_CREATED);
+//        }
 
         if (empty($data['email'])) {
             return new JsonResponse(
@@ -57,24 +57,24 @@ class SendEmailController extends AbstractController
                 );
         }
 
-//        $entityManager = $doctrine->getManager();
-//        $matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+        $entityManager = $doctrine->getManager();
+        $matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
         if (empty($matchingEmail)) {
             $data['code'] = rand(100000, 999999);
 
-            $dataEmail = $data['email'];
-            $dataCode = $data['code'];
+            $dataEmail = ['email' => $data['email']];
+            $dataCode = ['code' => $data['code']];
 
             $token = $this->tokenService->createToken($dataEmail, $dataCode);
 
             $user = new User();
-
-            $user->setCode($data['code']);
-            $user->setEmail($data['email']);
-            $user->setCounter(1);
-
-            $entityManager->persist($user);
-            $entityManager->flush();
+//
+//            $user->setCode($data['code']);
+//            $user->setEmail($data['email']);
+//            $user->setCounter(1);
+//
+//            $entityManager->persist($user);
+//            $entityManager->flush();
 
             $errors = $validator->validate($user, null, 'registration');
 

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -15,11 +16,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class NonClientRegisterController extends AbstractController
 {
-    private $requestStack;
+    protected $tokenService;
 
-    public function __construct(RequestStack $requestStack)
+    public function __construct(TokenService $tokenService)
     {
-        $this->requestStack = $requestStack;
+        $this->tokenService = $tokenService;
     }
 
     /**
@@ -29,17 +30,17 @@ class NonClientRegisterController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (empty($data['email']) && $data ['FirstName'] && $data['LastName'] && $data['PassId']) {
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'body' => [
-                        'message' => 'Empty input',
-                    ],
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        }
+//        if (empty($data['email']) && $data ['FirstName'] && $data['LastName'] && $data['PassId']) {
+//            return new JsonResponse(
+//                [
+//                    'success' => false,
+//                    'body' => [
+//                        'message' => 'Empty input',
+//                    ],
+//                ],
+//                Response::HTTP_BAD_REQUEST
+//            );
+//        }
 
         $em = $this->getDoctrine()->getManager();
         $userId = $em->getRepository(User::class)->findBy(['passport_id' => $data['PassId']]);
@@ -57,7 +58,7 @@ class NonClientRegisterController extends AbstractController
             );
         }
 
-        $userEmail = $em->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+        //$userEmail = $em->getRepository(User::class)->findOneBy(['email' => $data['email']]);
 
 //        if (!empty($userEmail)) {
 //            return new JsonResponse(
@@ -87,20 +88,30 @@ class NonClientRegisterController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
         }
 
-        $counter = $userEmail->getCounter();
+        $dataFirst = ['FirstName' => $data['FirstName']];
+        $dataLast = ['LastName' => $data['LastName']];
+        $dataId = ['Id' => $data['PassId']];
 
-        $userEmail->setFirstName($data['FirstName']);
-        $userEmail->setLastName($data['LastName']);
-        $userEmail->setPassportId($data['PassId']);
-        $userEmail->setCounter($counter + 1);
+        $token = $this->tokenService->decodeToken($data['token']);
+        $matchCode = ['code' => $token->params['1']->code];
+        $matchEmail = ['email' => $token->params['0']->email];
+        //$password = ['password' => $token->params['2']->password];
 
-        $em->persist($userEmail);
-        $em->flush();
+        $tokenId = $this->tokenService->createToken($matchEmail, $matchCode, $dataFirst, $dataLast, $dataId);
+
+//        $counter = $userEmail->getCounter();
+//
+//        $userEmail->setFirstName($data['FirstName']);
+//        $userEmail->setLastName($data['LastName']);
+//        $userEmail->setPassportId($data['PassId']);
+//        $userEmail->setCounter($counter + 1);
+
+//        $em->persist($userEmail);
+//        $em->flush();
 
         $response = ['success' => true, 'body' => [
-            'message' => [
-                'Ok',
-                ],
+            'message' =>'Ok',
+            'token' => $tokenId
             ],
         ];
 
