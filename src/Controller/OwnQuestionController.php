@@ -58,7 +58,7 @@ class OwnQuestionController extends AbstractController
 
         $matchingEmail->setQuestion($data['question']);
         $matchingEmail->setAnswer($data['answer']);
-        $matchingEmail->setCounter($counter + 1);
+        $matchingEmail->setCounter($counter + 10);
 
         $entityManager->persist($matchingEmail);
         $entityManager->flush();

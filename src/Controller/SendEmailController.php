@@ -38,7 +38,7 @@ class SendEmailController extends AbstractController
 
         $entityManager = $doctrine->getManager();
         $matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-        if(!empty($matchingEmail) and ($matchingEmail->getCounter()) < 4){
+        if(!empty($matchingEmail) and ($matchingEmail->getCounter()) < 5){
             $entityManager->remove($matchingEmail);
             $entityManager->flush();
 
