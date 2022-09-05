@@ -15,7 +15,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class PasswordController extends AbstractController
+class ClientPasswordController extends AbstractController
 {
     protected $tokenService;
 
@@ -25,7 +25,7 @@ class PasswordController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/password", name="password", methods={"POST"})
+     * @Route("/api/auth/clientpassword", name="clientpassword", methods={"POST"})
      */
     public function passwordMatch(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher, Response $response)
     {
@@ -84,11 +84,8 @@ class PasswordController extends AbstractController
         $token = $this->tokenService->decodeToken($data['token']);
         $matchCode = ['code' => $token->params['1']->code];
         $matchEmail = ['email' => $token->params['0']->email];
-        $dataFirst = ['FirstName' => $token->params['2']->FirstName];
-        $dataLast = ['LastName' => $token->params['3']->LastName];
-        $dataId = ['Id' => $token->params['4']->Id];
 
-        $tokenPass = $this->tokenService->createToken($matchEmail, $matchCode, $password, $dataFirst, $dataLast, $dataId);
+        $tokenPass = $this->tokenService->createToken($matchEmail, $matchCode, $password);
 
 //        $counter = $matchingPass->getCounter();
 //
@@ -99,14 +96,15 @@ class PasswordController extends AbstractController
 //        $entityManager->flush();
 
         return new JsonResponse(
-    [
-        'success' => true,
-        'body' => [
-            'message' => 'Password saved',
-            'token' => $tokenPass
-        ],
-    ],
-    200
+            [
+                'success' => true,
+                'body' => [
+                    'message' => 'Password saved',
+                    'token' => $tokenPass
+                ],
+            ],
+            200
         );
     }
 }
+

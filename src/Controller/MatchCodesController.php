@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Firebase\JWT\JWT;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,11 +16,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MatchCodesController extends AbstractController
 {
-    private $requestStack;
+    protected $tokenService;
 
-    public function __construct(RequestStack $requestStack)
+    public function __construct(TokenService $tokenService)
     {
-        $this->requestStack = $requestStack;
+        $this->tokenService = $tokenService;
     }
 
     /**
@@ -29,10 +30,13 @@ class MatchCodesController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $entityManager = $doctrine->getManager();
-        $matchingCode = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+        $token = $this->tokenService->decodeToken($data['token']);
+        $matchCode = $token->params['1']->code;
 
-        if ($matchingCode->getCode() != $data['code']) {
+//        $entityManager = $doctrine->getManager();
+//        $matchingCode = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+
+        if ($matchCode != $data['code']) {
             return new JsonResponse(
                 [
                     'success' => false,
@@ -44,19 +48,18 @@ class MatchCodesController extends AbstractController
             );
         }
 
-        $matchingCounter = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-        $counter = $matchingCounter->getCounter();
-        $matchingCounter->setCounter($counter + 1);
-
-        $entityManager->persist($matchingCode);
-        $entityManager->flush();
+//        $matchingCounter = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+//        $counter = $matchingCounter->getCounter();
+//        $matchingCounter->setCounter($counter + 1);
+//
+//        $entityManager->persist($matchingCode);
+//        $entityManager->flush();
 
         return new JsonResponse(
             [
                 'success' => true,
                 'body' => [
                     'message' => 'Codes match',
-                    'cookie' => $response
                 ],
             ],
             200

@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class OwnQuestionController extends AbstractController
+class ClientQuestionController extends AbstractController
 {
     protected $tokenService;
 
@@ -24,7 +24,7 @@ class OwnQuestionController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/quest", name="question", methods={"POST"})
+     * @Route("/api/auth/clientquest", name="clientquestion", methods={"POST"})
      */
     public function yourQuestion(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator, Response $response)
     {
@@ -63,8 +63,8 @@ class OwnQuestionController extends AbstractController
         }
 
         $dataArray = [
-          'question' => $data['question'],
-          'answer' => $data['answer']
+            'question' => $data['question'],
+            'answer' => $data['answer']
         ];
 
         $token1 = $this->tokenService->createToken($dataArray);
@@ -76,12 +76,8 @@ class OwnQuestionController extends AbstractController
         $matchCode = ['code' => $token->params['1']->code];
         $matchEmail = ['email' => $token->params['0']->email];
         $password = ['password' => $token->params['2']->password];
-        $dataFirst = ['FirstName' => $token->params['3']->FirstName];
-        $dataLast = ['LastName' => $token->params['4']->LastName];
-        $dataId = ['Id' => $token->params['5']->Id];
 
-
-        $tokenId = $this->tokenService->createToken($matchEmail, $matchCode, $password, $dataFirst, $dataLast, $dataId, $dataQuest, $dataAnswer);
+        $tokenId = $this->tokenService->createToken($matchEmail, $matchCode, $password, $dataQuest, $dataAnswer);
 
 
 //        $counter = $matchingEmail->getCounter();
@@ -104,3 +100,4 @@ class OwnQuestionController extends AbstractController
         return new JsonResponse($responseQuest, Response::HTTP_CREATED);
     }
 }
+
