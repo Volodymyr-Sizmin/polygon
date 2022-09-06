@@ -29,6 +29,7 @@ return [
         '/api/auth/finalPin' => [[['_route' => 'finalPin', '_controller' => 'App\\Controller\\ResetPinController::finalSavePin'], null, ['POST' => 0], null, false, false, null]],
         '/api/auth/savenondata' => [[['_route' => 'nondata', '_controller' => 'App\\Controller\\SaveNonBankClientDataController::savedata'], null, ['POST' => 0], null, false, false, null]],
         '/api/auth/savedata' => [[['_route' => 'savedata', '_controller' => 'App\\Controller\\SaveRegisterDataController::savedata'], null, ['POST' => 0], null, false, false, null]],
+        '/api/auth/savereset' => [[['_route' => 'savereset', '_controller' => 'App\\Controller\\SaveResetPasswordController::savedata'], null, ['POST' => 0], null, false, false, null]],
         '/api/auth/sendemail' => [[['_route' => 'email', '_controller' => 'App\\Controller\\SendEmailController::sendEmail'], null, ['POST' => 0], null, false, false, null]],
         '/api/playlists' => [
             [['_route' => 'index_playlist', '_controller' => 'App\\Controller\\PlaylistController::index'], null, ['GET' => 0], null, false, false, null],

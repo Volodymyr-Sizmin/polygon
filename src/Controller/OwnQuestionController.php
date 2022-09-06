@@ -62,13 +62,6 @@ class OwnQuestionController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
         }
 
-        $dataArray = [
-          'question' => $data['question'],
-          'answer' => $data['answer']
-        ];
-
-        $token1 = $this->tokenService->createToken($dataArray);
-
         $dataQuest = ['question' => $data['question']];
         $dataAnswer = ['answer' => $data['answer']];
 

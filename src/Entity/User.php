@@ -69,7 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *     message="Your password must contain only numbers and be 6 numbers long", groups={"code"}
      * )
      */
-    private $code;
+    //private $code;
 
 //    /**
 //     * @ORM\Column(type="text")
@@ -136,7 +136,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $reset_code;
+    //private $reset_code;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -254,22 +254,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getCode(): ?int
-    {
-        return $this->code;
-    }
+//    public function getCode(): ?int
+//    {
+//        return $this->code;
+//    }
+//
+//    public function setCode(string $code): self
+//    {
+//        $this->code = $code;
+//
+//        return $this;
+//    }
 
-    public function setCode(string $code): self
-    {
-        $this->code = $code;
-
-        return $this;
-    }
-
-    public function getToken(): ?string
-    {
-        return $this->token;
-    }
+//    public function getToken(): ?string
+//    {
+//        return $this->token;
+//    }
 
     public function setToken($token): self
     {
@@ -338,17 +338,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getResetCode(): ?string
-    {
-        return $this->reset_code;
-    }
-
-    public function setResetCode(?string $reset_code): self
-    {
-        $this->reset_code = $reset_code;
-
-        return $this;
-    }
+//    public function getResetCode(): ?string
+//    {
+//        return $this->reset_code;
+//    }
+//
+//    public function setResetCode(?string $reset_code): self
+//    {
+//        $this->reset_code = $reset_code;
+//
+//        return $this;
+//    }
 
     public function getPin(): ?int
     {
