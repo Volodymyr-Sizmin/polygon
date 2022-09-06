@@ -130,7 +130,7 @@ class SendEmailController extends AbstractController
                         'message' => 'Hello. A user with this email has already been registered in the system. Please call the number +7 XXX XXXX XXXX or contact the nearest bank office.',
                     ],
                 ],
-                Response::HTTP_BAD_REQUEST
+                404
             );
         }
     }
