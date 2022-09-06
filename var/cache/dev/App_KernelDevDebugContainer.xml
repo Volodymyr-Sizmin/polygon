@@ -367,6 +367,7 @@
     <service id="App\Controller\ResetCodeController" class="App\Controller\ResetCodeController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
+      <argument type="service" id="App\Service\TokenService"/>
       <call method="setContainer">
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\ResetCodeController"/>
       </call>
@@ -382,7 +383,7 @@
     <service id="App\Controller\ResetPasswordController" class="App\Controller\ResetPasswordController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
-      <argument type="service" id="security.user_password_hasher"/>
+      <argument type="service" id="App\Service\TokenService"/>
       <call method="setContainer">
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\ResetPasswordController"/>
       </call>
@@ -408,6 +409,14 @@
       <argument type="service" id="App\Service\TokenService"/>
       <call method="setContainer">
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\SaveRegisterDataController"/>
+      </call>
+    </service>
+    <service id="App\Controller\SaveResetPasswordController" class="App\Controller\SaveResetPasswordController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <argument type="service" id="App\Service\TokenService"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.GNc8e5B.App\Controller\SaveResetPasswordController"/>
       </call>
     </service>
     <service id="App\Controller\SendEmailController" class="App\Controller\SendEmailController" public="true" autowire="true" autoconfigure="true">
@@ -4984,6 +4993,9 @@
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\SaveRegisterDataController" class="App\Controller\SaveRegisterDataController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\SaveRegisterDataController" class="App\Controller\SaveRegisterDataController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\SaveRegisterDataController" class="App\Controller\SaveRegisterDataController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\SaveResetPasswordController" class="App\Controller\SaveResetPasswordController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\SaveResetPasswordController" class="App\Controller\SaveResetPasswordController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\SaveResetPasswordController" class="App\Controller\SaveResetPasswordController" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\SendEmailController" class="App\Controller\SendEmailController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\SendEmailController" class="App\Controller\SendEmailController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\SendEmailController" class="App\Controller\SendEmailController" autowire="true" autoconfigure="true" abstract="true"/>
@@ -5407,7 +5419,7 @@
         <argument key="validatorPass" type="service_closure" id="validator"/>
       </argument>
     </service>
-    <service id=".service_locator.2ROBLUU" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.nOePLAz" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Controller\ClientPasswordController::passwordMatch" type="service_closure" id=".service_locator.4ICwA1R"/>
@@ -5429,6 +5441,7 @@
         <argument key="App\Controller\ResetPinController::recieveId" type="service_closure" id=".service_locator.EhNGjzf"/>
         <argument key="App\Controller\SaveNonBankClientDataController::savedata" type="service_closure" id=".service_locator.Su4SoZ6"/>
         <argument key="App\Controller\SaveRegisterDataController::savedata" type="service_closure" id=".service_locator.Su4SoZ6"/>
+        <argument key="App\Controller\SaveResetPasswordController::savedata" type="service_closure" id=".service_locator.Su4SoZ6"/>
         <argument key="App\Controller\SendEmailController::sendEmail" type="service_closure" id=".service_locator.EhNGjzf"/>
         <argument key="App\Kernel::loadRoutes" type="service_closure" id=".service_locator.KfbR3DY"/>
         <argument key="App\Kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.KfbR3DY"/>
@@ -5455,6 +5468,7 @@
         <argument key="App\Controller\ResetPinController:recieveId" type="service_closure" id=".service_locator.EhNGjzf"/>
         <argument key="App\Controller\SaveNonBankClientDataController:savedata" type="service_closure" id=".service_locator.Su4SoZ6"/>
         <argument key="App\Controller\SaveRegisterDataController:savedata" type="service_closure" id=".service_locator.Su4SoZ6"/>
+        <argument key="App\Controller\SaveResetPasswordController:savedata" type="service_closure" id=".service_locator.Su4SoZ6"/>
         <argument key="App\Controller\SendEmailController:sendEmail" type="service_closure" id=".service_locator.EhNGjzf"/>
         <argument key="kernel:loadRoutes" type="service_closure" id=".service_locator.KfbR3DY"/>
         <argument key="kernel:registerContainerConfiguration" type="service_closure" id=".service_locator.KfbR3DY"/>
@@ -5706,6 +5720,12 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.GNc8e5B" method="withContext"/>
     </service>
+    <service id=".service_locator.GNc8e5B.App\Controller\SaveResetPasswordController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\SaveResetPasswordController"/>
+      <argument>App\Controller\SaveResetPasswordController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.GNc8e5B" method="withContext"/>
+    </service>
     <service id=".service_locator.GNc8e5B.App\Controller\SendEmailController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\SendEmailController"/>
       <argument>App\Controller\SendEmailController</argument>
@@ -5849,12 +5869,12 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
-      <argument type="service" id=".service_locator.2ROBLUU"/>
+      <argument type="service" id=".service_locator.nOePLAz"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
-      <argument type="service" id=".service_locator.2ROBLUU"/>
+      <argument type="service" id=".service_locator.nOePLAz"/>
     </service>
     <service id=".doctrine.orm.default_metadata_driver.inner" class="Doctrine\Persistence\Mapping\Driver\MappingDriverChain">
       <call method="addDriver">
@@ -6617,7 +6637,7 @@
     <service id="Twig\Environment" alias="twig"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.gSv9zYw" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.2ROBLUU"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.nOePLAz"/>
     <service id="session" alias=".session.do-not-use" public="true">
       <deprecated package="symfony/framework-bundle" version="5.3">The "%alias_id%" service and "SessionInterface" alias are deprecated, use "$requestStack-&gt;getSession()" instead.</deprecated>
     </service>
@@ -6629,7 +6649,7 @@
     <service id=".service_locator.jrMekjb" alias=".service_locator.4Y2hPXE"/>
     <service id=".service_locator.ph0ZeRZ" alias=".service_locator.SRxqn0Y"/>
     <service id=".service_locator.egn84eH" alias=".service_locator.Su4SoZ6"/>
-    <service id=".service_locator.CPTMBJQ" alias=".service_locator.2ROBLUU"/>
+    <service id=".service_locator.7Mv7Yii" alias=".service_locator.nOePLAz"/>
     <service id=".service_locator.wKF4yn1" alias=".service_locator.19_mNxd"/>
     <service id=".service_locator.7NGWde." alias=".service_locator.XZDWDyX"/>
     <service id=".service_locator.O24_MAy" alias=".service_locator.yY.p4P7"/>

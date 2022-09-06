@@ -14,7 +14,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class SaveNonBankClientDataController extends AbstractController
+class SaveResetPasswordController extends AbstractController
 {
     protected $tokenService;
 
@@ -24,24 +24,20 @@ class SaveNonBankClientDataController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/savenondata", name="nondata", methods={"POST"})
+     * @Route("/api/auth/savereset", name="savereset", methods={"POST"})
      */
     public function savedata(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher): Response
     {
         $data = json_decode($request->getContent(), true);
 
-        $token = $this->tokenService->decodeToken($data['token']);
-        //$matchCode = implode(['code' => $token->params['1']->code]);
-        $matchEmail = implode(['email' => $token->params['0']->email]);
-        $password = implode(['email' => $token->params['2']->password]);
-        $dataFirst = implode(['FirstName' => $token->params['3']->FirstName]);
-        $dataLast = implode(['LastName' => $token->params['4']->LastName]);
-        $dataId = implode(['Id' => $token->params['5']->Id]);
-        $dataQuest = implode(['Question' => $token->params['6']->question]);
-        $dataAnswer = implode(['Id' => $token->params['7']->answer]);
+        $authorizationHeader = $request->headers->get('Authorization');
+        $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
+
+        $matchCode = implode(['code' => $token->params['0']->code]);
+        $password = implode(['password' => $token->params['2']->password]);
 
 
-//        if (empty($sesEmail && $sesCode && $sesPass && $sesQuest && $sesAnswer && $sesPassId && $sesFirstName && $sesLastName)) {
+//        if (empty($sesEmail && $sesCode && $sesPass && $sesQuest && $sesAnswer)) {
 //            return new JsonResponse(
 //                [
 //                    'success' => false,
@@ -52,39 +48,31 @@ class SaveNonBankClientDataController extends AbstractController
 //                Response::HTTP_BAD_REQUEST
 //            );
 //        }
-//
-//        $user = $session->get('user');
 
-        $user = new User();
+        $entityManager = $doctrine->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $token->params['1']->email]);
 
         $errors = $validatorPass->validate($user, null, 'password');
 
-        if (count($errors) > 0) {
-            $errorsStringPass = (string) $errors;
-
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'body' => [
-                        'message' => $errorsStringPass,
-                    ],
-                ],
-                Response::HTTP_BAD_REQUEST);
-        }
+//        if (count($errors) > 0) {
+//            $errorsStringPass = (string) $errors;
+//
+//            return new JsonResponse(
+//                [
+//                    'success' => false,
+//                    'body' => [
+//                        'message' => $errorsStringPass,
+//                    ],
+//                ],
+//                Response::HTTP_BAD_REQUEST);
+//        }
 
         $hashedPass = $passwordHasher->hashPassword(
             $user,
             $password
         );
 
-        $user->setEmail($matchEmail);
-        //$user->setCode($matchCode);
-        $user->setFirstName($dataFirst);
-        $user->setLastName($dataLast);
-        $user->setPassportId($dataId);
         $user->setPassword($hashedPass);
-        $user->setQuestion($dataQuest);
-        $user->setAnswer($dataAnswer);
 
         $em = $doctrine->getManager();
         $em->persist($user);

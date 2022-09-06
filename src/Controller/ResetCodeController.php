@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,7 +14,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ResetCodeController extends AbstractController
 {
-    protected $code;
+    protected $tokenService;
+
+    public function __construct(TokenService $tokenService)
+    {
+        $this->tokenService = $tokenService;
+    }
 
     /**
      * @Route("/api/auth/resetcode", name="resetcode", methods={"POST"})
@@ -22,11 +28,16 @@ class ResetCodeController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $repository = $doctrine->getRepository(User::class);
+        $authorizationHeader = $request->headers->get('Authorization');
+        $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
 
-        $matchingCode = $repository->findOneBy(['email' => $data['email']]);
+        $matchCode = $token->params['0']->code;
 
-        if (!isset($matchingCode)) {
+//        $repository = $doctrine->getRepository(User::class);
+//
+//        $matchingCode = $repository->findOneBy(['email' => $data['email']]);
+
+        if (!isset($matchCode)) {
             return new JsonResponse(
                 [
                     'success' => false,
@@ -38,7 +49,7 @@ class ResetCodeController extends AbstractController
             );
         }
 
-        if ($matchingCode->getResetCode() != $data['code']) {
+        if ($matchCode != $data['code']) {
             return new JsonResponse(
                 [
                     'success' => false,

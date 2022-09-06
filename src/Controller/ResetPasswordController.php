@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,12 +15,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ResetPasswordController extends AbstractController
 {
-    protected $password;
-    private $encoder;
+    protected $tokenService;
 
-    public function __construct(UserPasswordHasherInterface $encoder)
+    public function __construct(TokenService $tokenService)
     {
-        $this->encoder = $encoder;
+        $this->tokenService = $tokenService;
     }
 
     /**
@@ -28,6 +28,8 @@ class ResetPasswordController extends AbstractController
     public function passwordMatch(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass)
     {
         $data = json_decode($request->getContent(), true);
+
+        $authorizationHeader = $request->headers->get('Authorization');
 
         if ($data['password'] !== $data['confirm_password']) {
             return new JsonResponse(
@@ -41,40 +43,32 @@ class ResetPasswordController extends AbstractController
             );
         }
 
-        $entityManager = $doctrine->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+//        $entityManager = $doctrine->getManager();
+//        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+//
+//        if (!$user) {
+//            throw $this->createNotFoundException('No user found for email '.$data['email']);
+//        }
+//
+//        $user->setPassword($data['password']);
+//
 
-        if (!$user) {
-            throw $this->createNotFoundException('No user found for email '.$data['email']);
-        }
+        $dataPass = [
+            'password' => $data['password'],
+        ];
 
-        $user->setPassword($data['password']);
-        $errors = $validatorPass->validate($user, null, 'password');
+        $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
+        $matchCode = ['code' => $token->params['0']->code];
+        $matchEmail = ['email' =>$token->params['1']->email];
 
-        if (count($errors) > 0) {
-            $errorsStringPass = (string) $errors;
-
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'body' => [
-                        'message' => $errorsStringPass,
-                    ],
-                ],
-                Response::HTTP_BAD_REQUEST);
-        }
-
-        $user->setPassword($this->encoder->hashPassword(
-            $user,
-            $data['password']
-        ));
-        $entityManager->flush();
+        $tokenPass = $this->tokenService->createToken($matchCode, $matchEmail, $dataPass);
 
         return new JsonResponse(
             [
                 'success' => true,
                 'body' => [
                     'message' => 'Password saved',
+                    'token' => $tokenPass
                 ],
             ],
             200

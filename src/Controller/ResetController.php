@@ -46,7 +46,7 @@ class ResetController extends AbstractController
 
         $entityManager = $doctrine->getManager();
         $user = $entityManager->getRepository(User::class)->findOneBy(['passport_id' => $data['passport_id']]);
-        $user->setResetCode($data['reset_code']);
+        //$user->setResetCode($data['reset_code']);
 
         if (!$user) {
             $response = [
@@ -56,6 +56,13 @@ class ResetController extends AbstractController
 
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
+
+        $dataArray = [
+            'code' => $data['reset_code'],
+        ];
+        $dataEmail = ['email' => $user->getEmail()];
+
+        $token = $this->tokenService->createToken($dataArray, $dataEmail);
 
         $errors = $validator->validate($user, null, 'code');
 
@@ -72,9 +79,9 @@ class ResetController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
         }
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($user);
-        $em->flush();
+//        $em = $this->getDoctrine()->getManager();
+//        $em->persist($user);
+//        $em->flush();
 
         $emailForSend = (new TemplatedEmail())
             ->from('admin@polybank.com')
@@ -97,7 +104,7 @@ class ResetController extends AbstractController
         $transport = Transport::fromDsn($dsn);
         $mailer = new Mailer($transport);
         $mailer->send($emailForSend);
-        $response = ['success' => true, 'message' => ['Email has come'], 'email' => $user->getEmail(), 'token' => $user->getToken()];
+        $response = ['success' => true, 'message' => ['Email has come'], 'token' => $token];
 
         return new JsonResponse($response, Response::HTTP_CREATED);
     }
