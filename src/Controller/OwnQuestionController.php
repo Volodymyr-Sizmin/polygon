@@ -38,7 +38,7 @@ class OwnQuestionController extends AbstractController
                         'message' => 'Empty input',
                     ],
                 ],
-                Response::HTTP_BAD_REQUEST
+                404
             );
         }
 
@@ -72,7 +72,6 @@ class OwnQuestionController extends AbstractController
         $dataFirst = ['FirstName' => $token->params['3']->FirstName];
         $dataLast = ['LastName' => $token->params['4']->LastName];
         $dataId = ['Id' => $token->params['5']->Id];
-
 
         $tokenId = $this->tokenService->createToken($matchEmail, $matchCode, $password, $dataFirst, $dataLast, $dataId, $dataQuest, $dataAnswer);
 
