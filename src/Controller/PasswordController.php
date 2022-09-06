@@ -54,7 +54,7 @@ class PasswordController extends AbstractController
                         'message' => 'Passwords do not match',
                     ],
                 ],
-                Response::HTTP_BAD_REQUEST
+                404
             );
         }
 

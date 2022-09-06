@@ -54,7 +54,7 @@ class NonClientRegisterController extends AbstractController
                         'cookie' => $response
                     ],
                 ],
-                Response::HTTP_BAD_REQUEST
+                404
             );
         }
 

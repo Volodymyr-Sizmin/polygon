@@ -53,7 +53,7 @@ class SendEmailController extends AbstractController
                         'message' => 'Empty input',
                     ],
                 ],
-                    Response::HTTP_BAD_REQUEST
+                    404
                 );
         }
 
