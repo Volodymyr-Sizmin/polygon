@@ -294,6 +294,13 @@
         <argument type="service" id=".service_locator.GNc8e5B.App\Controller\ClientQuestionController"/>
       </call>
     </service>
+    <service id="App\Controller\CodeGeneratorController" class="App\Controller\CodeGeneratorController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.GNc8e5B.App\Controller\CodeGeneratorController"/>
+      </call>
+    </service>
     <service id="App\Controller\CreatePinController" class="App\Controller\CreatePinController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
@@ -4948,6 +4955,9 @@
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ClientQuestionController" class="App\Controller\ClientQuestionController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ClientQuestionController" class="App\Controller\ClientQuestionController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\ClientQuestionController" class="App\Controller\ClientQuestionController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\CodeGeneratorController" class="App\Controller\CodeGeneratorController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\CodeGeneratorController" class="App\Controller\CodeGeneratorController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\CodeGeneratorController" class="App\Controller\CodeGeneratorController" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\CreatePinController" class="App\Controller\CreatePinController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\CreatePinController" class="App\Controller\CreatePinController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\CreatePinController" class="App\Controller\CreatePinController" autowire="true" autoconfigure="true" abstract="true"/>
@@ -5618,6 +5628,12 @@
     <service id=".service_locator.GNc8e5B.App\Controller\ClientQuestionController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\ClientQuestionController"/>
       <argument>App\Controller\ClientQuestionController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.GNc8e5B" method="withContext"/>
+    </service>
+    <service id=".service_locator.GNc8e5B.App\Controller\CodeGeneratorController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\CodeGeneratorController"/>
+      <argument>App\Controller\CodeGeneratorController</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.GNc8e5B" method="withContext"/>
     </service>
