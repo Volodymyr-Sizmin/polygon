@@ -5391,13 +5391,6 @@
         <argument key="validatorPass" type="service_closure" id="validator"/>
       </argument>
     </service>
-    <service id=".service_locator.T83jifu" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator"/>
-      <argument type="collection">
-        <argument key="doctrine" type="service_closure" id="doctrine"/>
-        <argument key="response" type="service_closure" id="Symfony\Component\HttpFoundation\Response"/>
-      </argument>
-    </service>
     <service id=".service_locator.wkLA6hh" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -5419,7 +5412,7 @@
         <argument key="validatorPass" type="service_closure" id="validator"/>
       </argument>
     </service>
-    <service id=".service_locator.nOePLAz" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.XwwSro5" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Controller\ClientPasswordController::passwordMatch" type="service_closure" id=".service_locator.4ICwA1R"/>
@@ -5428,7 +5421,6 @@
         <argument key="App\Controller\CreatePinController::createPin" type="service_closure" id=".service_locator.EhNGjzf"/>
         <argument key="App\Controller\LoginByIdController::idLogin" type="service_closure" id=".service_locator.mIQa0gx"/>
         <argument key="App\Controller\LoginController::emailLogin" type="service_closure" id=".service_locator.SRxqn0Y"/>
-        <argument key="App\Controller\MatchCodesController::matchCodes" type="service_closure" id=".service_locator.T83jifu"/>
         <argument key="App\Controller\NonClientRegisterController::nonClientRegister" type="service_closure" id=".service_locator.4Y2hPXE"/>
         <argument key="App\Controller\OwnQuestionController::yourQuestion" type="service_closure" id=".service_locator.4Y2hPXE"/>
         <argument key="App\Controller\PasswordController::passwordMatch" type="service_closure" id=".service_locator.4ICwA1R"/>
@@ -5455,7 +5447,6 @@
         <argument key="App\Controller\CreatePinController:createPin" type="service_closure" id=".service_locator.EhNGjzf"/>
         <argument key="App\Controller\LoginByIdController:idLogin" type="service_closure" id=".service_locator.mIQa0gx"/>
         <argument key="App\Controller\LoginController:emailLogin" type="service_closure" id=".service_locator.SRxqn0Y"/>
-        <argument key="App\Controller\MatchCodesController:matchCodes" type="service_closure" id=".service_locator.T83jifu"/>
         <argument key="App\Controller\NonClientRegisterController:nonClientRegister" type="service_closure" id=".service_locator.4Y2hPXE"/>
         <argument key="App\Controller\OwnQuestionController:yourQuestion" type="service_closure" id=".service_locator.4Y2hPXE"/>
         <argument key="App\Controller\PasswordController:passwordMatch" type="service_closure" id=".service_locator.4ICwA1R"/>
@@ -5869,12 +5860,12 @@
       <argument type="service" id="security.token_storage"/>
     </service>
     <service id="debug.argument_resolver.service.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
-      <argument type="service" id=".service_locator.nOePLAz"/>
+      <argument type="service" id=".service_locator.XwwSro5"/>
     </service>
     <service id="debug.argument_resolver.default.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver"/>
     <service id="debug.argument_resolver.variadic.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver"/>
     <service id="debug.argument_resolver.not_tagged_controller.inner" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
-      <argument type="service" id=".service_locator.nOePLAz"/>
+      <argument type="service" id=".service_locator.XwwSro5"/>
     </service>
     <service id=".doctrine.orm.default_metadata_driver.inner" class="Doctrine\Persistence\Mapping\Driver\MappingDriverChain">
       <call method="addDriver">
@@ -6637,7 +6628,7 @@
     <service id="Twig\Environment" alias="twig"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.gSv9zYw" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.nOePLAz"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.XwwSro5"/>
     <service id="session" alias=".session.do-not-use" public="true">
       <deprecated package="symfony/framework-bundle" version="5.3">The "%alias_id%" service and "SessionInterface" alias are deprecated, use "$requestStack-&gt;getSession()" instead.</deprecated>
     </service>
@@ -6649,7 +6640,7 @@
     <service id=".service_locator.jrMekjb" alias=".service_locator.4Y2hPXE"/>
     <service id=".service_locator.ph0ZeRZ" alias=".service_locator.SRxqn0Y"/>
     <service id=".service_locator.egn84eH" alias=".service_locator.Su4SoZ6"/>
-    <service id=".service_locator.7Mv7Yii" alias=".service_locator.nOePLAz"/>
+    <service id=".service_locator.JsyS3tj" alias=".service_locator.XwwSro5"/>
     <service id=".service_locator.wKF4yn1" alias=".service_locator.19_mNxd"/>
     <service id=".service_locator.7NGWde." alias=".service_locator.XZDWDyX"/>
     <service id=".service_locator.O24_MAy" alias=".service_locator.yY.p4P7"/>
@@ -6676,7 +6667,6 @@
     <service id=".service_locator.a779dfs" alias=".service_locator.EhNGjzf"/>
     <service id=".service_locator.5uYVyXJ" alias=".service_locator.mIQa0gx"/>
     <service id=".service_locator.6wPFGbs" alias=".service_locator.SRxqn0Y"/>
-    <service id=".service_locator.MifgFNi" alias=".service_locator.T83jifu"/>
     <service id=".service_locator.mmbpznm" alias=".service_locator.wkLA6hh"/>
     <service id=".service_locator.T8.TLJR" alias=".service_locator.T7xmfzk"/>
     <service id=".service_locator.oHJo.M4" alias=".service_locator.Su4SoZ6"/>
