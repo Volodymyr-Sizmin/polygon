@@ -8,7 +8,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -31,7 +30,6 @@ class SaveNonBankClientDataController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $token = $this->tokenService->decodeToken($data['token']);
-        //$matchCode = implode(['code' => $token->params['1']->code]);
         $matchEmail = implode(['email' => $token->params['0']->email]);
         $password = implode(['email' => $token->params['2']->password]);
         $dataFirst = implode(['FirstName' => $token->params['3']->FirstName]);
@@ -39,21 +37,6 @@ class SaveNonBankClientDataController extends AbstractController
         $dataId = implode(['Id' => $token->params['5']->Id]);
         $dataQuest = implode(['Question' => $token->params['6']->question]);
         $dataAnswer = implode(['Id' => $token->params['7']->answer]);
-
-
-//        if (empty($sesEmail && $sesCode && $sesPass && $sesQuest && $sesAnswer && $sesPassId && $sesFirstName && $sesLastName)) {
-//            return new JsonResponse(
-//                [
-//                    'success' => false,
-//                    'body' => [
-//                        'message' => 'Empty input',
-//                    ],
-//                ],
-//                Response::HTTP_BAD_REQUEST
-//            );
-//        }
-//
-//        $user = $session->get('user');
 
         $user = new User();
 
@@ -78,7 +61,6 @@ class SaveNonBankClientDataController extends AbstractController
         );
 
         $user->setEmail($matchEmail);
-        //$user->setCode($matchCode);
         $user->setFirstName($dataFirst);
         $user->setLastName($dataLast);
         $user->setPassportId($dataId);

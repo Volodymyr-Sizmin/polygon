@@ -6,10 +6,8 @@ use App\Entity\User;
 use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -30,18 +28,6 @@ class NonClientRegisterController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-//        if (empty($data['email']) && $data ['FirstName'] && $data['LastName'] && $data['PassId']) {
-//            return new JsonResponse(
-//                [
-//                    'success' => false,
-//                    'body' => [
-//                        'message' => 'Empty input',
-//                    ],
-//                ],
-//                Response::HTTP_BAD_REQUEST
-//            );
-//        }
-
         $em = $this->getDoctrine()->getManager();
         $userId = $em->getRepository(User::class)->findBy(['passport_id' => $data['PassId']]);
 
@@ -57,20 +43,6 @@ class NonClientRegisterController extends AbstractController
                 404
             );
         }
-
-        //$userEmail = $em->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-
-//        if (!empty($userEmail)) {
-//            return new JsonResponse(
-//                [
-//                    'success' => false,
-//                    'body' => [
-//                        'message' => 'Hello. A user with this email has already been registered in the system. Please call the number +7 XXX XXXX XXXX or contact the nearest bank office.',
-//                    ],
-//                ],
-//                Response::HTTP_BAD_REQUEST
-//            );
-//        }
 
         $user = new User();
         $errors = $validator->validate($user, null, ['name', 'passport']);
@@ -95,19 +67,8 @@ class NonClientRegisterController extends AbstractController
         $token = $this->tokenService->decodeToken($data['token']);
         $matchCode = ['code' => $token->params['1']->code];
         $matchEmail = ['email' => $token->params['0']->email];
-        //$password = ['password' => $token->params['2']->password];
 
         $tokenId = $this->tokenService->createToken($matchEmail, $matchCode, $dataFirst, $dataLast, $dataId);
-
-//        $counter = $userEmail->getCounter();
-//
-//        $userEmail->setFirstName($data['FirstName']);
-//        $userEmail->setLastName($data['LastName']);
-//        $userEmail->setPassportId($data['PassId']);
-//        $userEmail->setCounter($counter + 1);
-
-//        $em->persist($userEmail);
-//        $em->flush();
 
         $response = ['success' => true, 'body' => [
             'message' =>'Ok',

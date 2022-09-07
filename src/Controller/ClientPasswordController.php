@@ -6,10 +6,8 @@ use App\Entity\User;
 use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,21 +28,6 @@ class ClientPasswordController extends AbstractController
     public function passwordMatch(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher, Response $response)
     {
         $data = json_decode($request->getContent(), true);
-
-//        $entityManager = $doctrine->getManager();
-//        $matchingPass = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-//
-//        if (empty($matchingPass)) {
-//            return new JsonResponse(
-//                [
-//                    'success' => false,
-//                    'body' => [
-//                        'message' => 'Empty input',
-//                    ],
-//                ],
-//                Response::HTTP_BAD_REQUEST
-//            );
-//        }
 
         if ($data['password'] !== $data['confirm_password']) {
             return new JsonResponse(
@@ -74,11 +57,6 @@ class ClientPasswordController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
         }
 
-        $hashedPassword = $passwordHasher->hashPassword(
-            $user,
-            $data['password']
-        );
-
         $password = ['password' => $data['password']];
 
         $token = $this->tokenService->decodeToken($data['token']);
@@ -86,14 +64,6 @@ class ClientPasswordController extends AbstractController
         $matchEmail = ['email' => $token->params['0']->email];
 
         $tokenPass = $this->tokenService->createToken($matchEmail, $matchCode, $password);
-
-//        $counter = $matchingPass->getCounter();
-//
-//        $matchingPass->setPassword($hashedPassword);
-//        $matchingPass->setCounter($counter + 1);
-//
-//        $entityManager->persist($matchingPass);
-//        $entityManager->flush();
 
         return new JsonResponse(
             [

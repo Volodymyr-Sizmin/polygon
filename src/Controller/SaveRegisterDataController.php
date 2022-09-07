@@ -8,7 +8,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -31,23 +30,10 @@ class SaveRegisterDataController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $token = $this->tokenService->decodeToken($data['token']);
-        $matchCode = implode(['code' => $token->params['1']->code]);
         $matchEmail = implode(['email' => $token->params['0']->email]);
         $password = implode(['email' => $token->params['2']->password]);
         $dataQuest = implode(['Question' => $token->params['3']->question]);
         $dataAnswer = implode(['answer' => $token->params['4']->answer]);
-
-//        if (empty($sesEmail && $sesCode && $sesPass && $sesQuest && $sesAnswer)) {
-//            return new JsonResponse(
-//                [
-//                    'success' => false,
-//                    'body' => [
-//                        'message' => 'Empty input',
-//                    ],
-//                ],
-//                Response::HTTP_BAD_REQUEST
-//            );
-//        }
 
         $user = new User();
 
@@ -72,7 +58,6 @@ class SaveRegisterDataController extends AbstractController
         );
 
         $user->setEmail($matchEmail);
-        $user->setCode($matchCode);
         $user->setPassword($hashedPass);
         $user->setQuestion($dataQuest);
         $user->setAnswer($dataAnswer);

@@ -6,10 +6,8 @@ use App\Entity\User;
 use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -41,9 +39,6 @@ class ClientQuestionController extends AbstractController
                 Response::HTTP_BAD_REQUEST
             );
         }
-
-        //$entityManager = $doctrine->getManager();
-        //$matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
 
         $user = new User();
 
@@ -78,16 +73,6 @@ class ClientQuestionController extends AbstractController
         $password = ['password' => $token->params['2']->password];
 
         $tokenId = $this->tokenService->createToken($matchEmail, $matchCode, $password, $dataQuest, $dataAnswer);
-
-
-//        $counter = $matchingEmail->getCounter();
-//
-//        $matchingEmail->setQuestion($data['question']);
-//        $matchingEmail->setAnswer($data['answer']);
-//        $matchingEmail->setCounter($counter + 10);
-//
-//        $entityManager->persist($matchingEmail);
-//        $entityManager->flush();
 
         $responseQuest = [
             'success' => true,
