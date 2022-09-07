@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,10 +31,6 @@ class ResetCodeController extends AbstractController
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
 
         $matchCode = $token->params['0']->code;
-
-//        $repository = $doctrine->getRepository(User::class);
-//
-//        $matchingCode = $repository->findOneBy(['email' => $data['email']]);
 
         if (!isset($matchCode)) {
             return new JsonResponse(

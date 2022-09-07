@@ -46,7 +46,6 @@ class ResetController extends AbstractController
 
         $entityManager = $doctrine->getManager();
         $user = $entityManager->getRepository(User::class)->findOneBy(['passport_id' => $data['passport_id']]);
-        //$user->setResetCode($data['reset_code']);
 
         if (!$user) {
             $response = [
@@ -78,10 +77,6 @@ class ResetController extends AbstractController
                 ],
                 Response::HTTP_BAD_REQUEST);
         }
-
-//        $em = $this->getDoctrine()->getManager();
-//        $em->persist($user);
-//        $em->flush();
 
         $emailForSend = (new TemplatedEmail())
             ->from('admin@polybank.com')

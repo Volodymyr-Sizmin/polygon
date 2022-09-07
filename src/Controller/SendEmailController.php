@@ -8,10 +8,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
@@ -36,15 +34,6 @@ class SendEmailController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $entityManager = $doctrine->getManager();
-//        $matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-//        if(!empty($matchingEmail) and ($matchingEmail->getCounter()) < 5){
-//            $entityManager->remove($matchingEmail);
-//            $entityManager->flush();
-//
-//            return new JsonResponse(['body' => ['message' => 'Try to enter email once again']], Response::HTTP_CREATED);
-//        }
-
         if (empty($data['email'])) {
             return new JsonResponse(
                 [
@@ -68,13 +57,6 @@ class SendEmailController extends AbstractController
             $token = $this->tokenService->createToken($dataEmail, $dataCode);
 
             $user = new User();
-//
-//            $user->setCode($data['code']);
-//            $user->setEmail($data['email']);
-//            $user->setCounter(1);
-//
-//            $entityManager->persist($user);
-//            $entityManager->flush();
 
             $errors = $validator->validate($user, null, 'registration');
 

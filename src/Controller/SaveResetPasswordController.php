@@ -28,44 +28,14 @@ class SaveResetPasswordController extends AbstractController
      */
     public function savedata(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher): Response
     {
-        $data = json_decode($request->getContent(), true);
-
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
 
-        $matchCode = implode(['code' => $token->params['0']->code]);
         $password = implode(['password' => $token->params['2']->password]);
 
 
-//        if (empty($sesEmail && $sesCode && $sesPass && $sesQuest && $sesAnswer)) {
-//            return new JsonResponse(
-//                [
-//                    'success' => false,
-//                    'body' => [
-//                        'message' => 'Empty input',
-//                    ],
-//                ],
-//                Response::HTTP_BAD_REQUEST
-//            );
-//        }
-
         $entityManager = $doctrine->getManager();
         $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $token->params['1']->email]);
-
-        $errors = $validatorPass->validate($user, null, 'password');
-
-//        if (count($errors) > 0) {
-//            $errorsStringPass = (string) $errors;
-//
-//            return new JsonResponse(
-//                [
-//                    'success' => false,
-//                    'body' => [
-//                        'message' => $errorsStringPass,
-//                    ],
-//                ],
-//                Response::HTTP_BAD_REQUEST);
-//        }
 
         $hashedPass = $passwordHasher->hashPassword(
             $user,

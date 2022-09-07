@@ -6,10 +6,8 @@ use App\Entity\User;
 use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -42,9 +40,6 @@ class OwnQuestionController extends AbstractController
             );
         }
 
-        //$entityManager = $doctrine->getManager();
-        //$matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-
         $user = new User();
 
         $errors = $validator->validate($user, null, ['quest']);
@@ -74,16 +69,6 @@ class OwnQuestionController extends AbstractController
         $dataId = ['Id' => $token->params['5']->Id];
 
         $tokenId = $this->tokenService->createToken($matchEmail, $matchCode, $password, $dataFirst, $dataLast, $dataId, $dataQuest, $dataAnswer);
-
-
-//        $counter = $matchingEmail->getCounter();
-//
-//        $matchingEmail->setQuestion($data['question']);
-//        $matchingEmail->setAnswer($data['answer']);
-//        $matchingEmail->setCounter($counter + 10);
-//
-//        $entityManager->persist($matchingEmail);
-//        $entityManager->flush();
 
         $responseQuest = [
             'success' => true,
