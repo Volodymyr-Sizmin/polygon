@@ -238,7 +238,7 @@
     <parameter key="liip_test_fixtures.keep_database_and_schema">false</parameter>
     <parameter key="liip_test_fixtures.cache_metadata">true</parameter>
     <parameter key="nelmio_cors.map" type="collection">
-      <parameter key="\w+$" type="collection">
+      <parameter key="w+$" type="collection">
         <parameter key="allow_origin">true</parameter>
         <parameter key="allow_headers">true</parameter>
         <parameter key="allow_methods" type="collection">
