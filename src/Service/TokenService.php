@@ -15,7 +15,7 @@ class TokenService
         $payload = [
             'iss' => 'admin@polybank.ru',
             'iat' => $now_seconds,
-            'exp' => $now_seconds + (600),
+            'exp' => $now_seconds + (1800),
             'aud' => 'your email',
             'params' => $params
         ];

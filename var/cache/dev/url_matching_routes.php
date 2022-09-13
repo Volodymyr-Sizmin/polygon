@@ -9,7 +9,7 @@ return [
     false, // $matchHost
     [ // $staticRoutes
         '/api/auth/clientpassword' => [[['_route' => 'clientpassword', '_controller' => 'App\\Controller\\ClientPasswordController::passwordMatch'], null, ['POST' => 0], null, false, false, null]],
-        '/api/auth/clientquest' => [[['_route' => 'clientquestion', '_controller' => 'App\\Controller\\ClientQuestionController::yourQuestion'], null, ['POST' => 0], null, false, false, null]],
+        '/api/auth/generatecode' => [[['_route' => 'clientquestion', '_controller' => 'App\\Controller\\CodeGeneratorController::generateCode'], null, ['POST' => 0], null, false, false, null]],
         '/api/auth/createpin' => [[['_route' => 'createpin', '_controller' => 'App\\Controller\\CreatePinController::createPin'], null, ['POST' => 0], null, false, false, null]],
         '/api/auth/confpin' => [[['_route' => 'confirmpin', '_controller' => 'App\\Controller\\CreatePinController::confPin'], null, ['POST' => 0], null, false, false, null]],
         '/api/auth/decode' => [[['_route' => 'decode', '_controller' => 'App\\Controller\\DecodeController::decodeJwtToken'], null, ['POST' => 0], null, false, false, null]],

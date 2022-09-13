@@ -25,6 +25,12 @@ class ResetPasswordController extends AbstractController
      */
     public function passwordMatch(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass)
     {
+        header('Access-Control-Allow-Origin: *');
+
+        header('Access-Control-Allow-Methods: GET, POST');
+
+        header("Access-Control-Allow-Headers: X-Requested-With");
+
         $data = json_decode($request->getContent(), true);
 
         $authorizationHeader = $request->headers->get('Authorization');

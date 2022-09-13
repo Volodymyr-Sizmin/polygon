@@ -32,6 +32,12 @@ class ResetController extends AbstractController
      */
     public function resetById(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator): Response
     {
+        header('Access-Control-Allow-Origin: *');
+
+        header('Access-Control-Allow-Methods: GET, POST');
+
+        header("Access-Control-Allow-Headers: X-Requested-With");
+
         $data = json_decode($request->getContent(), true);
         if (!$data) {
             $response = [

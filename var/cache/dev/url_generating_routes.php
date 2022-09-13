@@ -4,7 +4,7 @@
 
 return [
     'clientpassword' => [[], ['_controller' => 'App\\Controller\\ClientPasswordController::passwordMatch'], [], [['text', '/api/auth/clientpassword']], [], []],
-    'clientquestion' => [[], ['_controller' => 'App\\Controller\\ClientQuestionController::yourQuestion'], [], [['text', '/api/auth/clientquest']], [], []],
+    'clientquestion' => [[], ['_controller' => 'App\\Controller\\CodeGeneratorController::generateCode'], [], [['text', '/api/auth/generatecode']], [], []],
     'createpin' => [[], ['_controller' => 'App\\Controller\\CreatePinController::createPin'], [], [['text', '/api/auth/createpin']], [], []],
     'confirmpin' => [[], ['_controller' => 'App\\Controller\\CreatePinController::confPin'], [], [['text', '/api/auth/confpin']], [], []],
     'decode' => [[], ['_controller' => 'App\\Controller\\DecodeController::decodeJwtToken'], [], [['text', '/api/auth/decode']], [], []],
