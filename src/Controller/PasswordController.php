@@ -28,7 +28,7 @@ class PasswordController extends AbstractController
     public function passwordMatch(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher, Response $response)
     {
         $data = json_decode($request->getContent(), true);
-
+        
         if ($data['password'] !== $data['confirm_password']) {
             return new JsonResponse(
                 [
@@ -40,7 +40,7 @@ class PasswordController extends AbstractController
                 404
             );
         }
-
+        
         $user = new User();
         $errors = $validatorPass->validate($user, null, 'password');
 
@@ -60,6 +60,7 @@ class PasswordController extends AbstractController
         $password = ['password' => $data['password']];
 
         $token = $this->tokenService->decodeToken($data['token']);
+        dd($token);
         $matchEmail = ['email' => $token->params['0']->email];
         $matchCode = ['code' => $token->params['1']->code];
         $dataFirst = ['FirstName' => $token->params['2']->FirstName];
