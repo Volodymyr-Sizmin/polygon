@@ -61,14 +61,14 @@ class OwnQuestionController extends AbstractController
         $dataAnswer = ['answer' => $data['answer']];
 
         $token = $this->tokenService->decodeToken($data['token']);
-        $matchCode = ['code' => $token->params['1']->code];
         $matchEmail = ['email' => $token->params['0']->email];
-        $password = ['password' => $token->params['2']->password];
-        $dataFirst = ['FirstName' => $token->params['3']->FirstName];
-        $dataLast = ['LastName' => $token->params['4']->LastName];
-        $dataId = ['Id' => $token->params['5']->Id];
+        $matchCode = ['code' => $token->params['1']->code];
+        $dataFirst = ['FirstName' => $token->params['2']->FirstName];
+        $dataLast = ['LastName' => $token->params['3']->LastName];
+        $dataId = ['Id' => $token->params['4']->Id];
+        $password = ['password' => $token->params['5']->password];
 
-        $tokenId = $this->tokenService->createToken($matchEmail, $matchCode, $password, $dataFirst, $dataLast, $dataId, $dataQuest, $dataAnswer);
+        $tokenId = $this->tokenService->createToken($matchEmail, $matchCode, $dataFirst, $dataLast, $dataId, $password, $dataQuest, $dataAnswer);
 
         $responseQuest = [
             'success' => true,
