@@ -31,10 +31,10 @@ class SaveNonBankClientDataController extends AbstractController
 
         $token = $this->tokenService->decodeToken($data['token']);
         $matchEmail = implode(['email' => $token->params['0']->email]);
-        $password = implode(['email' => $token->params['2']->password]);
-        $dataFirst = implode(['FirstName' => $token->params['3']->FirstName]);
-        $dataLast = implode(['LastName' => $token->params['4']->LastName]);
-        $dataId = implode(['Id' => $token->params['5']->Id]);
+        $dataFirst = implode(['FirstName' => $token->params['2']->FirstName]);
+        $dataLast = implode(['LastName' => $token->params['3']->LastName]);
+        $dataId = implode(['Id' => $token->params['4']->Id]);
+        $password = implode(['email' => $token->params['5']->password]);
         $dataQuest = implode(['Question' => $token->params['6']->question]);
         $dataAnswer = implode(['Id' => $token->params['7']->answer]);
 
