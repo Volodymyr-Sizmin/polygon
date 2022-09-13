@@ -60,13 +60,13 @@ class PasswordController extends AbstractController
         $password = ['password' => $data['password']];
 
         $token = $this->tokenService->decodeToken($data['token']);
-        $matchCode = ['code' => $token->params['1']->code];
         $matchEmail = ['email' => $token->params['0']->email];
+        $matchCode = ['code' => $token->params['1']->code];
         $dataFirst = ['FirstName' => $token->params['2']->FirstName];
         $dataLast = ['LastName' => $token->params['3']->LastName];
         $dataId = ['Id' => $token->params['4']->Id];
 
-        $tokenPass = $this->tokenService->createToken($matchEmail, $matchCode, $password, $dataFirst, $dataLast, $dataId);
+        $tokenPass = $this->tokenService->createToken($matchEmail, $matchCode, $dataFirst, $dataLast, $dataId, $password);
 
         return new JsonResponse(
     [

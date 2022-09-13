@@ -28,6 +28,7 @@ class LoginController extends AbstractController
     public function emailLogin(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $encoder): Response
     {
         $data = json_decode($request->getContent(), true);
+        
         if (!$data) {
             $response = [
                 'success' => false,
@@ -49,18 +50,28 @@ class LoginController extends AbstractController
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
-        $userPas = $entityManager->getRepository(User::class)->findOneBy(['password' => $data['password']]);
+        //$userPas = $entityManager->getRepository(User::class)->findOneBy(['password' => $data['password']]);
 
-        if (empty($userPas)) {
+        /*if (empty($userPas)) {
             $response = [
                 'success' => false,
-                'body' => ["'message' => 'Password doesn't exist'"],
+                'body' => ['message' => 'Password doesn\'t exist'],
+            ];
+
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
+        }*/
+
+        if (empty($user->getPassword())) {
+            $response = [
+                'success' => false,
+                'body' => ['message' => 'Password doesn\'t exist'],
             ];
 
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
         $verified = $encoder->isPasswordValid($user, $data['password']);
+        
         if (!$verified) {
             $response = [
                 'success' => false,
@@ -73,7 +84,7 @@ class LoginController extends AbstractController
         return new JsonResponse([
             'success' => true,
             'body' => [
-                'token' => $this->tokenService->fetchToken($user),
+                'token' => $this->tokenService->createToken($user),
             ],
         ]);
     }

@@ -61,7 +61,7 @@ class LoginByIdController extends AbstractController
         return new JsonResponse([
             'success' => true,
             'body' => [
-                'token' => $this->tokenService->fetchToken($user),
+                'token' => $this->tokenService->createToken($user),
             ],
         ]);
     }

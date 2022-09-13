@@ -24,6 +24,7 @@ return [
     'finalPin' => [[], ['_controller' => 'App\\Controller\\ResetPinController::finalSavePin'], [], [['text', '/api/auth/finalPin']], [], []],
     'nondata' => [[], ['_controller' => 'App\\Controller\\SaveNonBankClientDataController::savedata'], [], [['text', '/api/auth/savenondata']], [], []],
     'savedata' => [[], ['_controller' => 'App\\Controller\\SaveRegisterDataController::savedata'], [], [['text', '/api/auth/savedata']], [], []],
+    'savereset' => [[], ['_controller' => 'App\\Controller\\SaveResetPasswordController::savedata'], [], [['text', '/api/auth/savereset']], [], []],
     'email' => [[], ['_controller' => 'App\\Controller\\SendEmailController::sendEmail'], [], [['text', '/api/auth/sendemail']], [], []],
     '_preview_error' => [['code', '_format'], ['_controller' => 'error_controller::preview', '_format' => 'html'], ['code' => '\\d+'], [['variable', '.', '[^/]++', '_format', true], ['variable', '/', '\\d+', 'code', true], ['text', '/_error']], [], []],
     'index_playlist' => [[], ['_controller' => 'App\\Controller\\PlaylistController::index'], [], [['text', '/api/playlists']], [], []],
