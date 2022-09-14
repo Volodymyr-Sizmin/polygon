@@ -25,8 +25,9 @@ class MatchCodesController extends AbstractController
     public function matchCodes(Request $request)
     {
         $data = json_decode($request->getContent(), true);
-
+        
         $token = $this->tokenService->decodeToken($data['token']);
+        dd($token);
         $matchCode = $token->params['1']->code;
         $codeLifetime = $token->params['2']->codeLifetime;
 
