@@ -49,13 +49,6 @@ class SendEmailController extends AbstractController
         $entityManager = $doctrine->getManager();
         $matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
         if (empty($matchingEmail)) {
-            $data['code'] = rand(100000, 999999);
-
-            $dataEmail = ['email' => $data['email']];
-            $dataCode = ['code' => $data['code']];
-
-            $token = $this->tokenService->createToken($dataEmail, $dataCode);
-
             $user = new User();
 
             $errors = $validator->validate($user, null, 'registration');
@@ -72,6 +65,13 @@ class SendEmailController extends AbstractController
                 ],
                 Response::HTTP_BAD_REQUEST);
             }
+
+            $data['code'] = rand(100000, 999999);
+            $dataEmail = ['email' => $data['email']];
+            $dataCode = ['code' => $data['code']];
+            $dataCodeLifetime = ['codeLifetime' => time() + 600];
+
+            $token = $this->tokenService->createToken($dataEmail, $dataCode, $dataCodeLifetime);
 
             $emailForSend = (new TemplatedEmail())
             ->from('admin@polybank.com')

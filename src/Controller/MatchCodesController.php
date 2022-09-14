@@ -28,6 +28,7 @@ class MatchCodesController extends AbstractController
 
         $token = $this->tokenService->decodeToken($data['token']);
         $matchCode = $token->params['1']->code;
+        $codeLifetime = $token->params['2']->codeLifetime;
 
         if ($matchCode != $data['code']) {
             return new JsonResponse(
@@ -35,6 +36,18 @@ class MatchCodesController extends AbstractController
                     'success' => false,
                     'body' => [
                         'message' => 'Введенный код не совпадает с присланным на почтовый ящик',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        if ($codeLifetime < time()) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Срок жизни кода истек',
                     ],
                 ],
                 Response::HTTP_BAD_REQUEST
