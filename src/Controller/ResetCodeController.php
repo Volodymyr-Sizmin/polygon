@@ -25,12 +25,6 @@ class ResetCodeController extends AbstractController
      */
     public function matchResetCodes(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator)
     {
-        header('Access-Control-Allow-Origin: *');
-
-        header('Access-Control-Allow-Methods: GET, POST');
-
-        header("Access-Control-Allow-Headers: X-Requested-With");
-
         $data = json_decode($request->getContent(), true);
 
         $authorizationHeader = $request->headers->get('Authorization');
