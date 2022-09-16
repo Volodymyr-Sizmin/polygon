@@ -100,7 +100,13 @@ class ResetController extends AbstractController
         $transport = Transport::fromDsn($dsn);
         $mailer = new Mailer($transport);
         $mailer->send($emailForSend);
-        $response = ['success' => true, 'message' => ['Email has come'], 'user' => $user->getEmail(), 'token' => $token];
+        $response = [
+            'success' => true, 
+            'message' => ['Email has come'], 
+            'email' => $user->getEmail(),
+            'passport_id' => $data['passport_id'],
+            'token' => $token
+        ];
 
         return new JsonResponse($response, Response::HTTP_CREATED);
     }
