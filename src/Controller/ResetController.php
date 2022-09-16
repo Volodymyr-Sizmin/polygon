@@ -59,6 +59,7 @@ class ResetController extends AbstractController
         $dataArray = [
             'code' => $data['reset_code'],
         ];
+
         $dataEmail = ['email' => $user->getEmail()];
 
         $token = $this->tokenService->createToken($dataArray, $dataEmail);
@@ -99,7 +100,7 @@ class ResetController extends AbstractController
         $transport = Transport::fromDsn($dsn);
         $mailer = new Mailer($transport);
         $mailer->send($emailForSend);
-        $response = ['success' => true, 'message' => ['Email has come'], 'token' => $token];
+        $response = ['success' => true, 'message' => ['Email has come'], 'user' => $user->getEmail(), 'token' => $token];
 
         return new JsonResponse($response, Response::HTTP_CREATED);
     }
