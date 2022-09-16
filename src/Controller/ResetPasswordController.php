@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -23,7 +24,7 @@ class ResetPasswordController extends AbstractController
     /**
      * @Route("/api/auth/newpassword", name="newpassword", methods={"POST"})
      */
-    public function passwordMatch(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass)
+    public function passwordMatch(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher)
     {
         $data = json_decode($request->getContent(), true);
 
@@ -46,10 +47,39 @@ class ResetPasswordController extends AbstractController
         ];
 
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
+        $email = $token->params['1']->email;
         $matchCode = ['code' => $token->params['0']->code];
-        $matchEmail = ['email' =>$token->params['1']->email];
+        $matchEmail = ['email' =>$email];
 
         $tokenPass = $this->tokenService->createToken($matchCode, $matchEmail, $dataPass);
+
+        $user = $doctrine->getRepository(User::class)->findOneBy(['email' => $email]);
+
+        $errors = $validatorPass->validate($user, null, 'password');
+
+        if (count($errors) > 0) {
+            $errorsStringPass = (string) $errors;
+
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => $errorsStringPass,
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST);
+        }
+
+        $hashedPass = $passwordHasher->hashPassword(
+            $user,
+            $data['password']
+        );
+
+        $user->setPassword($hashedPass);
+        
+        $em = $doctrine->getManager();
+        $em->persist($user);
+        $em->flush();
 
         return new JsonResponse(
             [
