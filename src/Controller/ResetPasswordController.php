@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,22 +55,7 @@ class ResetPasswordController extends AbstractController
         $tokenPass = $this->tokenService->createToken($matchCode, $matchEmail, $dataPass);
 
         $user = $doctrine->getRepository(User::class)->findOneBy(['email' => $email]);
-
-        $errors = $validatorPass->validate($user, null, 'password');
-
-        if (count($errors) > 0) {
-            $errorsStringPass = (string) $errors;
-
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'body' => [
-                        'message' => $errorsStringPass,
-                    ],
-                ],
-                Response::HTTP_BAD_REQUEST);
-        }
-
+        
         $hashedPass = $passwordHasher->hashPassword(
             $user,
             $data['password']
