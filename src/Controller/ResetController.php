@@ -96,8 +96,7 @@ class ResetController extends AbstractController
 
         $twigBodyRenderer->render($emailForSend);
 
-        $dsn = 'smtp://mailhog:1025';
-        $transport = Transport::fromDsn($dsn);
+        $transport = Transport::fromDsn($_ENV['MAILER_DSN']);
         $mailer = new Mailer($transport);
         $mailer->send($emailForSend);
         $response = [
