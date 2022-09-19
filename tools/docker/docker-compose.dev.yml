@@ -30,17 +30,17 @@ services:
       - backend
  
  # mailer service
-  mailer-dev:
-    container_name: mailhog
-    image: mailhog/mailhog
-    restart: always
-    logging:
-        driver: "none"
-    networks:
-      - backend
-    ports:
-      - "8025:8025"
-      - "1025:1025"
+  # mailer-dev:
+  #   container_name: mailhog
+  #   image: mailhog/mailhog
+  #   restart: always
+  #   logging:
+  #       driver: "none"
+  #   networks:
+  #     - backend
+  #   ports:
+  #     - "8025:8025"
+  #     - "1025:1025"
 
 networks:
   backend:
