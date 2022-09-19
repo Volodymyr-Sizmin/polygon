@@ -62,17 +62,17 @@ services:
       - "${REACT_CLIENT_PORT}:3000"
  
  # mailer service
-  mailer:
-    container_name: mailhog
-    image: mailhog/mailhog
-    restart: always
-    logging:
-        driver: "none"
-    networks:
-      - backend
-    ports:
-      - "8025:8025"
-      - "1025:1025"
+  # mailer:
+  #   container_name: mailhog
+  #   image: mailhog/mailhog
+  #   restart: always
+  #   logging:
+  #       driver: "none"
+  #   networks:
+  #     - backend
+  #   ports:
+  #     - "8025:8025"
+  #     - "1025:1025"
 
 networks:
   backend:
