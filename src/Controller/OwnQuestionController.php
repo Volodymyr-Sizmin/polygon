@@ -64,26 +64,12 @@ class OwnQuestionController extends AbstractController
         $matchEmail = ['email' => $token->params['0']->email];
         $matchCode = ['code' => $token->params['1']->code];
         $dataCodeLifetime = ['codeLifetime' => $token->params['2']->codeLifetime];
-        $dataIsBankClient = ['isBankClient' => $token->params['3']->isBankClient];
-        $dataFirst = ['FirstName' => $token->params['4']->FirstName];
-        $dataLast = ['LastName' => $token->params['5']->LastName];
-        $dataId = ['Id' => $token->params['6']->Id];
-        $dataResident = ['resident' => $token->params['7']->resident];
-        $password = ['password' => $token->params['8']->password];
+        $dataFirst = ['FirstName' => $token->params['3']->FirstName];
+        $dataLast = ['LastName' => $token->params['4']->LastName];
+        $dataId = ['Id' => $token->params['5']->Id];
+        $password = ['password' => $token->params['6']->password];
 
-        $tokenId = $this->tokenService->createToken(
-            $matchEmail, 
-            $matchCode, 
-            $dataCodeLifetime, 
-            $dataIsBankClient,
-            $dataFirst, 
-            $dataLast, 
-            $dataId, 
-            $dataResident,
-            $password, 
-            $dataQuest, 
-            $dataAnswer
-        );
+        $tokenId = $this->tokenService->createToken($matchEmail, $matchCode, $dataCodeLifetime, $dataFirst, $dataLast, $dataId, $password, $dataQuest, $dataAnswer);
 
         $responseQuest = [
             'success' => true,
