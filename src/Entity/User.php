@@ -165,6 +165,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $counter;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $resident;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -382,6 +387,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCounter(?int $counter): self
     {
         $this->counter = $counter;
+
+        return $this;
+    }
+
+    public function getResident(): ?bool
+    {
+        return $this->resident;
+    }
+
+    public function setResident(bool $resident): self
+    {
+        $this->resident = $resident;
 
         return $this;
     }
