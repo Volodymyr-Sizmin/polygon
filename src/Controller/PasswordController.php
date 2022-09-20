@@ -41,7 +41,7 @@ class PasswordController extends AbstractController
             );
         }
         
-        /*$user = new User();
+        $user = new User();
         $errors = $validatorPass->validate($user, null, 'password');
 
         if (count($errors) > 0) {
@@ -55,7 +55,7 @@ class PasswordController extends AbstractController
                     ],
                 ],
                 Response::HTTP_BAD_REQUEST);
-        }*/
+        }
 
         $password = ['password' => $data['password']];
 
@@ -64,23 +64,11 @@ class PasswordController extends AbstractController
         $matchEmail = ['email' => $token->params['0']->email];
         $matchCode = ['code' => $token->params['1']->code];
         $dataCodeLifetime = ['codeLifetime' => $token->params['2']->codeLifetime];
-        $dataIsBankClient = ['isBankClient' => $token->params['3']->isBankClient];
-        $dataFirst = ['FirstName' => $token->params['4']->FirstName];
-        $dataLast = ['LastName' => $token->params['5']->LastName];
-        $dataId = ['Id' => $token->params['6']->Id];
-        $dataResident = ['resident' => $token->params['7']->resident];
+        $dataFirst = ['FirstName' => $token->params['3']->FirstName];
+        $dataLast = ['LastName' => $token->params['4']->LastName];
+        $dataId = ['Id' => $token->params['5']->Id];
 
-        $tokenPass = $this->tokenService->createToken(
-            $matchEmail, 
-            $matchCode, 
-            $dataCodeLifetime,
-            $dataIsBankClient, 
-            $dataFirst, 
-            $dataLast, 
-            $dataId,
-            $dataResident, 
-            $password
-        );
+        $tokenPass = $this->tokenService->createToken($matchEmail, $matchCode, $dataCodeLifetime, $dataFirst, $dataLast, $dataId, $password);
 
         return new JsonResponse(
     [
