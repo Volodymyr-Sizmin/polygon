@@ -63,13 +63,24 @@ class NonClientRegisterController extends AbstractController
         $dataFirst = ['FirstName' => $data['FirstName']];
         $dataLast = ['LastName' => $data['LastName']];
         $dataId = ['Id' => $data['PassId']];
+        $dataResident = ['resident' => $data['residence']];
 
         $token = $this->tokenService->decodeToken($data['token']);
         $matchEmail = ['email' => $token->params['0']->email];
         $matchCode = ['code' => $token->params['1']->code];
         $dataCodeLifetime = ['codeLifetime' => $token->params['2']->codeLifetime];
+        $dataIsBankClient = ['isBankClient' => $token->params['3']->isBankClient];
 
-        $tokenId = $this->tokenService->createToken($matchEmail, $matchCode, $dataCodeLifetime, $dataFirst, $dataLast, $dataId);
+        $tokenId = $this->tokenService->createToken(
+            $matchEmail, 
+            $matchCode, 
+            $dataCodeLifetime, 
+            $dataIsBankClient, 
+            $dataFirst, 
+            $dataLast, 
+            $dataId, 
+            $dataResident
+        );
 
         $response = ['success' => true, 'body' => [
             'message' =>'Ok',
