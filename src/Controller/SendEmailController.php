@@ -47,8 +47,81 @@ class SendEmailController extends AbstractController
         }
 
         $entityManager = $doctrine->getManager();
-        $matchingEmail = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
-        if (empty($matchingEmail)) {
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
+
+        if ($user && $user->getQuestion()) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Hello. A user with this email has already been registered in the system. Please call the number +7 XXX XXXX XXXX or contact the nearest bank office.',
+                    ],
+                ],
+                404
+            );    
+        } else {
+            $isBankClient = ($user && !$user->getQuestion()) ? true: false;
+            $code = rand(100000, 999999);
+            $dataEmail = ['email' => $data['email']];
+            $dataCode = ['code' => $code];
+            $dataCodeLifetime = ['codeLifetime' => time() + 600];
+            $dataIsBankClient = ['isBankClient' => $isBankClient];
+
+            if ($isBankClient) {
+                $dataFirst = ['FirstName' => $user->getFirstName()];
+                $dataLast = ['LastName' => $user->getLastName()];
+                $dataId = ['Id' => $user->getPassportId()];
+                $dataResident = ['resident' => $user->getResident()];
+
+                $token = $this->tokenService->createToken(
+                    $dataEmail, 
+                    $dataCode, 
+                    $dataCodeLifetime, 
+                    $dataIsBankClient,
+                    $dataFirst,
+                    $dataLast,
+                    $dataId,
+                    $dataResident
+                );
+            } else {
+                $token = $this->tokenService->createToken($dataEmail, $dataCode, $dataCodeLifetime, $dataIsBankClient);
+            }
+
+            $emailForSend = (new TemplatedEmail())
+                ->from('admin@polybank.com')
+                ->to($data['email'])
+                ->subject('Your verification code')
+                ->htmlTemplate('index.html.twig')
+                ->context([
+                    'code' => $code,
+                    'token' => $token,
+                ]
+            );
+
+            $loader = new FilesystemLoader('/');
+
+            $twigEnv = new Environment($loader);
+
+            $twigBodyRenderer = new BodyRenderer($twigEnv);
+
+            $twigBodyRenderer->render($emailForSend);
+
+            $transport = Transport::fromDsn($_ENV['MAILER_DSN']);
+            $mailer = new Mailer($transport);
+            $mailer->send($emailForSend);
+
+            $responseEmail = [
+                'success' => true, 
+                'body' => [
+                    'message' => 'Email has come',
+                    'token' => $token,
+                ],
+            ];
+
+            return new JsonResponse($responseEmail, Response::HTTP_CREATED);
+        }
+
+        /*if (empty($matchingEmail)) {
             $user = new User();
 
             $errors = $validator->validate($user, null, 'registration');
@@ -113,6 +186,6 @@ class SendEmailController extends AbstractController
                 ],
                 404
             );
-        }
+        }*/
     }
 }

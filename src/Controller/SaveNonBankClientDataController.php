@@ -31,44 +31,52 @@ class SaveNonBankClientDataController extends AbstractController
 
         $token = $this->tokenService->decodeToken($data['token']);
         $matchEmail = implode(['email' => $token->params['0']->email]);
-        $dataFirst = implode(['FirstName' => $token->params['3']->FirstName]);
-        $dataLast = implode(['LastName' => $token->params['4']->LastName]);
-        $dataId = implode(['Id' => $token->params['5']->Id]);
-        $password = implode(['email' => $token->params['6']->password]);
-        $dataQuest = implode(['Question' => $token->params['7']->question]);
-        $dataAnswer = implode(['answer' => $token->params['8']->answer]);
-
-        $user = new User();
-
-        $errors = $validatorPass->validate($user, null, 'password');
-
-        if (count($errors) > 0) {
-            $errorsStringPass = (string) $errors;
-
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'body' => [
-                        'message' => $errorsStringPass,
-                    ],
-                ],
-                Response::HTTP_BAD_REQUEST);
-        }
-
-        $hashedPass = $passwordHasher->hashPassword(
-            $user,
-            $password
-        );
-
-        $user->setEmail($matchEmail);
-        $user->setFirstName($dataFirst);
-        $user->setLastName($dataLast);
-        $user->setPassportId($dataId);
-        $user->setPassword($hashedPass);
-        $user->setQuestion($dataQuest);
-        $user->setAnswer($dataAnswer);
+        $dataIsBankClient = implode(['isBankClient' => $token->params['3']->isBankClient]);
+        $dataFirst = implode(['FirstName' => $token->params['4']->FirstName]);
+        $dataLast = implode(['LastName' => $token->params['5']->LastName]);
+        $dataId = implode(['Id' => $token->params['6']->Id]);
+        $dataResident = implode(['resident' => $token->params['7']->resident]);
+        $password = implode(['email' => $token->params['8']->password]);
+        $dataQuest = implode(['Question' => $token->params['9']->question]);
+        $dataAnswer = implode(['answer' => $token->params['10']->answer]);
 
         $em = $doctrine->getManager();
+
+        if ($dataIsBankClient) {
+            $user = $em->getRepository(User::class)->findOneBy(['email' => $matchEmail]);
+            $hashedPass = $passwordHasher->hashPassword($user, $password);
+            $user->setPassword($hashedPass);
+            $user->setQuestion($dataQuest);
+            $user->setAnswer($dataAnswer);
+        } else {
+            $user = new User();
+
+            $errors = $validatorPass->validate($user, null, 'password');
+
+            if (count($errors) > 0) {
+                $errorsStringPass = (string) $errors;
+
+                return new JsonResponse(
+                    [
+                        'success' => false,
+                        'body' => [
+                            'message' => $errorsStringPass,
+                        ],
+                    ],
+                    Response::HTTP_BAD_REQUEST);
+            }
+
+            $hashedPass = $passwordHasher->hashPassword($user, $password);
+            $user->setEmail($matchEmail);
+            $user->setFirstName($dataFirst);
+            $user->setLastName($dataLast);
+            $user->setPassportId($dataId);
+            $user->setResident($dataResident);
+            $user->setPassword($hashedPass);
+            $user->setQuestion($dataQuest);
+            $user->setAnswer($dataAnswer);
+        }
+                
         $em->persist($user);
         $em->flush();
 
