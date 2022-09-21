@@ -63,7 +63,7 @@ class NonClientRegisterController extends AbstractController
         $dataFirst = ['FirstName' => $data['FirstName']];
         $dataLast = ['LastName' => $data['LastName']];
         $dataId = ['Id' => $data['PassId']];
-        $dataResident = ['resident' => $data['residence']];
+        $dataResident = ['resident' => $data['Residence']];
 
         $token = $this->tokenService->decodeToken($data['token']);
         $matchEmail = ['email' => $token->params['0']->email];
