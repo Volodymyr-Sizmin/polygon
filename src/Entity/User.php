@@ -23,7 +23,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
+     * @ORM\Column(type="string", length=180, unique=true, nullable=true)
      * @Assert\Regex(
      *     pattern="/^[a-z]{3,25}|[1-9]{1,4}\@[a-z]{1,10}\.[a-z]{1,4}/", groups={"registration"},
      *     match=true, groups={"registration"},
@@ -78,7 +78,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 //    private $token;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Regex(
      *     pattern="/\w{1,40}|d{1,10}|\s|\?|\!/", groups={"quest"},
      *     match=true, groups={"quest"},
@@ -98,7 +98,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $answer;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      * @Assert\Regex(
      *     pattern="/[a-zA-Z]{2,26}|\s|[0-9]{1,33}/", groups={"passport"},
      *     match=true, groups={"passport"},
@@ -114,7 +114,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $passport_id;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      * @Assert\Regex(
      *     pattern="/[A-Za-z]{1,33}|\'|\-|\s/", groups={"name"},
      *     match=true, groups={"name"},
@@ -124,7 +124,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $FirstName;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      * @Assert\Regex(
      *     pattern="/[A-Za-z]{1,33}|\'|\-|\s/", groups={"name"},
      *     match=true, groups={"name"},
