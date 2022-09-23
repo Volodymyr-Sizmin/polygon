@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Service\TokenService;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,8 +24,10 @@ class MatchCodesController extends AbstractController
     public function matchCodes(Request $request)
     {
         $data = json_decode($request->getContent(), true);
+
+        $authorizationHeader = $request->headers->get('Authorization');
+        $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
         
-        $token = $this->tokenService->decodeToken($data['token']);
         $matchCode = $token->params['1']->code;
         $codeLifetime = $token->params['2']->codeLifetime;
 

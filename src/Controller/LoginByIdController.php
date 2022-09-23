@@ -49,6 +49,7 @@ class LoginByIdController extends AbstractController
         }
 
         $verified = $encoder->isPasswordValid($user, $data['password']);
+
         if (!$verified) {
             $response = [
                 'success' => false,
@@ -58,10 +59,13 @@ class LoginByIdController extends AbstractController
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
+        $token = $this->tokenService->createToken($user);
+        header("Authorization: Bearer $token");
+
         return new JsonResponse([
             'success' => true,
             'body' => [
-                'token' => $this->tokenService->createToken($user),
+                'message' => 'User successfully authorized',
             ],
         ]);
     }

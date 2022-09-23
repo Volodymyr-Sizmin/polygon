@@ -29,7 +29,8 @@ class SaveNonBankClientDataController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $token = $this->tokenService->decodeToken($data['token']);
+        $authorizationHeader = $request->headers->get('Authorization');
+        $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
         $matchEmail = implode(['email' => $token->params['0']->email]);
         $dataIsBankClient = implode(['isBankClient' => $token->params['3']->isBankClient]);
         $dataFirst = implode(['FirstName' => $token->params['4']->FirstName]);

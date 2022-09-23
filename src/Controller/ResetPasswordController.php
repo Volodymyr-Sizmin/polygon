@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ResetPasswordController extends AbstractController
 {
@@ -25,7 +24,7 @@ class ResetPasswordController extends AbstractController
     /**
      * @Route("/api/auth/newpassword", name="newpassword", methods={"POST"})
      */
-    public function passwordMatch(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher)
+    public function passwordMatch(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher)
     {
         $data = json_decode($request->getContent(), true);
 
@@ -67,6 +66,7 @@ class ResetPasswordController extends AbstractController
         $em->persist($user);
         $em->flush();
 
+        header("Authorization: Bearer $tokenPass");
         return new JsonResponse(
             [
                 'success' => true,

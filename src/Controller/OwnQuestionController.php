@@ -2,15 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Service\TokenService;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class OwnQuestionController extends AbstractController
 {
@@ -24,7 +21,7 @@ class OwnQuestionController extends AbstractController
     /**
      * @Route("/api/auth/quest", name="question", methods={"POST"})
      */
-    public function yourQuestion(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator, Response $response)
+    public function yourQuestion(Request $request)
     {
         $data = json_decode($request->getContent(), true);
 
@@ -40,27 +37,11 @@ class OwnQuestionController extends AbstractController
             );
         }
 
-        $user = new User();
-
-        $errors = $validator->validate($user, null, ['quest']);
-
-        if (count($errors) > 0) {
-            $errorsStringPass = (string) $errors;
-
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'body' => [
-                        'message' => $errorsStringPass,
-                    ],
-                ],
-                Response::HTTP_BAD_REQUEST);
-        }
-
         $dataQuest = ['question' => $data['question']];
         $dataAnswer = ['answer' => $data['answer']];
 
-        $token = $this->tokenService->decodeToken($data['token']);
+        $authorizationHeader = $request->headers->get('Authorization');
+        $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
         $matchEmail = ['email' => $token->params['0']->email];
         $matchCode = ['code' => $token->params['1']->code];
         $dataCodeLifetime = ['codeLifetime' => $token->params['2']->codeLifetime];
@@ -87,12 +68,10 @@ class OwnQuestionController extends AbstractController
 
         $responseQuest = [
             'success' => true,
-            'body' => [
-                'message' => 'Ok',
-                'token' => $tokenId
-            ]
+            'body' => ['message' => 'Ok'],
         ];
 
+        header("Authorization: Bearer $tokenId");
         return new JsonResponse($responseQuest, Response::HTTP_CREATED);
     }
 }

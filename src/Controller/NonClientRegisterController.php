@@ -28,7 +28,7 @@ class NonClientRegisterController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $doctrine->getManager();
         $userId = $em->getRepository(User::class)->findBy(['passport_id' => $data['PassId']]);
 
         if (!empty($userId)) {
@@ -65,7 +65,8 @@ class NonClientRegisterController extends AbstractController
         $dataId = ['Id' => $data['PassId']];
         $dataResident = ['resident' => $data['Residence']];
 
-        $token = $this->tokenService->decodeToken($data['token']);
+        $authorizationHeader = $request->headers->get('Authorization');
+        $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
         $matchEmail = ['email' => $token->params['0']->email];
         $matchCode = ['code' => $token->params['1']->code];
         $dataCodeLifetime = ['codeLifetime' => $token->params['2']->codeLifetime];
@@ -82,12 +83,9 @@ class NonClientRegisterController extends AbstractController
             $dataResident
         );
 
-        $response = ['success' => true, 'body' => [
-            'message' =>'Ok',
-            'token' => $tokenId
-            ],
-        ];
+        $response = ['success' => true, 'body' => ['message' =>'Ok']];
 
+        header("Authorization: Bearer $tokenId");
         return new JsonResponse($response, Response::HTTP_CREATED);
     }
 }
