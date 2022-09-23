@@ -104,9 +104,9 @@ class ResetController extends AbstractController
             'message' => ['Email has come'], 
             'email' => $user->getEmail(),
             'passport_id' => $data['passport_id'],
-            'token' => $token
         ];
 
+        header("Authorization: Bearer $token");
         return new JsonResponse($response, Response::HTTP_CREATED);
     }
 }

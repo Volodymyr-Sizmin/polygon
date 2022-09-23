@@ -3,13 +3,11 @@
 namespace App\Controller;
 
 use App\Service\TokenService;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ResetCodeController extends AbstractController
 {
@@ -23,7 +21,7 @@ class ResetCodeController extends AbstractController
     /**
      * @Route("/api/auth/resetcode", name="resetcode", methods={"POST"})
      */
-    public function matchResetCodes(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator)
+    public function matchResetCodes(Request $request)
     {
         $data = json_decode($request->getContent(), true);
 

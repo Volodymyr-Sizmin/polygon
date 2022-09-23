@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class LoginController extends AbstractController
 {
@@ -25,7 +24,7 @@ class LoginController extends AbstractController
     /**
      * @Route("/api/auth/login", name="login", methods={"POST"})
      */
-    public function emailLogin(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $encoder): Response
+    public function emailLogin(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $encoder): Response
     {
         $data = json_decode($request->getContent(), true);
         
@@ -70,10 +69,13 @@ class LoginController extends AbstractController
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
+        $token = $this->tokenService->createToken($user);
+        header("Authorization: Bearer $token");
+
         return new JsonResponse([
             'success' => true,
             'body' => [
-                'token' => $this->tokenService->createToken($user),
+                'message' => 'User successfully authorized',
             ],
         ]);
     }
