@@ -67,7 +67,7 @@ class PasswordController extends AbstractController
         return new JsonResponse(
             [
                 'success' => true,
-                'body' => ['message' => 'Password saved'],
+                'body' => ['message' => 'Password saved', 'token' => $tokenPass],
             ],
             200
         );
