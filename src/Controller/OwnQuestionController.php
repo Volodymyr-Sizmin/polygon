@@ -72,7 +72,6 @@ class OwnQuestionController extends AbstractController
             'token' => $tokenId]
         ];
 
-        header("Authorization: Bearer $tokenId");
         return new JsonResponse($responseQuest, Response::HTTP_CREATED);
     }
 }

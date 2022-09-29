@@ -62,8 +62,6 @@ class PasswordController extends AbstractController
             $password
         );
 
-
-        header("Authorization: Bearer $tokenPass");
         return new JsonResponse(
             [
                 'success' => true,
