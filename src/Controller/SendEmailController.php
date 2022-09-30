@@ -41,8 +41,8 @@ class SendEmailController extends AbstractController
                         'message' => 'Empty input',
                     ],
                 ],
-                    404
-                );
+                404
+            );
         }
 
         $entityManager = $doctrine->getManager();
@@ -57,9 +57,9 @@ class SendEmailController extends AbstractController
                     ],
                 ],
                 404
-            );    
+            );
         } else {
-            $isBankClient = ($user && !$user->getQuestion()) ? true: false;
+            $isBankClient = ($user && !$user->getQuestion()) ? true : false;
             $code = rand(100000, 999999);
             $dataEmail = ['email' => $data['email']];
             $dataCode = ['code' => $code];
@@ -73,9 +73,9 @@ class SendEmailController extends AbstractController
                 $dataResident = ['resident' => $user->getResident()];
 
                 $token = $this->tokenService->createToken(
-                    $dataEmail, 
-                    $dataCode, 
-                    $dataCodeLifetime, 
+                    $dataEmail,
+                    $dataCode,
+                    $dataCodeLifetime,
                     $dataIsBankClient,
                     $dataFirst,
                     $dataLast,
@@ -92,10 +92,9 @@ class SendEmailController extends AbstractController
                 ->subject('Your verification code')
                 ->htmlTemplate('index.html.twig')
                 ->context([
-                    'code' => $code,
-                    'token' => $token,
-                ]
-            );
+                        'code' => $code,
+                        'token' => $token,
+                    ]);
 
             $loader = new FilesystemLoader('/');
 
@@ -110,12 +109,14 @@ class SendEmailController extends AbstractController
             $mailer->send($emailForSend);
 
             $responseEmail = [
-                'success' => true, 
-                'body' => ['message' => 'Email has come'],
+                'success' => true,
+                'body' => [
+                    'message' => 'Email has come',
+                    'token' => $token
+                ]
             ];
 
             return new JsonResponse($responseEmail, Response::HTTP_CREATED);
         }
-
     }
 }
