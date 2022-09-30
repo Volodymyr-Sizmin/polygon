@@ -114,7 +114,7 @@ class SendEmailController extends AbstractController
                     'message' => 'Email has come'
                 ]
             ];
-            header("Authorization: Bearer $token");
+            header("Authorization", "Bearer . $token");
             return new JsonResponse($responseEmail, Response::HTTP_CREATED);
         }
     }
