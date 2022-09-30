@@ -84,7 +84,7 @@ class NonClientRegisterController extends AbstractController
         );
 
         $response = ['success' => true, 'body' => ['message' =>'Ok']];
-        header($tokenId);
+        $request->headers->set('Authorization', $tokenId);
         return new JsonResponse($response, Response::HTTP_CREATED);
     }
 }
