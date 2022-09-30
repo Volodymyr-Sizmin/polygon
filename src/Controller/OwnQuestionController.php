@@ -68,9 +68,9 @@ class OwnQuestionController extends AbstractController
 
         $responseQuest = [
             'success' => true,
-            'body' => ['message' => 'Ok',
-            'token' => $tokenId]
+            'body' => ['message' => 'Ok']
         ];
+        header($tokenId);
 
         return new JsonResponse($responseQuest, Response::HTTP_CREATED);
     }
