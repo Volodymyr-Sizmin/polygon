@@ -71,7 +71,7 @@ class OwnQuestionController extends AbstractController
             'body' => ['message' => 'Ok']
         ];
 
-        $response->headers->set('Authorization', $tokenId);
+        header("Authorization: Bearer $tokenId");
 
         return new JsonResponse($responseQuest, Response::HTTP_CREATED);
     }
