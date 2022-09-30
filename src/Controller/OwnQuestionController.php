@@ -21,7 +21,7 @@ class OwnQuestionController extends AbstractController
     /**
      * @Route("/api/auth/quest", name="question", methods={"POST"})
      */
-    public function yourQuestion(Request $request)
+    public function yourQuestion(Request $request, Response $response)
     {
         $data = json_decode($request->getContent(), true);
 
@@ -71,7 +71,7 @@ class OwnQuestionController extends AbstractController
             'body' => ['message' => 'Ok']
         ];
 
-        $request->headers->set('Authorization', $tokenId);
+        $response->headers->set('Authorization', $tokenId);
 
         return new JsonResponse($responseQuest, Response::HTTP_CREATED);
     }

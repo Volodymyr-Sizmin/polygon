@@ -29,7 +29,7 @@ class SendEmailController extends AbstractController
     /**
      * @Route("/api/auth/sendemail", name="email", methods={"POST"})
      */
-    public function sendEmail(Request $request, ManagerRegistry $doctrine)
+    public function sendEmail(Request $request, Response $response, ManagerRegistry $doctrine)
     {
         $data = json_decode($request->getContent(), true);
 
@@ -114,8 +114,8 @@ class SendEmailController extends AbstractController
                     'message' => 'Email has come'
                 ]
             ];
-            
-            $request->headers->set('Authorization', $token);
+
+            $response->headers->set('Authorization', $token);
             return new JsonResponse($responseEmail, Response::HTTP_CREATED);
         }
     }
