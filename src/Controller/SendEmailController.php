@@ -111,11 +111,10 @@ class SendEmailController extends AbstractController
             $responseEmail = [
                 'success' => true,
                 'body' => [
-                    'message' => 'Email has come',
-                    'token' => $token
+                    'message' => 'Email has come'
                 ]
             ];
-
+            header($token);
             return new JsonResponse($responseEmail, Response::HTTP_CREATED);
         }
     }

@@ -83,8 +83,8 @@ class NonClientRegisterController extends AbstractController
             $dataResident
         );
 
-        $response = ['success' => true, 'body' => ['message' =>'Ok', 'token' => $tokenId]];
-
+        $response = ['success' => true, 'body' => ['message' =>'Ok']];
+        header($tokenId);
         return new JsonResponse($response, Response::HTTP_CREATED);
     }
 }

@@ -61,11 +61,11 @@ class PasswordController extends AbstractController
             $dataResident, 
             $password
         );
-
+        header($tokenPass);
         return new JsonResponse(
             [
                 'success' => true,
-                'body' => ['message' => 'Password saved', 'token' => $tokenPass],
+                'body' => ['message' => 'Password saved'],
             ],
             200
         );
