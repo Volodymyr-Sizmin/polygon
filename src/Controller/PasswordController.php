@@ -61,7 +61,8 @@ class PasswordController extends AbstractController
             $dataResident, 
             $password
         );
-        header($tokenPass);
+
+        $request->headers->set('Authorization', $tokenPass);
         return new JsonResponse(
             [
                 'success' => true,
