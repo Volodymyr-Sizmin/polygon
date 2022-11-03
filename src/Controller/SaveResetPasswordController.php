@@ -24,7 +24,7 @@ class SaveResetPasswordController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/savereset", name="savereset", methods={"POST"})
+     * @Route("/registration_service/savereset", name="savereset", methods={"POST"})
      */
     public function savedata(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher): Response
     {

@@ -23,7 +23,7 @@ class SaveNonBankClientDataController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/savenondata", name="nondata", methods={"POST"})
+     * @Route("/registration_service/savenondata", name="nondata", methods={"POST"})
      */
     public function savedata(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher): Response
     {

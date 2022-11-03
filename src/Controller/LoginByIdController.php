@@ -22,7 +22,7 @@ class LoginByIdController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/loginid", name="loginid", methods={"POST"})
+     * @Route("/registration_service/loginid", name="loginid", methods={"POST"})
      */
     public function idLogin(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $encoder): Response
     {

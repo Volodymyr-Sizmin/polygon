@@ -23,7 +23,7 @@ class ClientPasswordController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/clientpassword", name="clientpassword", methods={"POST"})
+     * @Route("/registration_service/clientpassword", name="clientpassword", methods={"POST"})
      */
     public function passwordMatch(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher, Response $response)
     {

@@ -22,7 +22,7 @@ class ResetPasswordController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/newpassword", name="newpassword", methods={"POST"})
+     * @Route("/registration_service/newpassword", name="newpassword", methods={"POST"})
      */
     public function passwordMatch(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher)
     {

@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class FetchController extends AbstractController
 {
     /**
-     * @Route("/api/auth/fetch", name="fetch", methods={"GET"})
+     * @Route("/api/php bin/console debug:router/fetch", name="fetch", methods={"GET"})
      */
     public function matchCodes()
     {

@@ -20,7 +20,7 @@ class DecodeController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/decode", name="decode", methods={"POST"})
+     * @Route("/registration_service/decode", name="decode", methods={"POST"})
      */
     public function decodeJwtToken(Request $request)
     {

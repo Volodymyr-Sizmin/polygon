@@ -19,7 +19,7 @@ class ResetCodeController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/resetcode", name="resetcode", methods={"POST"})
+     * @Route("/registration_service/resetcode", name="resetcode", methods={"POST"})
      */
     public function matchResetCodes(Request $request)
     {

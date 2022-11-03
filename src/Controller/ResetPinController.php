@@ -62,7 +62,7 @@ class ResetPinController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/receiveId", name="receiveId", methods={"POST"})
+     * @Route("/registration_service/receiveId", name="receiveId", methods={"POST"})
      */
     public function recieveId(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator)
     {
@@ -136,7 +136,7 @@ class ResetPinController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/matchPin", name="matchPin", methods={"POST"})
+     * @Route("/registration_service/matchPin", name="matchPin", methods={"POST"})
      */
     public function matchPin(Request $request, ManagerRegistry $doctrine)
     {
@@ -170,7 +170,7 @@ class ResetPinController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/newPin", name="newPin", methods={"POST"})
+     * @Route("/registration_service/newPin", name="newPin", methods={"POST"})
      */
     public function newPin(Request $request)
     {
@@ -197,7 +197,7 @@ class ResetPinController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/finalPin", name="finalPin", methods={"POST"})
+     * @Route("/registration_service/finalPin", name="finalPin", methods={"POST"})
      */
     public function finalSavePin(Request $request, ManagerRegistry $doctrine)
     {

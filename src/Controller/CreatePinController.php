@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class CreatePinController extends AbstractController
 {
     /**
-     * @Route("/api/auth/createpin", name="createpin", methods={"POST"})
+     * @Route("/registration_service/createpin", name="createpin", methods={"POST"})
      */
     public function createPin(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator): Response
     {
@@ -70,7 +70,7 @@ class CreatePinController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/confpin", name="confirmpin", methods={"POST"})
+     * @Route("/registration_service/confpin", name="confirmpin", methods={"POST"})
      */
     public function confPin(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator)
     {

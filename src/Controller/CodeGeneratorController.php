@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CodeGeneratorController extends AbstractController
 {
     /**
-     * @Route("/api/auth/generatecode", name="clientquestion", methods={"POST"})
+     * @Route("/registration_service/generatecode", name="clientquestion", methods={"POST"})
      */
     public function generateCode(): Response
     {

@@ -22,7 +22,7 @@ class LoginController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/login", name="login", methods={"POST"})
+     * @Route("/registration_service/login", name="login", methods={"POST"})
      */
     public function emailLogin(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $encoder): Response
     {

@@ -19,7 +19,7 @@ class OwnQuestionController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/quest", name="question", methods={"POST"})
+     * @Route("/registration_service/quest", name="question", methods={"POST"})
      */
     public function yourQuestion(Request $request, Response $response)
     {

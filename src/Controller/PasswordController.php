@@ -18,7 +18,7 @@ class PasswordController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/password", name="password", methods={"POST"})
+     * @Route("/registration_service/password", name="password", methods={"POST"})
      */
     public function passwordMatch(Request $request)
     {
