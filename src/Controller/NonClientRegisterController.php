@@ -67,13 +67,13 @@ class NonClientRegisterController extends AbstractController
 
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
-        $matchEmail = ['email' => $token->params['0']->email];
-        $matchCode = ['code' => $token->params['1']->code];
-        $dataCodeLifetime = ['codeLifetime' => $token->params['2']->codeLifetime];
-        $dataIsBankClient = ['isBankClient' => $token->params['3']->isBankClient];
+        $matchEmail = ['email' => $token->aud];
+        $matchCode = ['code' => $token->data->code];
+        $dataCodeLifetime = ['codeLifetime' => $token->data->code_life_time];
+        $dataIsBankClient = ['isBankClient' => $token->data->is_bank_client];
 
         $tokenId = $this->tokenService->createToken(
-            $matchEmail, 
+            $matchEmail,
             $matchCode, 
             $dataCodeLifetime, 
             $dataIsBankClient, 

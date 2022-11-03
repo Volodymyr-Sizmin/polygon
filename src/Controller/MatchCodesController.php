@@ -27,9 +27,9 @@ class MatchCodesController extends AbstractController
 
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
-        
-        $matchCode = $token->params['1']->code;
-        $codeLifetime = $token->params['2']->codeLifetime;
+
+        $matchCode = $token->data->code;
+        $codeLifetime = $token->data->code_life_time;
 
         if ($matchCode != $data['code']) {
             return new JsonResponse(
