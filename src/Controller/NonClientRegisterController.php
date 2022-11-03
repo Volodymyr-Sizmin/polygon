@@ -22,7 +22,7 @@ class NonClientRegisterController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/nonclient", name="nonclient", methods={"POST"})
+     * @Route("/registration_service/nonclient", name="nonclient", methods={"POST"})
      */
     public function nonClientRegister(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator, Response $response)
     {

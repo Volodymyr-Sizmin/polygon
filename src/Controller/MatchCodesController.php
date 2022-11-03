@@ -19,7 +19,7 @@ class MatchCodesController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/code", name="code", methods={"POST"})
+     * @Route("/registration_service/code", name="code", methods={"POST"})
      */
     public function matchCodes(Request $request)
     {

@@ -27,7 +27,7 @@ class SendEmailController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/sendemail", name="email", methods={"POST"})
+     * @Route("/registration_service/sendemail", name="email", methods={"POST"})
      */
     public function sendEmail(Request $request, Response $response, ManagerRegistry $doctrine)
     {

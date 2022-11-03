@@ -22,7 +22,7 @@ class ClientQuestionController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/clientquest", name="clientquestion", methods={"POST"})
+     * @Route("/api/registration_service/clientquest", name="clientquestion", methods={"POST"})
      */
     public function yourQuestion(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator, Response $response)
     {

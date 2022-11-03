@@ -23,7 +23,7 @@ class SaveRegisterDataController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/savedata", name="savedata", methods={"POST"})
+     * @Route("/registration_service/savedata", name="savedata", methods={"POST"})
      */
     public function savedata(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validatorPass, UserPasswordHasherInterface $passwordHasher): Response
     {

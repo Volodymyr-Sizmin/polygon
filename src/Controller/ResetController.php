@@ -28,7 +28,7 @@ class ResetController extends AbstractController
     }
 
     /**
-     * @Route("/api/auth/reset", name="reset", methods={"POST"})
+     * @Route("/registration_service/reset", name="reset", methods={"POST"})
      */
     public function resetById(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator): Response
     {
