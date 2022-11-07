@@ -26,6 +26,19 @@ class MatchCodesController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $authorizationHeader = $request->headers->get('Authorization');
+
+        if (!isset($authorizationHeader)) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Empty token field in request header',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
 
         $matchCode = $token->data->code;
@@ -36,7 +49,7 @@ class MatchCodesController extends AbstractController
                 [
                     'success' => false,
                     'body' => [
-                        'message' => 'Введенный код не совпадает с присланным на почтовый ящик',
+                        'message' => 'The entered code does not match the code sent to the mailbox',
                     ],
                 ],
                 Response::HTTP_BAD_REQUEST
@@ -48,7 +61,7 @@ class MatchCodesController extends AbstractController
                 [
                     'success' => false,
                     'body' => [
-                        'message' => 'Срок жизни кода истек',
+                        'message' => 'Code has expired',
                     ],
                 ],
                 Response::HTTP_BAD_REQUEST
