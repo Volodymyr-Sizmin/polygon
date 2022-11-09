@@ -41,14 +41,14 @@ class PasswordController extends AbstractController
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
         
-        $matchEmail = ['email' => $token->params['0']->email];
-        $matchCode = ['code' => $token->params['1']->code];
-        $dataCodeLifetime = ['codeLifetime' => $token->params['2']->codeLifetime];
-        $dataIsBankClient = ['isBankClient' => $token->params['3']->isBankClient];
-        $dataFirst = ['FirstName' => $token->params['4']->FirstName];
-        $dataLast = ['LastName' => $token->params['5']->LastName];
-        $dataId = ['Id' => $token->params['6']->Id];
-        $dataResident = ['resident' => $token->params['7']->resident];
+        $matchEmail = ['email' => $token->aud];
+        $matchCode = ['code' => $token->data[1]->code];
+        $dataCodeLifetime = ['code_life_time' => $token->data[2]->code_life_time];
+        $dataIsBankClient = ['is_bank_client' => $token->data[3]->is_bank_client];
+        $dataFirst = ['first_name' => $token->data[4]->first_name];
+        $dataLast = ['last_name' => $token->data[5]->last_name];
+        $dataId = ['passport_id' => $token->data[6]->passport_id];
+        $dataResident = ['resident' => $token->data[7]->resident];
 
         $tokenPass = $this->tokenService->createToken(
             $matchEmail, 

@@ -63,13 +63,13 @@ class SendEmailController extends AbstractController
             $code = rand(100000, 999999);
             $dataEmail = ['email' => $data['email']];
             $dataCode = ['code' => $code];
-            $dataCodeLifetime = ['codeLifetime' => time() + 600];
-            $dataIsBankClient = ['isBankClient' => $isBankClient];
+            $dataCodeLifetime = ['code_life_time' => time() + 600];
+            $dataIsBankClient = ['is_bank_client' => $isBankClient];
 
             if ($isBankClient) {
-                $dataFirst = ['FirstName' => $user->getFirstName()];
-                $dataLast = ['LastName' => $user->getLastName()];
-                $dataId = ['Id' => $user->getPassportId()];
+                $dataFirst = ['first_name' => $user->getFirstName()];
+                $dataLast = ['last_name' => $user->getLastName()];
+                $dataId = ['passport_id' => $user->getPassportId()];
                 $dataResident = ['resident' => $user->getResident()];
 
                 $token = $this->tokenService->createToken(

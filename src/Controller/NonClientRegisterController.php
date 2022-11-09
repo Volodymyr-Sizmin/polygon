@@ -29,7 +29,7 @@ class NonClientRegisterController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $em = $doctrine->getManager();
-        $userId = $em->getRepository(User::class)->findBy(['passport_id' => $data['PassId']]);
+        $userId = $em->getRepository(User::class)->findBy(['passport_id' => $data['passport_id']]);
 
         if (!empty($userId)) {
             return new JsonResponse(
@@ -60,17 +60,17 @@ class NonClientRegisterController extends AbstractController
                 Response::HTTP_BAD_REQUEST);
         }
 
-        $dataFirst = ['FirstName' => $data['FirstName']];
-        $dataLast = ['LastName' => $data['LastName']];
-        $dataId = ['Id' => $data['PassId']];
-        $dataResident = ['resident' => $data['Residence']];
+        $dataFirst = ['first_name' => $data['first_name']];
+        $dataLast = ['last_name' => $data['last_name']];
+        $dataId = ['passport_id' => $data['passport_id']];
+        $dataResident = ['resident' => $data['resident']];
 
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
         $matchEmail = ['email' => $token->aud];
-        $matchCode = ['code' => $token->data->code];
-        $dataCodeLifetime = ['codeLifetime' => $token->data->code_life_time];
-        $dataIsBankClient = ['isBankClient' => $token->data->is_bank_client];
+        $matchCode = ['code' => $token->data[1]->code];
+        $dataCodeLifetime = ['code_life_time' => $token->data[2]->code_life_time];
+        $dataIsBankClient = ['is_bank_client' => $token->data[3]->is_bank_client];
 
         $tokenId = $this->tokenService->createToken(
             $matchEmail,
