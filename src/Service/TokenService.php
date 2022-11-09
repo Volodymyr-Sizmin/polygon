@@ -7,6 +7,18 @@ use Firebase\JWT\Key;
 
 class TokenService
 {
+    /*
+    @params['0'] - email
+    @params['1'] - code
+    @params['2'] - codeLifetime
+    @params['3'] - isBankClient
+    @params['4'] - FirstName
+    @params['5'] - LastName
+    @params['6'] - Id
+    @params['7'] - resident
+    @params['8'] - password
+    @params['9'] - role
+    */
     public function createToken(...$params)
     {
         $private_key = 'nZr4u7x!A%D*G-KaPdSgVkYp2s5v8y/B?E(H+MbQeThWmZq4t6w9z_C&F)J@NcRf';
@@ -18,11 +30,13 @@ class TokenService
         $resident = ((isset($params[7])) ? intval($params[7]['resident']) : '');
         $is_bank_client = ((isset($params[3])) ? intval($params[3]['isBankClient']) : '');
         $password = ((isset($params[8])) ? $params[8]['password'] : '');
+        $role = ((isset($params[9])) ? $params[9]['role'] : '');
         $payload = [
             'iss' => 'admin@polybank.ru',
             'iat' => $now_seconds,
             'exp' => $now_seconds + (1800),
             'aud' => $params[0]['email'],
+            'role' => $role,
             'data' => [
                 "code" => $params[1]['code'],
                 "code_life_time" => $params[2]['codeLifetime'],
