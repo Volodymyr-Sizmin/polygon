@@ -110,9 +110,9 @@ class SendEmailController extends AbstractController
 
             $responseEmail = [
                 'success' => true,
+                'token' => "Bearer $token",
                 'body' => [
-                    'message' => 'Email has come',
-                    'token' => "Bearer $token"
+                    'message' => 'Email has come'
                 ]
             ];
 
