@@ -76,6 +76,7 @@ class LoginController extends AbstractController
             'success' => true,
             'body' => [
                 'message' => 'User successfully authorized',
+                'token' => "Bearer $token"
             ],
         ]);
     }

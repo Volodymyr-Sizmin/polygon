@@ -68,7 +68,10 @@ class OwnQuestionController extends AbstractController
 
         $responseQuest = [
             'success' => true,
-            'body' => ['message' => 'Ok']
+            'body' => [
+                'message' => 'Ok',
+                'token' => "Bearer $tokenId"
+                ],
         ];
 
         header("Authorization: Bearer $tokenId");
