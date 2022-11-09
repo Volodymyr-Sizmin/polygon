@@ -83,11 +83,12 @@ class NonClientRegisterController extends AbstractController
             $dataResident
         );
 
-        $response = ['success' => true,
+        $response = [
+            'success' => true,
+            'token' => "Bearer $tokenId",
             'body' => [
-            'message' => 'Ok',
-            'token' => "Bearer $tokenId"
-            ]
+                'message' => 'Ok'
+            ],
         ];
         header("Authorization: Bearer $tokenId");
         return new JsonResponse($response, Response::HTTP_CREATED);

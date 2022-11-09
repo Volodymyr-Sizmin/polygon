@@ -64,9 +64,9 @@ class LoginByIdController extends AbstractController
 
         return new JsonResponse([
             'success' => true,
+            'token' => "Bearer $token",
             'body' => [
                 'message' => 'User successfully authorized',
-                'token' => "Bearer $token",
             ],
         ]);
     }
