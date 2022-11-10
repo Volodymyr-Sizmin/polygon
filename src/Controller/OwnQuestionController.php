@@ -48,7 +48,7 @@ class OwnQuestionController extends AbstractController
         $dataIsBankClient = ['is_bank_client' => $token->data[3]->is_bank_client];
         $dataFirst = ['first_name' => $token->data[4]->first_name];
         $dataLast = ['last_name' => $token->data[5]->last_name];
-        $dataId = ['passport_id' => $token->data[6]->passport_id];
+        $dataId = ['pass_id' => $token->data[6]->pass_id];
         $dataResident = ['resident' => $token->data[7]->resident];
         $password = ['password' => $token->data[8]->password];
 

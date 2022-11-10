@@ -37,7 +37,7 @@ class LoginByIdController extends AbstractController
         }
 
         $entityManager = $doctrine->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['passport_id' => $data['passport_id']]);
+        $user = $entityManager->getRepository(User::class)->findOneBy(['passport_id' => $data['pass_id']]);
 
         if (!$user) {
             $response = [

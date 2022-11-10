@@ -29,7 +29,7 @@ class NonClientRegisterController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $em = $doctrine->getManager();
-        $userId = $em->getRepository(User::class)->findBy(['passport_id' => $data['passport_id']]);
+        $userId = $em->getRepository(User::class)->findBy(['passport_id' => $data['pass_id']]);
 
         if (!empty($userId)) {
             return new JsonResponse(
@@ -62,7 +62,7 @@ class NonClientRegisterController extends AbstractController
 
         $dataFirst = ['first_name' => $data['first_name']];
         $dataLast = ['last_name' => $data['last_name']];
-        $dataId = ['passport_id' => $data['passport_id']];
+        $dataId = ['pass_id' => $data['pass_id']];
         $dataResident = ['resident' => $data['resident']];
 
         $authorizationHeader = $request->headers->get('Authorization');
