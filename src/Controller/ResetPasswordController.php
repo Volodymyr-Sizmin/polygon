@@ -48,7 +48,7 @@ class ResetPasswordController extends AbstractController
 
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
         $email = $token->params['1']->email;
-        $matchCode = ['code' => $token->params['0']->code];
+        $matchCode = ['code' => $token->data['0']->code];
         $matchEmail = ['email' =>$email];
 
         $tokenPass = $this->tokenService->createToken($matchCode, $matchEmail, $dataPass);

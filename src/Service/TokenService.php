@@ -14,6 +14,7 @@ class TokenService
 
         $now_seconds = time();
         $role = ((isset($params['data']['role'])) ? $params['data']['role'] : null);
+
         $payload = [
             'iss' => 'admin@polybank.ru',
             'iat' => $now_seconds,

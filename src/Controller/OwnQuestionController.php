@@ -42,7 +42,7 @@ class OwnQuestionController extends AbstractController
 
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
-        $matchEmail = ['email' => $token->aud];
+        $matchEmail = ['email' => $token->data[0]->email];
         $matchCode = ['code' => $token->data[1]->code];
         $dataCodeLifetime = ['code_life_time' => $token->data[2]->code_life_time];
         $dataIsBankClient = ['is_bank_client' => $token->data[3]->is_bank_client];

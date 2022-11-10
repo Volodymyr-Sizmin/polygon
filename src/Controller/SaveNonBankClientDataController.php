@@ -31,15 +31,15 @@ class SaveNonBankClientDataController extends AbstractController
 
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
-        $matchEmail = implode(['email' => $token->params['0']->email]);
-        $dataIsBankClient = implode(['isBankClient' => $token->params['3']->isBankClient]);
-        $dataFirst = implode(['FirstName' => $token->params['4']->FirstName]);
-        $dataLast = implode(['LastName' => $token->params['5']->LastName]);
-        $dataId = implode(['Id' => $token->params['6']->Id]);
-        $dataResident = implode(['residence' => $token->params['7']->residence]);
-        $password = implode(['email' => $token->params['8']->password]);
-        $dataQuest = implode(['Question' => $token->params['9']->question]);
-        $dataAnswer = implode(['answer' => $token->params['10']->answer]);
+        $matchEmail = implode(['email' => $token->data['0']->email]);
+        $dataIsBankClient = implode(['is_bank_client' => $token->data['3']->is_bank_client]);
+        $dataFirst = implode(['first_name' => $token->data['4']->first_name]);
+        $dataLast = implode(['last_name' => $token->data['5']->last_name]);
+        $dataId = implode(['pass_id' => $token->data['6']->pass_id]);
+        $dataResident = implode(['residence' => $token->data['7']->residence]);
+        $password = implode(['email' => $token->data['8']->password]);
+        $dataQuest = implode(['question' => $token->data['9']->question]);
+        $dataAnswer = implode(['answer' => $token->data['10']->answer]);
 
         $em = $doctrine->getManager();
 

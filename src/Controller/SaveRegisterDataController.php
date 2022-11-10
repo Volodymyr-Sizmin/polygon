@@ -30,10 +30,10 @@ class SaveRegisterDataController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         $token = $this->tokenService->decodeToken($data['token']);
-        $matchEmail = implode(['email' => $token->params['0']->email]);
-        $password = implode(['email' => $token->params['2']->password]);
-        $dataQuest = implode(['Question' => $token->params['3']->question]);
-        $dataAnswer = implode(['answer' => $token->params['4']->answer]);
+        $matchEmail = implode(['email' => $token->data['0']->email]);
+        $password = implode(['email' => $token->data['2']->password]);
+        $dataQuest = implode(['question' => $token->data['3']->question]);
+        $dataAnswer = implode(['answer' => $token->data['4']->answer]);
 
         $user = new User();
 
