@@ -69,7 +69,13 @@ class LoginController extends AbstractController
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
-        $token = $this->tokenService->createToken($user);
+        $email = $user->getEmail();
+        $resident = $user->getResident();
+
+        $token = $this->tokenService->createToken(
+            ['email' => $email],
+            ['residence' => $resident]
+        );
         header("Authorization: Bearer $token");
 
         return new JsonResponse([

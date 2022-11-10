@@ -37,11 +37,11 @@ class SaveResetPasswordController extends AbstractController
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
 
-        $password = implode(['password' => $token->params['2']->password]);
+        $password = implode(['password' => $token->data['2']->password]);
 
 
         $entityManager = $doctrine->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $token->params['1']->email]);
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $token->data['1']->email]);
 
         $hashedPass = $passwordHasher->hashPassword(
             $user,

@@ -14,11 +14,12 @@ class TokenService
 
         $now_seconds = time();
         $role = ((isset($params['data']['role'])) ? $params['data']['role'] : null);
+
         $payload = [
             'iss' => 'admin@polybank.ru',
             'iat' => $now_seconds,
             'exp' => $now_seconds + (1800),
-            'aud' => $params[0]['email'],
+            'aud' => 'https://polygon-application-php.andersenlab.dev',
             'role' => $role,
             'data' => $params
         ];
