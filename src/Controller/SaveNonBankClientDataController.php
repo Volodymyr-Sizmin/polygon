@@ -36,7 +36,7 @@ class SaveNonBankClientDataController extends AbstractController
         $dataFirst = implode(['FirstName' => $token->params['4']->FirstName]);
         $dataLast = implode(['LastName' => $token->params['5']->LastName]);
         $dataId = implode(['Id' => $token->params['6']->Id]);
-        $dataResident = implode(['resident' => $token->params['7']->resident]);
+        $dataResident = implode(['residence' => $token->params['7']->residence]);
         $password = implode(['email' => $token->params['8']->password]);
         $dataQuest = implode(['Question' => $token->params['9']->question]);
         $dataAnswer = implode(['answer' => $token->params['10']->answer]);
