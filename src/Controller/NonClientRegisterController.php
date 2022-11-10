@@ -63,7 +63,7 @@ class NonClientRegisterController extends AbstractController
         $dataFirst = ['first_name' => $data['first_name']];
         $dataLast = ['last_name' => $data['last_name']];
         $dataId = ['pass_id' => $data['pass_id']];
-        $dataResident = ['resident' => $data['resident']];
+        $dataResident = ['residence' => $data['residence']];
 
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));

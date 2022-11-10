@@ -70,7 +70,7 @@ class SendEmailController extends AbstractController
                 $dataFirst = ['first_name' => $user->getFirstName()];
                 $dataLast = ['last_name' => $user->getLastName()];
                 $dataId = ['pass_id' => $user->getPassportId()];
-                $dataResident = ['resident' => $user->getResident()];
+                $dataResident = ['residence' => $user->getResident()];
 
                 $token = $this->tokenService->createToken(
                     $dataEmail,

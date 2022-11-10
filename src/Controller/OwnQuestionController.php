@@ -49,7 +49,7 @@ class OwnQuestionController extends AbstractController
         $dataFirst = ['first_name' => $token->data[4]->first_name];
         $dataLast = ['last_name' => $token->data[5]->last_name];
         $dataId = ['pass_id' => $token->data[6]->pass_id];
-        $dataResident = ['resident' => $token->data[7]->resident];
+        $dataResident = ['residence' => $token->data[7]->residence];
         $password = ['password' => $token->data[8]->password];
 
         $tokenId = $this->tokenService->createToken(
