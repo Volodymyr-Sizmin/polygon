@@ -170,6 +170,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $resident;
 
+    /**
+     * @ORM\Column(type="smallint", nullable=true)
+     */
+    private $full_registration;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -399,6 +404,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setResident(bool $resident): self
     {
         $this->resident = $resident;
+
+        return $this;
+    }
+
+    public function getFullRegistration(): ?int
+    {
+        return $this->full_registration;
+    }
+
+    public function setFullRegistration(?int $full_registration): self
+    {
+        $this->full_registration = $full_registration;
 
         return $this;
     }
