@@ -77,13 +77,12 @@ class MatchCodesController extends AbstractController
         if (isset($user)) {
             $user->setEmail($matchEmail);
             $em->merge($user);
-            $em->flush();
         } else {
             $user = new User();
             $user->setEmail($matchEmail);
             $em->persist($user);
-            $em->flush();
         }
+        $em->flush();
 
         return new JsonResponse(
             [
