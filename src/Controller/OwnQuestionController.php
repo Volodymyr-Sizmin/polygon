@@ -62,32 +62,22 @@ class OwnQuestionController extends AbstractController
         $userPassId = $user->getPassportId();
         $userResidence = $user->getResident();
 
+        $user->setFirstName(implode($dataFirst));
+        $user->setLastName(implode($dataLast));
+        $user->setPassportId(implode($dataId));
+        $user->setResident(implode($dataResident));
+        $hashedPass = $passwordHasher->hashPassword($user, implode($password));
+        $user->setPassword($hashedPass);
+        $user->setAnswer(implode($dataAnswer));
+        $user->setQuestion(implode($dataQuest));
+        $user->setFullRegistration(true);
 
         if (isset($userFirstName) || isset($userLastName) || isset($userPassId) || isset($userResidence)) {
-            $user->setFirstName(implode($dataFirst));
-            $user->setLastName(implode($dataLast));
-            $user->setPassportId(implode($dataId));
-            $user->setResident(implode($dataResident));
-            $hashedPass = $passwordHasher->hashPassword($user, implode($password));
-            $user->setPassword($hashedPass);
-            $user->setAnswer(implode($dataAnswer));
-            $user->setQuestion(implode($dataQuest));
-            $user->setFullRegistration(true);
             $em->merge($user);
-            $em->flush();
         } else {
-            $user->setFirstName(implode($dataFirst));
-            $user->setLastName(implode($dataLast));
-            $user->setPassportId(implode($dataId));
-            $user->setResident(implode($dataResident));
-            $hashedPass = $passwordHasher->hashPassword($user, implode($password));
-            $user->setPassword($hashedPass);
-            $user->setAnswer(implode($dataAnswer));
-            $user->setQuestion(implode($dataQuest));
-            $user->setFullRegistration(true);
             $em->persist($user);
-            $em->flush();
         }
+        $em->flush();
 
         $tokenId = $this->tokenService->createToken(
             $matchEmail,

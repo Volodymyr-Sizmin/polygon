@@ -25,7 +25,7 @@ class PasswordController extends AbstractController
     public function passwordMatch(Request $request, ManagerRegistry $doctrine)
     {
         $data = json_decode($request->getContent(), true);
-        
+
         if ($data['password'] !== $data['confirm_password']) {
             return new JsonResponse(
                 [
@@ -37,12 +37,12 @@ class PasswordController extends AbstractController
                 404
             );
         }
-        
+
         $password = ['password' => $data['password']];
 
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
-        
+
         $matchEmail = ['email' => $token->data[0]->email];
         $matchCode = ['code' => $token->data[1]->code];
         $dataCodeLifetime = ['code_life_time' => $token->data[2]->code_life_time];
@@ -59,31 +59,27 @@ class PasswordController extends AbstractController
         $userPassId = $user->getPassportId();
         $userResidence = $user->getResident();
 
+        $user->setFirstName(implode($dataFirst));
+        $user->setLastName(implode($dataLast));
+        $user->setPassportId(implode($dataId));
+        $user->setResident(implode($dataResident));
+
         if (isset($userFirstName) || isset($userLastName) || isset($userPassId) || isset($userResidence)) {
-            $user->setFirstName(implode($dataFirst));
-            $user->setLastName(implode($dataLast));
-            $user->setPassportId(implode($dataId));
-            $user->setResident(implode($dataResident));
             $em->merge($user);
-            $em->flush();
         } else {
-            $user->setFirstName(implode($dataFirst));
-            $user->setLastName(implode($dataLast));
-            $user->setPassportId(implode($dataId));
-            $user->setResident(implode($dataResident));
             $em->persist($user);
-            $em->flush();
         }
+        $em->flush();
 
         $tokenPass = $this->tokenService->createToken(
-            $matchEmail, 
-            $matchCode, 
+            $matchEmail,
+            $matchCode,
             $dataCodeLifetime,
-            $dataIsBankClient, 
-            $dataFirst, 
-            $dataLast, 
+            $dataIsBankClient,
+            $dataFirst,
+            $dataLast,
             $dataId,
-            $dataResident, 
+            $dataResident,
             $password
         );
 
