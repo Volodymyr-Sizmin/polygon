@@ -48,7 +48,11 @@ class SendEmailController extends AbstractController
         $entityManager = $doctrine->getManager();
         $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
 
-        if ($user && $user->getQuestion()) {
+        if (isset($user)) {
+            $registrationStatus = $user->getFullRegistration();
+        }
+
+        if (isset($registrationStatus) && $registrationStatus == true) {
             return new JsonResponse(
                 [
                     'success' => false,

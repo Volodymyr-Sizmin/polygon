@@ -31,7 +31,7 @@ class NonClientRegisterController extends AbstractController
         $em = $doctrine->getManager();
         $userId = $em->getRepository(User::class)->findBy(['passport_id' => $data['pass_id']]);
 
-        if (!empty($userId)) {
+        if (!empty($userId) && $userId[0]->getFullRegistration() == true) {
             return new JsonResponse(
                 [
                     'success' => false,

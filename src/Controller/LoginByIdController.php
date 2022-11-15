@@ -59,7 +59,16 @@ class LoginByIdController extends AbstractController
             return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
         }
 
-        $token = $this->tokenService->createToken($user);
+        if ($user->getFullRegistration() == false) {
+            $response = [
+                'success' => false,
+                'body' => ['message' => 'User is not fully registered'],
+            ];
+            return new JsonResponse($response, Response::HTTP_BAD_REQUEST);
+        }
+
+        $passId = $user->getPassportId();
+        $token = $this->tokenService->createToken(['pass_id' => $passId]);
         header("Authorization: Bearer $token");
 
         return new JsonResponse([

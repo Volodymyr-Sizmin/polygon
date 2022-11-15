@@ -39,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $email;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="json", nullable=true)
      */
     private $roles = [];
 
@@ -98,7 +98,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $answer;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Regex(
      *     pattern="/[a-zA-Z]{2,26}|\s|[0-9]{1,33}/", groups={"passport"},
      *     match=true, groups={"passport"},
@@ -114,7 +114,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $passport_id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Regex(
      *     pattern="/[A-Za-z]{1,33}|\'|\-|\s/", groups={"name"},
      *     match=true, groups={"name"},
@@ -124,7 +124,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $FirstName;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Regex(
      *     pattern="/[A-Za-z]{1,33}|\'|\-|\s/", groups={"name"},
      *     match=true, groups={"name"},
@@ -166,7 +166,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $counter;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $resident;
 
@@ -232,7 +232,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }

@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Service\TokenService;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,10 +22,10 @@ class PasswordController extends AbstractController
     /**
      * @Route("/registration_service/password", name="password", methods={"POST"})
      */
-    public function passwordMatch(Request $request)
+    public function passwordMatch(Request $request, ManagerRegistry $doctrine)
     {
         $data = json_decode($request->getContent(), true);
-        
+
         if ($data['password'] !== $data['confirm_password']) {
             return new JsonResponse(
                 [
@@ -35,12 +37,12 @@ class PasswordController extends AbstractController
                 404
             );
         }
-        
+
         $password = ['password' => $data['password']];
 
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
-        
+
         $matchEmail = ['email' => $token->data[0]->email];
         $matchCode = ['code' => $token->data[1]->code];
         $dataCodeLifetime = ['code_life_time' => $token->data[2]->code_life_time];
@@ -50,15 +52,34 @@ class PasswordController extends AbstractController
         $dataId = ['pass_id' => $token->data[6]->pass_id];
         $dataResident = ['residence' => $token->data[7]->residence];
 
+        $em = $doctrine->getManager();
+        $user = $em->getRepository(User::class)->findOneBy(['email' => $matchEmail]);
+        $userFirstName = $user->getFirstName();
+        $userLastName = $user->getLastName();
+        $userPassId = $user->getPassportId();
+        $userResidence = $user->getResident();
+
+        $user->setFirstName(implode($dataFirst));
+        $user->setLastName(implode($dataLast));
+        $user->setPassportId(implode($dataId));
+        $user->setResident(implode($dataResident));
+
+        if (isset($userFirstName) || isset($userLastName) || isset($userPassId) || isset($userResidence)) {
+            $em->merge($user);
+        } else {
+            $em->persist($user);
+        }
+        $em->flush();
+
         $tokenPass = $this->tokenService->createToken(
-            $matchEmail, 
-            $matchCode, 
+            $matchEmail,
+            $matchCode,
             $dataCodeLifetime,
-            $dataIsBankClient, 
-            $dataFirst, 
-            $dataLast, 
+            $dataIsBankClient,
+            $dataFirst,
+            $dataLast,
             $dataId,
-            $dataResident, 
+            $dataResident,
             $password
         );
 

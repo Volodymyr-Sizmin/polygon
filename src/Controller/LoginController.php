@@ -72,18 +72,26 @@ class LoginController extends AbstractController
         $email = $user->getEmail();
         $resident = $user->getResident();
 
-        $token = $this->tokenService->createToken(
-            ['email' => $email],
-            ['residence' => $resident]
-        );
-        header("Authorization: Bearer $token");
-
+        if ($user->getFullRegistration()) {
+            $token = $this->tokenService->createToken(
+                ['email' => $email],
+                ['residence' => $resident]
+            );
+            header("Authorization: Bearer $token");
+            return new JsonResponse([
+                'success' => true,
+                'token' => "Bearer $token",
+                'body' => [
+                    'message' => 'User successfully authorized',
+                ],
+            ]);
+        }
         return new JsonResponse([
-            'success' => true,
-            'token' => "Bearer $token",
+            'success' => false,
             'body' => [
-                'message' => 'User successfully authorized',
-            ],
-        ]);
+                'message' => 'User isn\'t fully registered',
+            ]
+        ], Response::HTTP_BAD_REQUEST
+        );
     }
 }
