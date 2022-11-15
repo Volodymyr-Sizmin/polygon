@@ -2,11 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Service\TokenService;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class OwnQuestionController extends AbstractController
@@ -21,7 +24,7 @@ class OwnQuestionController extends AbstractController
     /**
      * @Route("/registration_service/quest", name="question", methods={"POST"})
      */
-    public function yourQuestion(Request $request, Response $response)
+    public function yourQuestion(Request $request, Response $response, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher)
     {
         $data = json_decode($request->getContent(), true);
 
@@ -51,6 +54,40 @@ class OwnQuestionController extends AbstractController
         $dataId = ['pass_id' => $token->data[6]->pass_id];
         $dataResident = ['residence' => $token->data[7]->residence];
         $password = ['password' => $token->data[8]->password];
+
+        $em = $doctrine->getManager();
+        $user = $em->getRepository(User::class)->findOneBy(['email' => $matchEmail]);
+        $userFirstName = $user->getFirstName();
+        $userLastName = $user->getLastName();
+        $userPassId = $user->getPassportId();
+        $userResidence = $user->getResident();
+
+
+        if (isset($userFirstName) || isset($userLastName) || isset($userPassId) || isset($userResidence)) {
+            $user->setFirstName(implode($dataFirst));
+            $user->setLastName(implode($dataLast));
+            $user->setPassportId(implode($dataId));
+            $user->setResident(implode($dataResident));
+            $hashedPass = $passwordHasher->hashPassword($user, implode($password));
+            $user->setPassword($hashedPass);
+            $user->setAnswer(implode($dataAnswer));
+            $user->setQuestion(implode($dataQuest));
+            $user->setFullRegistration(true);
+            $em->merge($user);
+            $em->flush();
+        } else {
+            $user->setFirstName(implode($dataFirst));
+            $user->setLastName(implode($dataLast));
+            $user->setPassportId(implode($dataId));
+            $user->setResident(implode($dataResident));
+            $hashedPass = $passwordHasher->hashPassword($user, implode($password));
+            $user->setPassword($hashedPass);
+            $user->setAnswer(implode($dataAnswer));
+            $user->setQuestion(implode($dataQuest));
+            $user->setFullRegistration(true);
+            $em->persist($user);
+            $em->flush();
+        }
 
         $tokenId = $this->tokenService->createToken(
             $matchEmail,

@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Service\TokenService;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +23,7 @@ class MatchCodesController extends AbstractController
     /**
      * @Route("/registration_service/code", name="code", methods={"POST"})
      */
-    public function matchCodes(Request $request)
+    public function matchCodes(Request $request, ManagerRegistry $doctrine)
     {
         $data = json_decode($request->getContent(), true);
 
@@ -43,6 +45,7 @@ class MatchCodesController extends AbstractController
 
         $matchCode = $token->data[1]->code;
         $codeLifetime = $token->data[2]->code_life_time;
+        $matchEmail = $token->data[0]->email;
 
         if ($matchCode != $data['code']) {
             return new JsonResponse(
@@ -66,6 +69,20 @@ class MatchCodesController extends AbstractController
                 ],
                 Response::HTTP_BAD_REQUEST
             );
+        }
+
+        $em = $doctrine->getManager();
+        $user = $em->getRepository(User::class)->findOneBy(['email' => $matchEmail]);
+
+        if (isset($user)) {
+            $user->setEmail($matchEmail);
+            $em->merge($user);
+            $em->flush();
+        } else {
+            $user = new User();
+            $user->setEmail($matchEmail);
+            $em->persist($user);
+            $em->flush();
         }
 
         return new JsonResponse(

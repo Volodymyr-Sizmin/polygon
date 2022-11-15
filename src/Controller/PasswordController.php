@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Service\TokenService;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +22,7 @@ class PasswordController extends AbstractController
     /**
      * @Route("/registration_service/password", name="password", methods={"POST"})
      */
-    public function passwordMatch(Request $request)
+    public function passwordMatch(Request $request, ManagerRegistry $doctrine)
     {
         $data = json_decode($request->getContent(), true);
         
@@ -49,6 +51,29 @@ class PasswordController extends AbstractController
         $dataLast = ['last_name' => $token->data[5]->last_name];
         $dataId = ['pass_id' => $token->data[6]->pass_id];
         $dataResident = ['residence' => $token->data[7]->residence];
+
+        $em = $doctrine->getManager();
+        $user = $em->getRepository(User::class)->findOneBy(['email' => $matchEmail]);
+        $userFirstName = $user->getFirstName();
+        $userLastName = $user->getLastName();
+        $userPassId = $user->getPassportId();
+        $userResidence = $user->getResident();
+
+        if (isset($userFirstName) || isset($userLastName) || isset($userPassId) || isset($userResidence)) {
+            $user->setFirstName(implode($dataFirst));
+            $user->setLastName(implode($dataLast));
+            $user->setPassportId(implode($dataId));
+            $user->setResident(implode($dataResident));
+            $em->merge($user);
+            $em->flush();
+        } else {
+            $user->setFirstName(implode($dataFirst));
+            $user->setLastName(implode($dataLast));
+            $user->setPassportId(implode($dataId));
+            $user->setResident(implode($dataResident));
+            $em->persist($user);
+            $em->flush();
+        }
 
         $tokenPass = $this->tokenService->createToken(
             $matchEmail, 
