@@ -101,7 +101,8 @@ class ResetController extends AbstractController
         $mailer->send($emailForSend);
         $response = [
             'success' => true, 
-            'message' => ['Email has come'], 
+            'message' => ['Email has come'],
+            'token' => "Bearer $token",
             'email' => $user->getEmail(),
             'passport_id' => $data['passport_id'],
         ];
