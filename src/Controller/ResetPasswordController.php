@@ -47,7 +47,7 @@ class ResetPasswordController extends AbstractController
         ];
 
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
-        $email = $token->params['1']->email;
+        $email = $token->data['1']->email;
         $matchCode = ['code' => $token->data['0']->code];
         $matchEmail = ['email' =>$email];
 
@@ -70,9 +70,9 @@ class ResetPasswordController extends AbstractController
         return new JsonResponse(
             [
                 'success' => true,
+                'token' => "Bearer $tokenPass",
                 'body' => [
-                    'message' => 'Password saved',
-                    'token' => $tokenPass
+                    'message' => 'Password saved'
                 ],
             ],
             200
