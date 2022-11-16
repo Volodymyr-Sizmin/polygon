@@ -45,7 +45,7 @@ class ResetController extends AbstractController
         $data['reset_code'] = rand(100000, 999999);
 
         $entityManager = $doctrine->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['passport_id' => $data['pass_id']]);
+        $user = $entityManager->getRepository(User::class)->findOneBy(['passport_id' => $data['passport_id']]);
 
         if (!$user) {
             $response = [
@@ -103,7 +103,7 @@ class ResetController extends AbstractController
             'success' => true, 
             'message' => ['Email has come'], 
             'email' => $user->getEmail(),
-            'passport_id' => $data['pass_id'],
+            'passport_id' => $data['passport_id'],
         ];
 
         header("Authorization: Bearer $token");
