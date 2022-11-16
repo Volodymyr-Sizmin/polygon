@@ -60,8 +60,8 @@ class ClientPasswordController extends AbstractController
         $password = ['password' => $data['password']];
 
         $token = $this->tokenService->decodeToken($data['token']);
-        $matchCode = ['code' => $token->params['1']->code];
-        $matchEmail = ['email' => $token->params['0']->email];
+        $matchCode = ['code' => $token->data['1']->code];
+        $matchEmail = ['email' => $token->data['0']->email];
 
         $tokenPass = $this->tokenService->createToken($matchEmail, $matchCode, $password);
 
