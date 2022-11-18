@@ -66,8 +66,7 @@ class OwnQuestionController extends AbstractController
         $user->setLastName(implode($dataLast));
         $user->setPassportId(implode($dataId));
         $user->setResident(implode($dataResident));
-        $hashedPass = $passwordHasher->hashPassword($user, implode($password));
-        $user->setPassword($hashedPass);
+        $user->setPassword(implode($password));
         $user->setAnswer(implode($dataAnswer));
         $user->setQuestion(implode($dataQuest));
         $user->setFullRegistration(true);

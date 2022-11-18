@@ -63,7 +63,11 @@ class SendEmailController extends AbstractController
                 404
             );
         } else {
-            $isBankClient = ($user && !$user->getQuestion()) ? true : false;
+            $isBankClient = (
+                $user && $user->getFirstName()
+                && $user->getLastName()
+                && $user->getPassportId()
+            ) ? true : false;
             $code = rand(100000, 999999);
             $dataEmail = ['email' => $data['email']];
             $dataCode = ['code' => $code];
