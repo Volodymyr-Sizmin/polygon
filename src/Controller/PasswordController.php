@@ -72,8 +72,6 @@ class PasswordController extends AbstractController
         }
         $em->flush();
 
-
-
         $tokenPass = $this->tokenService->createToken(
             $matchEmail,
             $matchCode,
