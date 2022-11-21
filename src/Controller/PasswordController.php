@@ -63,14 +63,14 @@ class PasswordController extends AbstractController
         $user->setPassportId(implode($dataId));
         $user->setResident(implode($dataResident));
 
+        $password = ['password' => $passwordHasher->hashPassword($user, $data['password'])];
+
         if (isset($userFirstName) || isset($userLastName) || isset($userPassId) || isset($userResidence)) {
             $em->merge($user);
         } else {
             $em->persist($user);
         }
         $em->flush();
-
-        $password = ['password' => $passwordHasher->hashPassword($user, $data['password'])];
 
         $tokenPass = $this->tokenService->createToken(
             $matchEmail,
