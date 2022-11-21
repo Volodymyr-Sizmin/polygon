@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class PasswordController extends AbstractController
@@ -22,7 +23,7 @@ class PasswordController extends AbstractController
     /**
      * @Route("/registration_service/password", name="password", methods={"POST"})
      */
-    public function passwordMatch(Request $request, ManagerRegistry $doctrine)
+    public function passwordMatch(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher)
     {
         $data = json_decode($request->getContent(), true);
 
@@ -37,8 +38,6 @@ class PasswordController extends AbstractController
                 404
             );
         }
-
-        $password = ['password' => $data['password']];
 
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
@@ -70,6 +69,8 @@ class PasswordController extends AbstractController
             $em->persist($user);
         }
         $em->flush();
+
+        $password = ['password' => $passwordHasher->hashPassword($user, $data['password'])];
 
         $tokenPass = $this->tokenService->createToken(
             $matchEmail,
