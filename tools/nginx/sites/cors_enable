@@ -1,5 +1,5 @@
 set $cors '';
-if ($http_origin ~ '^https?://(localhost|10.10.14.21|10.10.14.22|polygon-application.andersenlab.dev)') {
+if ($http_origin ~ '^https?://(localhost|10.10.14.21|10.10.14.22|polygon-application-php.andersenlab.dev)') {
         set $cors 'true';
 }
 
