@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,6 +47,28 @@ class MatchCodesController extends AbstractController
         $matchCode = $token->data[1]->code;
         $codeLifetime = $token->data[2]->code_life_time;
         $matchEmail = $token->data[0]->email;
+
+        $cookies = $request->cookies;
+        $cookieId = $cookies->get('PHPSESSID');
+        $session = $request->getSession();
+        $sessionId = $session->getId();
+
+        if (isset($cookieId) && $cookieId == $sessionId) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Please, wait for 10 minutes',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            $session->set('email', $matchEmail);
+            $cookies = new Cookie('PHPSESSID', $sessionId, time() + 600);
+            $response = new Response();
+            $response->headers->setCookie($cookies);
+        }
 
         if ($matchCode != $data['code']) {
             return new JsonResponse(
