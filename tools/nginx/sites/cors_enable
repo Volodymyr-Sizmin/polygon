@@ -5,7 +5,7 @@ if ($http_origin ~ '^https?://(localhost|10.10.14.21|10.10.14.22|polygon-applica
 
 
 if ($cors = 'true') {
-        add_header 'Access-Control-Allow-Origin' "$http_origin" always;
+        add_header 'Access-Control-Allow-Origin' "*" always;
         add_header 'Access-Control-Allow-Credentials' 'true' always;
         add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS' always;
         add_header 'Access-Control-Allow-Headers' 'Accept,X-AUTH-TOKEN,Cache-Control,Content-Type,Keep-Alive,Origin,User-Agent,Authorization' always;

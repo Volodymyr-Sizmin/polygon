@@ -49,11 +49,9 @@ class MatchCodesController extends AbstractController
         $matchEmail = $token->data[0]->email;
 
         $cookies = $request->cookies;
-        $cookieId = $cookies->get('PHPSESSID');
-        $session = $request->getSession();
-        $sessionId = $session->getId();
+        $cookieKey = $cookies->get('UserCookie');
 
-        if (isset($cookieId) && $cookieId == $sessionId) {
+        if (isset($cookieKey) && $cookieKey == $matchEmail) {
             return new JsonResponse(
                 [
                     'success' => false,
@@ -64,10 +62,10 @@ class MatchCodesController extends AbstractController
                 Response::HTTP_BAD_REQUEST
             );
         } else {
-            $session->set('email', $matchEmail);
-            $cookies = new Cookie('PHPSESSID', $sessionId, time() + 600);
+            $cookies = new Cookie('UserCookie', $matchEmail, time() + 600);
             $response = new Response();
             $response->headers->setCookie($cookies);
+            $response->sendHeaders();
         }
 
         if ($matchCode != $data['code']) {
