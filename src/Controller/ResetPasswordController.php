@@ -70,7 +70,6 @@ class ResetPasswordController extends AbstractController
         return new JsonResponse(
             [
                 'success' => true,
-                'token' => "Bearer $tokenPass",
                 'body' => [
                     'message' => 'Password saved'
                 ],
