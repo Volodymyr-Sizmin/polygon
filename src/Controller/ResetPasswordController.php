@@ -47,11 +47,11 @@ class ResetPasswordController extends AbstractController
         ];
 
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
-        $email = $token->data['1']->email;
-        $matchCode = ['code' => $token->data['0']->code];
+        $email = $token->aud;
+        $matchCode = ['code' => $token->data['1']->code];
         $matchEmail = ['email' =>$email];
 
-        $tokenPass = $this->tokenService->createToken($matchCode, $matchEmail, $dataPass);
+        $tokenPass = $this->tokenService->createToken($matchEmail, $matchCode, $dataPass);
 
         $user = $doctrine->getRepository(User::class)->findOneBy(['email' => $email]);
         

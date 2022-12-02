@@ -28,7 +28,7 @@ class ResetCodeController extends AbstractController
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
 
-        $matchCode = $token->data['0']->code;
+        $matchCode = $token->data['1']->code;
 
         if (!isset($matchCode)) {
             return new JsonResponse(

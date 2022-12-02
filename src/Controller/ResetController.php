@@ -62,7 +62,7 @@ class ResetController extends AbstractController
 
         $dataEmail = ['email' => $user->getEmail()];
 
-        $token = $this->tokenService->createToken($dataArray, $dataEmail);
+        $token = $this->tokenService->createToken($dataEmail, $dataArray);
 
         $errors = $validator->validate($user, null, 'code');
 
