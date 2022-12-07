@@ -49,24 +49,11 @@ class MatchCodesController extends AbstractController
         $matchEmail = $token->data->email;
 
         $cookies = $request->cookies;
-        $cookieKey = $cookies->get('UserCookie');
 
-        if (isset($cookieKey) && $cookieKey == $matchEmail) {
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'body' => [
-                        'message' => 'Please, wait for 10 minutes',
-                    ],
-                ],
-                Response::HTTP_BAD_REQUEST
-            );
-        } else {
-            $cookies = new Cookie('UserCookie', $matchEmail, time() + 600);
-            $response = new Response();
-            $response->headers->setCookie($cookies);
-            $response->sendHeaders();
-        }
+        $cookies = new Cookie('UserCookie', $matchEmail, time() + 600, '/', null, false, false);
+        $response = new Response();
+        $response->headers->setCookie($cookies);
+        $response->sendHeaders();
 
         if ($matchCode != $data['code']) {
             return new JsonResponse(
