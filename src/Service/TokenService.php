@@ -15,14 +15,13 @@ class TokenService
         $now_seconds = time();
         $role = ((isset($params['data']['role'])) ? $params['data']['role'] : null);
         $aud = ((isset($params[0]['email'])) ? $params[0]['email'] : $params[0]);
-
         $payload = [
             'iss' => 'admin@polybank.ru',
             'iat' => $now_seconds,
             'exp' => $now_seconds + (1800),
             'aud' => $aud,
             'role' => $role,
-            'data' => $params
+            'data' => array_merge(...$params)
         ];
 
         return JWT::encode($payload, $private_key, 'HS512');
