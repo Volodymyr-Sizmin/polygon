@@ -77,7 +77,7 @@ class SendEmailController extends AbstractController
             if ($isBankClient) {
                 $dataFirst = ['first_name' => $user->getFirstName()];
                 $dataLast = ['last_name' => $user->getLastName()];
-                $dataId = ['pass_id' => $user->getPassportId()];
+                $dataId = ['passport_id' => $user->getPassportId()];
                 $dataResident = ['resident' => $user->getResident()];
 
                 $token = $this->tokenService->createToken(

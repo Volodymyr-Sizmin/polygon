@@ -79,7 +79,7 @@ class ResetPinController extends AbstractController
         $data['reset_code'] = rand(100000, 999999);
 
         $entityManager = $doctrine->getManager();
-        $user = $entityManager->getRepository(User::class)->findOneBy(['passport_id' => $data['pass_id']]);
+        $user = $entityManager->getRepository(User::class)->findOneBy(['passport_id' => $data['passport_id']]);
         $user->setResetCode($data['reset_code']);
 
         if (!$user) {
