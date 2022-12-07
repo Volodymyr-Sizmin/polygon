@@ -396,7 +396,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getResident(): ?bool
+    public function getResident(): ?int
     {
         return $this->resident;
     }
