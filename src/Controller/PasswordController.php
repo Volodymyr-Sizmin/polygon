@@ -48,7 +48,7 @@ class PasswordController extends AbstractController
         $dataIsBankClient = ['is_bank_client' => $token->data->is_bank_client];
         $dataFirst = ['first_name' => $token->data->first_name];
         $dataLast = ['last_name' => $token->data->last_name];
-        $dataId = ['pass_id' => $token->data->pass_id];
+        $dataId = ['passport_id' => $token->data->passport_id];
         $dataResident = ['resident' => $token->data->resident];
 
         $em = $doctrine->getManager();
