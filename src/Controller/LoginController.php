@@ -75,7 +75,7 @@ class LoginController extends AbstractController
         if ($user->getFullRegistration()) {
             $token = $this->tokenService->createToken(
                 ['email' => $email],
-                ['residence' => $resident]
+                ['resident' => $resident]
             );
             header("Authorization: Bearer $token");
             return new JsonResponse([

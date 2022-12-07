@@ -67,7 +67,7 @@ class SendEmailController extends AbstractController
                 $user && $user->getFirstName()
                 && $user->getLastName()
                 && $user->getPassportId()
-            ) ? true : false;
+            ) ? 1 : 0;
             $code = rand(100000, 999999);
             $dataEmail = ['email' => $data['email']];
             $dataCode = ['code' => $code];
@@ -78,7 +78,7 @@ class SendEmailController extends AbstractController
                 $dataFirst = ['first_name' => $user->getFirstName()];
                 $dataLast = ['last_name' => $user->getLastName()];
                 $dataId = ['pass_id' => $user->getPassportId()];
-                $dataResident = ['residence' => $user->getResident()];
+                $dataResident = ['resident' => $user->getResident()];
 
                 $token = $this->tokenService->createToken(
                     $dataEmail,

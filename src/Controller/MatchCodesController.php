@@ -44,9 +44,9 @@ class MatchCodesController extends AbstractController
 
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
 
-        $matchCode = $token->data[1]->code;
-        $codeLifetime = $token->data[2]->code_life_time;
-        $matchEmail = $token->data[0]->email;
+        $matchCode = $token->data->code;
+        $codeLifetime = $token->data->code_life_time;
+        $matchEmail = $token->data->email;
 
         $cookies = $request->cookies;
         $cookieKey = $cookies->get('UserCookie');

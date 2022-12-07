@@ -42,14 +42,14 @@ class PasswordController extends AbstractController
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
 
-        $matchEmail = ['email' => $token->data[0]->email];
-        $matchCode = ['code' => $token->data[1]->code];
-        $dataCodeLifetime = ['code_life_time' => $token->data[2]->code_life_time];
-        $dataIsBankClient = ['is_bank_client' => $token->data[3]->is_bank_client];
-        $dataFirst = ['first_name' => $token->data[4]->first_name];
-        $dataLast = ['last_name' => $token->data[5]->last_name];
-        $dataId = ['pass_id' => $token->data[6]->pass_id];
-        $dataResident = ['residence' => $token->data[7]->residence];
+        $matchEmail = ['email' => $token->data->email];
+        $matchCode = ['code' => $token->data->code];
+        $dataCodeLifetime = ['code_life_time' => $token->data->code_life_time];
+        $dataIsBankClient = ['is_bank_client' => $token->data->is_bank_client];
+        $dataFirst = ['first_name' => $token->data->first_name];
+        $dataLast = ['last_name' => $token->data->last_name];
+        $dataId = ['pass_id' => $token->data->pass_id];
+        $dataResident = ['resident' => $token->data->resident];
 
         $em = $doctrine->getManager();
         $user = $em->getRepository(User::class)->findOneBy(['email' => $matchEmail]);
