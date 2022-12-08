@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\CookieService;
 use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,10 +15,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class MatchCodesController extends AbstractController
 {
     protected $tokenService;
+    protected $cookieService;
 
-    public function __construct(TokenService $tokenService)
+    public function __construct(TokenService $tokenService, CookieService $cookieService)
     {
         $this->tokenService = $tokenService;
+        $this->cookieService = $cookieService;
     }
 
     /**
@@ -47,13 +49,6 @@ class MatchCodesController extends AbstractController
         $matchCode = $token->data->code;
         $codeLifetime = $token->data->code_life_time;
         $matchEmail = $token->data->email;
-
-        $cookies = $request->cookies;
-
-        $cookies = new Cookie('UserCookie', $matchEmail, time() + 600, '/', null, false, false);
-        $response = new Response();
-        $response->headers->setCookie($cookies);
-        $response->sendHeaders();
 
         if ($matchCode != $data['code']) {
             return new JsonResponse(
@@ -92,12 +87,25 @@ class MatchCodesController extends AbstractController
         }
         $em->flush();
 
+        $cookie = $request->cookies;
+
+        if (($cookie) && $cookie->get('UserCookie') != $matchEmail) {
+            $cookies = $this->cookieService->setCookie($matchEmail);
+            header('Set-Cookie: ' . $cookies);
+            $cookieData = serialize($cookies->getValue());
+        } elseif (($cookie) && $cookie->get('UserCookie') == $matchEmail) {
+            $cookieData = null;
+        } else {
+            $cookies = $this->cookieService->setCookie($matchEmail);
+            header('Set-Cookie: ' . $cookies);
+            $cookieData = serialize($cookies->getValue());
+        }
+
         return new JsonResponse(
             [
                 'success' => true,
-                'body' => [
-                    'message' => 'Codes match',
-                ],
+                'message' => 'Codes match',
+                'cookie' => $cookieData,
             ],
             200
         );
