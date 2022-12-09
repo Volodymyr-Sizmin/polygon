@@ -31,16 +31,13 @@ class NonClientRegisterController extends AbstractController
         $em = $doctrine->getManager();
         $userId = $em->getRepository(User::class)->findBy(['passport_id' => $data['pass_id']]);
 
-        if (!empty($userId) && $userId[0]->getFullRegistration() == true) {
+        if (!empty($userId) && $userId[0]->getFullRegistration()) {
             return new JsonResponse(
                 [
                     'success' => false,
-                    'body' => [
-                        'message' => 'Hello. A user with this Id has already been registered in the system. Please call the number +7 XXX XXXX XXXX or contact the nearest bank office.',
-                        'cookie' => $response
-                    ],
+                    'message' => 'the user already exists',
                 ],
-                404
+                400
             );
         }
 
@@ -48,7 +45,7 @@ class NonClientRegisterController extends AbstractController
         $errors = $validator->validate($user, null, ['name', 'passport']);
 
         if (count($errors) > 0) {
-            $errorsStringPass = (string) $errors;
+            $errorsStringPass = (string)$errors;
 
             return new JsonResponse(
                 [
@@ -74,12 +71,12 @@ class NonClientRegisterController extends AbstractController
 
         $tokenId = $this->tokenService->createToken(
             $matchEmail,
-            $matchCode, 
-            $dataCodeLifetime, 
-            $dataIsBankClient, 
-            $dataFirst, 
-            $dataLast, 
-            $dataId, 
+            $matchCode,
+            $dataCodeLifetime,
+            $dataIsBankClient,
+            $dataFirst,
+            $dataLast,
+            $dataId,
             $dataResident
         );
 
