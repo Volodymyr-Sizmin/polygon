@@ -9,6 +9,8 @@ framework:
     session:
         # ...
         handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
+        cookie_lifetime: 600
+        gc_maxlifetime: 600
 
     #esi: true
     #fragments: true
