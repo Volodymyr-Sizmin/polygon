@@ -35,7 +35,7 @@ class SendEmailController extends AbstractController
         if ($session->get('attempts') >= 3) {
             return new JsonResponse(
                 [
-                    'success' => false,
+                    'success' => true,
                     'attempts' => 'limit',
                 ],
                 403
