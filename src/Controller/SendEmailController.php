@@ -31,6 +31,17 @@ class SendEmailController extends AbstractController
      */
     public function sendEmail(Request $request, Response $response, ManagerRegistry $doctrine)
     {
+        $session = $request->getSession();
+        if ($session->get('attempts') >= 3) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'attempts' => 'limit',
+                ],
+                403
+            );
+        }
+
         $data = json_decode($request->getContent(), true);
 
         if (empty($data['email'])) {
