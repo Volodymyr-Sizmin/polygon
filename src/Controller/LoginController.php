@@ -27,7 +27,7 @@ class LoginController extends AbstractController
     public function emailLogin(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $encoder): Response
     {
         $data = json_decode($request->getContent(), true);
-        
+
         if (!$data) {
             $response = [
                 'success' => false,
@@ -59,7 +59,7 @@ class LoginController extends AbstractController
         }
 
         $verified = $encoder->isPasswordValid($user, $data['password']);
-        
+
         if (!$verified) {
             $response = [
                 'success' => false,
@@ -71,11 +71,13 @@ class LoginController extends AbstractController
 
         $email = $user->getEmail();
         $resident = $user->getResident();
+        $passportId = $user->getPassportId();
 
         if ($user->getFullRegistration()) {
             $token = $this->tokenService->createToken(
                 ['email' => $email],
-                ['resident' => $resident]
+                ['resident' => $resident],
+                ['passport_id' => $passportId]
             );
             header("Authorization: Bearer $token");
             return new JsonResponse([
@@ -92,6 +94,58 @@ class LoginController extends AbstractController
                 'message' => 'User isn\'t fully registered',
             ]
         ], Response::HTTP_BAD_REQUEST
+        );
+    }
+
+    /**
+     * @Route("/registration_service/{email}", name="loginEmail", methods={"GET"})
+     */
+    public function login(Request $request, ManagerRegistry $doctrine, $email): JsonResponse
+    {
+        $authorizationHeader = $request->headers->get('Authorization');
+
+        if (!isset($authorizationHeader)) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Empty token field in request header',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
+        $tokenEmail = $token->aud;
+
+        if ($tokenEmail !== $email) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Invalid Email',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        $entityManager = $doctrine->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $tokenEmail]);
+
+        return new JsonResponse([
+            'answer' => $user->getAnswer(),
+            'email' => $tokenEmail,
+            'firstName' => $user->getFirstName(),
+            'id' => $user->getId(),
+            'lastName' => $user->getLastName(),
+            'passportId' => $user->getPassportId(),
+            'question' => $user->getQuestion(),
+            'residence' => $user->getResident(),
+            'roles' => $user->getRoles(),
+        ],
+            Response::HTTP_OK
         );
     }
 }
