@@ -70,11 +70,6 @@ phone_login:
   path: /api/login/phone
   controller: App\Controller\LoginController::phoneLogin
   methods: POST
-  
-logout:
-  path: /api/logout
-  controller: App\Controller\LoginController::logout
-  methods: GET
 
 email_registration:
   path: /api/registration/email

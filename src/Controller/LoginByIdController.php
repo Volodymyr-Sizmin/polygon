@@ -68,7 +68,10 @@ class LoginByIdController extends AbstractController
         }
 
         $passId = $user->getPassportId();
-        $token = $this->tokenService->createToken(['passport_id' => $passId]);
+        $email = $user->getEmail();
+        $token = $this->tokenService->createToken([
+            'email' => $email,
+            'passport_id' => $passId]);
         header("Authorization: Bearer $token");
 
         return new JsonResponse([

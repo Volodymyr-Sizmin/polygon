@@ -27,7 +27,7 @@ class LoginController extends AbstractController
     public function emailLogin(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $encoder): Response
     {
         $data = json_decode($request->getContent(), true);
-        
+
         if (!$data) {
             $response = [
                 'success' => false,
@@ -59,7 +59,7 @@ class LoginController extends AbstractController
         }
 
         $verified = $encoder->isPasswordValid($user, $data['password']);
-        
+
         if (!$verified) {
             $response = [
                 'success' => false,
@@ -71,11 +71,13 @@ class LoginController extends AbstractController
 
         $email = $user->getEmail();
         $resident = $user->getResident();
+        $passportId = $user->getPassportId();
 
         if ($user->getFullRegistration()) {
             $token = $this->tokenService->createToken(
                 ['email' => $email],
-                ['resident' => $resident]
+                ['resident' => $resident],
+                ['passport_id' => $passportId]
             );
             header("Authorization: Bearer $token");
             return new JsonResponse([
@@ -93,5 +95,65 @@ class LoginController extends AbstractController
             ]
         ], Response::HTTP_BAD_REQUEST
         );
+    }
+
+    /**
+     * @Route("/registration_service/{email}", name="loginEmail", methods={"GET"})
+     */
+    public function login(Request $request, ManagerRegistry $doctrine, $email)
+    {
+        $authorizationHeader = $request->headers->get('Authorization');
+
+        if (!isset($authorizationHeader)) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Empty token field in request header',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
+        $tokenEmail = $token->aud;
+
+        if ($tokenEmail !== $email) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'message' => 'Invalid Email',
+                    ],
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        } else {
+            $entityManager = $doctrine->getManager();
+            $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $tokenEmail]);
+            $id = $user->getId();
+            $firsName = $user->getFirstName();
+            $lastName = $user->getLastName();
+            $passportId = $user->getPassportId();
+            $roles = $user->getRoles();
+            $question = $user->getQuestion();
+            $answer = $user->getAnswer();
+            $residence = $user->getResident();
+
+            return new JsonResponse([
+                'answer' => $answer,
+                'email' => $tokenEmail,
+                'firstName' => $firsName,
+                'id' => $id,
+                'lastName' => $lastName,
+                'passportId' => $passportId,
+                'question' => $question,
+                'residence' => $residence,
+                'roles' => implode($roles),
+            ],
+                Response::HTTP_OK
+            );
+        }
     }
 }
