@@ -100,7 +100,7 @@ class LoginController extends AbstractController
     /**
      * @Route("/registration_service/{email}", name="loginEmail", methods={"GET"})
      */
-    public function login(Request $request, ManagerRegistry $doctrine, $email)
+    public function login(Request $request, ManagerRegistry $doctrine, $email): JsonResponse
     {
         $authorizationHeader = $request->headers->get('Authorization');
 
@@ -129,31 +129,23 @@ class LoginController extends AbstractController
                 ],
                 Response::HTTP_BAD_REQUEST
             );
-        } else {
-            $entityManager = $doctrine->getManager();
-            $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $tokenEmail]);
-            $id = $user->getId();
-            $firsName = $user->getFirstName();
-            $lastName = $user->getLastName();
-            $passportId = $user->getPassportId();
-            $roles = $user->getRoles();
-            $question = $user->getQuestion();
-            $answer = $user->getAnswer();
-            $residence = $user->getResident();
-
-            return new JsonResponse([
-                'answer' => $answer,
-                'email' => $tokenEmail,
-                'firstName' => $firsName,
-                'id' => $id,
-                'lastName' => $lastName,
-                'passportId' => $passportId,
-                'question' => $question,
-                'residence' => $residence,
-                'roles' => implode($roles),
-            ],
-                Response::HTTP_OK
-            );
         }
+
+        $entityManager = $doctrine->getManager();
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $tokenEmail]);
+
+        return new JsonResponse([
+            'answer' => $user->getAnswer(),
+            'email' => $tokenEmail,
+            'firstName' => $user->getFirstName(),
+            'id' => $user->getId(),
+            'lastName' => $user->getLastName(),
+            'passportId' => $user->getPassportId(),
+            'question' => $user->getQuestion(),
+            'residence' => $user->getResident(),
+            'roles' => $user->getRoles(),
+        ],
+            Response::HTTP_OK
+        );
     }
 }
