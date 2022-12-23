@@ -32,15 +32,7 @@ class SendEmailController extends AbstractController
     public function sendEmail(Request $request, Response $response, ManagerRegistry $doctrine)
     {
         $session = $request->getSession();
-        if ($session->get('attempts') >= 3) {
-            return new JsonResponse(
-                [
-                    'success' => true,
-                    'attempts' => 'limit',
-                ],
-                403
-            );
-        }
+        $attempts = $session->get('attempts');
 
         $data = json_decode($request->getContent(), true);
 
@@ -52,7 +44,7 @@ class SendEmailController extends AbstractController
                         'message' => 'Empty input',
                     ],
                 ],
-                404
+                Response::HTTP_BAD_REQUEST
             );
         }
 
@@ -63,7 +55,7 @@ class SendEmailController extends AbstractController
             $registrationStatus = $user->getFullRegistration();
         }
 
-        if (isset($registrationStatus) && $registrationStatus == true) {
+        if (isset($registrationStatus) && $registrationStatus) {
             return new JsonResponse(
                 [
                     'success' => false,
@@ -84,6 +76,16 @@ class SendEmailController extends AbstractController
             $dataCode = ['code' => $code];
             $dataCodeLifetime = ['code_life_time' => time() + 600];
             $dataIsBankClient = ['is_bank_client' => $isBankClient];
+
+            if ((isset($attempts['attempts']) && $attempts['attempts'] == 0) && (isset($attempts['email']) && $attempts['email'] == $dataEmail['email'])) {
+                return new JsonResponse(
+                    [
+                        'success' => true,
+                        'message' => '0',
+                    ],
+                    Response::HTTP_BAD_REQUEST
+                );
+            }
 
             if ($isBankClient) {
                 $dataFirst = ['first_name' => $user->getFirstName()];
@@ -114,7 +116,6 @@ class SendEmailController extends AbstractController
                         'code' => $code,
                         'token' => $token,
                     ]);
-
             $loader = new FilesystemLoader('/');
 
             $twigEnv = new Environment($loader);

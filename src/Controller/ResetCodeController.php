@@ -47,7 +47,7 @@ class ResetCodeController extends AbstractController
                 [
                     'success' => false,
                     'body' => [
-                        'message' => 'Введенный код не совпадает с присланным на почтовый ящик',
+                        'message' => 'ENGLISH',
                     ],
                 ],
                 Response::HTTP_BAD_REQUEST
