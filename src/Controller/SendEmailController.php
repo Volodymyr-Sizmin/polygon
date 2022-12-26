@@ -11,13 +11,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Routing\Annotation\Route;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use OpenApi\Annotations as OA;
 
 class SendEmailController extends AbstractController
 {
@@ -30,40 +28,6 @@ class SendEmailController extends AbstractController
 
     /**
      * @Route("/registration_service/sendemail", name="email", methods={"POST"})
-     * @throws TransportExceptionInterface
-     * @OA\Post(
-     *      path="/registration_service/sendemail",
-     *      description="Send a verification code to email box",
-     *      tags={"Registration Service"},
-     *      @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *         type="object",
-     *         @OA\Property(property="email", type="string", example="user@example.com"),
-     *         )
-     *     ),
-     * @OA\Response(
-     *     response=200,
-     *     description="Successfully sent email with code",
-     *     @OA\JsonContent(
-     *        type="object",
-     *        @OA\Property(property="success", type="boolean", example=true),
-     *        @OA\Property(property="attempts", type="string", example="limit"),
-     *     )
-     * ),
-     *  @OA\Response(
-     *         response="404",
-     *         description="Error sending email with code",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="body",
-     *                 type="object",
-     *                 @OA\Property(property="message", type="string", example="Empty input")
-     *             )
-     *         )
-     *      )
-     *   )
      */
     public function sendEmail(Request $request, Response $response, ManagerRegistry $doctrine)
     {
@@ -117,7 +81,7 @@ class SendEmailController extends AbstractController
                 return new JsonResponse(
                     [
                         'success' => true,
-                        'message' => "0",
+                        'message' => 0,
                     ],
                     Response::HTTP_OK
                 );

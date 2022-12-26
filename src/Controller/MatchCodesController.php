@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Service\CookieService;
-use App\Service\MatchCodeService;
 use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,76 +11,21 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use OpenApi\Annotations as OA;
 
 class MatchCodesController extends AbstractController
 {
     protected $tokenService;
     protected $cookieService;
-    protected $matchCodeService;
 
-    public function __construct(TokenService $tokenService, CookieService $cookieService, MatchCodeService $matchCodeService)
+    public function __construct(TokenService $tokenService, CookieService $cookieService)
     {
         $this->tokenService = $tokenService;
         $this->cookieService = $cookieService;
-        $this->matchCodeService = $matchCodeService;
     }
 
-      /**
-       * @Route("/registration_service/code", name="code", methods={"POST"})
-       * @OA\Post(
-       *      path="/registration_service/code",
-       *      tags={"Registration Service"},
-       *      description="Check verification code",
-       *      security={{"Bearer": {}}},
-       *      @OA\RequestBody(
-       *         @OA\JsonContent(
-       *             type="object",
-       *             @OA\Property(property="code", type="string")
-       *         )
-       *     ),
-       * @OA\Response(
-       *         response=200,
-       *         description="Codes match",
-       *         @OA\JsonContent(
-       *                type="object",
-       *                @OA\Property(property="success", type="boolean"),
-       *                @OA\Property(
-       *                property="body",
-       *                type="object",
-       *                @OA\Property(property="message", type="string"),
-       *                @OA\Property(property="attempts", type="integer")
-       *         )
-       *      )
-       *   ),
-       * @OA\Response(
-       *         response=400,
-       *         description="The entered code does not match the code sent to the mailbox",
-       *         @OA\JsonContent(
-       *                type="object",
-       *                @OA\Property(property="success", type="boolean"),
-       *                @OA\Property(
-       *                property="body",
-       *                type="object",
-       *                @OA\Property(property="message", type="string"),
-       *                @OA\Property(property="attempts", type="integer")
-       *         )
-       *      )
-       *   ),
-       * @OA\Response(
-       *         response=403,
-       *         description="Attempts limit reached",
-       *         @OA\JsonContent(
-       *                type="object",
-       *                @OA\Property(property="success", type="boolean"),
-       *                @OA\Property(
-       *                property="body",
-       *                type="object"
-       *         )
-       *      )
-       *    )
-       *  )
-       */
+    /**
+     * @Route("/registration_service/code", name="code", methods={"POST"})
+     */
     public function matchCodes(Request $request, ManagerRegistry $doctrine)
     {
         $data = json_decode($request->getContent(), true);
@@ -110,14 +54,34 @@ class MatchCodesController extends AbstractController
         $attempts = $session->get('attempts', ['attempts' => 2, 'email' => 'null']);
 
         if ($matchCode != $data['code']) {
-            $this->matchCodeService->matchCode($attempts, $matchEmail, $session);
+            if ($attempts['attempts'] == 0 && $attempts['email'] == $matchEmail) {
+                return new JsonResponse(
+                    [
+                        'success' => false,
+                        'body' => [
+                            'message' => 'Please, wait 10 minutes before next attempt',
+                        ],
+                        'message' => 0,
+                    ],
+                    Response::HTTP_BAD_REQUEST);
+            }
+
+            if ($attempts['email'] !== $matchEmail) {
+                $session->set('attempts', ['attempts' => 1, 'email' => $matchEmail]);
+            }
+            if ($attempts['attempts'] == 2 && $attempts['email'] == $matchEmail) {
+                $session->set('attempts', ['attempts' => 1, 'email' => $matchEmail]);
+            } elseif ($attempts['attempts'] == 1 && $attempts['email'] == $matchEmail) {
+                $session->set('attempts', ['attempts' => 0, 'email' => $matchEmail]);
+            }
+
             return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
                         'message' => 'The entered code does not match the code sent to the mailbox',
                     ],
-                    'message' => (string) $attempts['attempts'],
+                    'message' => reset($attempts),
                 ],
                 Response::HTTP_BAD_REQUEST
             );
