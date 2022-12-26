@@ -47,7 +47,7 @@ class ResetCodeController extends AbstractController
                 [
                     'success' => false,
                     'body' => [
-                        'message' => 'ENGLISH',
+                        'message' => 'The entered code does not match the one sent to the mailbox',
                     ],
                 ],
                 Response::HTTP_BAD_REQUEST
