@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Service\CookieService;
+use App\Service\MatchCodeService;
 use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,11 +17,13 @@ class MatchCodesController extends AbstractController
 {
     protected $tokenService;
     protected $cookieService;
+    protected $matchCodeService;
 
-    public function __construct(TokenService $tokenService, CookieService $cookieService)
+    public function __construct(TokenService $tokenService, CookieService $cookieService, MatchCodeService $matchCodeService)
     {
         $this->tokenService = $tokenService;
         $this->cookieService = $cookieService;
+        $this->matchCodeService = $matchCodeService;
     }
 
     /**
@@ -54,27 +57,7 @@ class MatchCodesController extends AbstractController
         $attempts = $session->get('attempts', ['attempts' => 2, 'email' => 'null']);
 
         if ($matchCode != $data['code']) {
-            if ($attempts['attempts'] == 0 && $attempts['email'] == $matchEmail) {
-                return new JsonResponse(
-                    [
-                        'success' => false,
-                        'body' => [
-                            'message' => 'Please, wait 10 minutes before next attempt',
-                        ],
-                        'message' => 0,
-                    ],
-                    Response::HTTP_BAD_REQUEST);
-            }
-
-            if ($attempts['email'] !== $matchEmail) {
-                $session->set('attempts', ['attempts' => 1, 'email' => $matchEmail]);
-            }
-            if ($attempts['attempts'] == 2 && $attempts['email'] == $matchEmail) {
-                $session->set('attempts', ['attempts' => 1, 'email' => $matchEmail]);
-            } elseif ($attempts['attempts'] == 1 && $attempts['email'] == $matchEmail) {
-                $session->set('attempts', ['attempts' => 0, 'email' => $matchEmail]);
-            }
-
+            $this->matchCodeService->matchCode($attempts, $matchEmail, $session);
             return new JsonResponse(
                 [
                     'success' => false,
