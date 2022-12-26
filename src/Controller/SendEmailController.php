@@ -32,7 +32,7 @@ class SendEmailController extends AbstractController
     public function sendEmail(Request $request, Response $response, ManagerRegistry $doctrine)
     {
         $session = $request->getSession();
-        $attempts = $session->get('attempts');
+        $attempts = $session->get('attempts', ['attempts' => 2, 'email' => 'null']);
 
         $data = json_decode($request->getContent(), true);
 
@@ -77,13 +77,13 @@ class SendEmailController extends AbstractController
             $dataCodeLifetime = ['code_life_time' => time() + 600];
             $dataIsBankClient = ['is_bank_client' => $isBankClient];
 
-            if ((isset($attempts['attempts']) && $attempts['attempts'] == 0) && (isset($attempts['email']) && $attempts['email'] == $dataEmail['email'])) {
+            if ($attempts['attempts'] == 0 && $attempts['email'] == $dataEmail['email']) {
                 return new JsonResponse(
                     [
                         'success' => true,
-                        'message' => '0',
+                        'message' => 0,
                     ],
-                    Response::HTTP_BAD_REQUEST
+                    Response::HTTP_OK
                 );
             }
 
@@ -113,9 +113,9 @@ class SendEmailController extends AbstractController
                 ->subject('Your verification code')
                 ->htmlTemplate('index.html.twig')
                 ->context([
-                        'code' => $code,
-                        'token' => $token,
-                    ]);
+                    'code' => $code,
+                    'token' => $token,
+                ]);
             $loader = new FilesystemLoader('/');
 
             $twigEnv = new Environment($loader);
