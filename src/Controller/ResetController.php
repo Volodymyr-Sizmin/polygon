@@ -32,7 +32,10 @@ class ResetController extends AbstractController
      */
     public function resetById(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator): Response
     {
+        $session = $request->getSession();
+        $attempts = $session->get('attempts', ['attempts' => 2, 'email' => 'null']);
         $data = json_decode($request->getContent(), true);
+
         if (!$data) {
             $response = [
                 'success' => false,
@@ -77,6 +80,16 @@ class ResetController extends AbstractController
                     ],
                 ],
                 Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($attempts['attempts'] == 0 && $attempts['email'] == $dataEmail['email']) {
+            return new JsonResponse(
+                [
+                    'success' => true,
+                    'message' => "0",
+                ],
+                Response::HTTP_OK
+            );
         }
 
         $emailForSend = (new TemplatedEmail())
