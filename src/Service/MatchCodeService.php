@@ -25,7 +25,7 @@ class MatchCodeService
                             'body' => [
                                 'message' => 'Please, wait 10 minutes before next attempt',
                             ],
-                            'message' => 0,
+                            'message' => "0",
                         ],
                         Response::HTTP_BAD_REQUEST);
             }
