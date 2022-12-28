@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Service\CookieService;
+use App\Service\MatchCodeService;
 use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,11 +17,13 @@ class MatchCodesController extends AbstractController
 {
     protected $tokenService;
     protected $cookieService;
+    protected $matchCodeService;
 
-    public function __construct(TokenService $tokenService, CookieService $cookieService)
+    public function __construct(TokenService $tokenService, CookieService $cookieService, MatchCodeService $matchCodeService)
     {
         $this->tokenService = $tokenService;
         $this->cookieService = $cookieService;
+        $this->matchCodeService = $matchCodeService;
     }
 
     /**
@@ -28,8 +31,6 @@ class MatchCodesController extends AbstractController
      */
     public function matchCodes(Request $request, ManagerRegistry $doctrine)
     {
-        $cookie = $request->cookies;
-
         $data = json_decode($request->getContent(), true);
 
         $authorizationHeader = $request->headers->get('Authorization');
@@ -53,32 +54,17 @@ class MatchCodesController extends AbstractController
         $matchEmail = $token->data->email;
 
         $session = $request->getSession();
-        $attempts = $session->get('attempts');
-
-        if ($attempts == null or $attempts == 0) {
-            $session->set('attempts', 1);
-        } else {
-            $session->set('attempts', $attempts + 1);
-        }
-
-        if ($session->get('attempts') >= 3) {
-            return new JsonResponse(
-                [
-                    'success' => false,
-                    'attempts' => 'limit',
-                ],
-                403
-            );
-        }
+        $attempts = $session->get('attempts', ['attempts' => 2, 'email' => 'null']);
 
         if ($matchCode != $data['code']) {
+            $this->matchCodeService->matchCode($attempts, $matchEmail, $session);
             return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
                         'message' => 'The entered code does not match the code sent to the mailbox',
                     ],
-                    'attempts' => $attempts,
+                    'message' => $attempts['attempts'],
                 ],
                 Response::HTTP_BAD_REQUEST
             );
@@ -112,8 +98,10 @@ class MatchCodesController extends AbstractController
         return new JsonResponse(
             [
                 'success' => true,
-                'message' => 'Codes match',
-                'attempts' => $attempts,
+                'body' => [
+                    'message' => 'Code matched',
+                ],
+                'message' => $attempts['attempts'],
             ],
             200
         );
