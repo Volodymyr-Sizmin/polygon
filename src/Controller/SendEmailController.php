@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,6 +29,7 @@ class SendEmailController extends AbstractController
 
     /**
      * @Route("/registration_service/sendemail", name="email", methods={"POST"})
+     * @throws TransportExceptionInterface
      */
     public function sendEmail(Request $request, Response $response, ManagerRegistry $doctrine)
     {
