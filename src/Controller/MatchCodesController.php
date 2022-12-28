@@ -64,7 +64,7 @@ class MatchCodesController extends AbstractController
                     'body' => [
                         'message' => 'The entered code does not match the code sent to the mailbox',
                     ],
-                    'message' => $attempts['attempts'],
+                    'message' => (string) $attempts['attempts'],
                 ],
                 Response::HTTP_BAD_REQUEST
             );

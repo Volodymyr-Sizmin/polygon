@@ -83,7 +83,7 @@ class SendEmailController extends AbstractController
                 return new JsonResponse(
                     [
                         'success' => true,
-                        'message' => 0,
+                        'message' => "0",
                     ],
                     Response::HTTP_OK
                 );
