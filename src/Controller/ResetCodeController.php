@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ResetCodeController extends AbstractController
 {
     protected $tokenService;
-    protected MatchCodeService $matchCodeService;
+    protected $matchCodeService;
 
     public function __construct(TokenService $tokenService, MatchCodeService $matchCodeService)
     {
