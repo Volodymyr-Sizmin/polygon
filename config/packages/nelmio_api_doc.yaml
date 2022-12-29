@@ -1,0 +1,33 @@
+nelmio_api_doc:
+    documentation:
+        components:
+            securitySchemes:
+                Bearer:
+                    type: http
+                    scheme: bearer
+#                ApiKeyAuth:
+#                    type: apiKey
+#                    in: header
+#                    name: Authorisation
+#        security:
+#            Bearer: [eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJwb2x5Z29uX3BocCIsImlhdCI6MTY2MDI5NjYxMywiZXhwIjoxNjkxODM1ODM3LCJhdWQiOiJ1c2VyQGV4YW1wbGUuY29tIiwiY29kZSI6NjY2NjY2LCJyb2xlIjoiYWRtaW4ifQ.YoGxu38i1Z1IQwBW7W2IC8qXRPcLZqn6_-iVvub0FCAEHywyLWvAlchj4b3xBqylnjDKf5JvliGWhP-O2XGsMQ]
+        info:
+            title: PHP Polygon_backend
+            description: Endpoints description
+            version: 1.0.0
+    areas: # to filter documented areas
+        path_patterns:
+#            - ^/(?!/doc$) # Accepts routes under /api except /api/doc
+             - /registration_service/sendemail
+             - /registration_service/reset
+             - /registration_service/resetcode
+             - /registration_service/quest
+             - /registration_service/savenondata
+             - /registration_service/loginid
+             - /registration_service/{email}
+             - /registration_service/login
+             - /registration_service/logout
+             - /registration_service/code
+             - /registration_service/nonclient
+             - /registration_service/password
+             - /registration_service/newpassword

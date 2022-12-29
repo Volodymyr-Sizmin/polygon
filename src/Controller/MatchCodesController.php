@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use OpenApi\Annotations as OA;
 
 class MatchCodesController extends AbstractController
 {
@@ -26,9 +27,61 @@ class MatchCodesController extends AbstractController
         $this->matchCodeService = $matchCodeService;
     }
 
-    /**
-     * @Route("/registration_service/code", name="code", methods={"POST"})
-     */
+      /**
+       * @Route("/registration_service/code", name="code", methods={"POST"})
+       * @OA\Post(
+       *      path="/registration_service/code",
+       *      tags={"Registration Service"},
+       *      description="Check verification code",
+       *      security={{"Bearer": {}}},
+       *      @OA\RequestBody(
+       *         @OA\JsonContent(
+       *             type="object",
+       *             @OA\Property(property="code", type="string")
+       *         )
+       *     ),
+       * @OA\Response(
+       *         response=200,
+       *         description="Codes match",
+       *         @OA\JsonContent(
+       *                type="object",
+       *                @OA\Property(property="success", type="boolean"),
+       *                @OA\Property(
+       *                property="body",
+       *                type="object",
+       *                @OA\Property(property="message", type="string"),
+       *                @OA\Property(property="attempts", type="integer")
+       *         )
+       *      )
+       *   ),
+       * @OA\Response(
+       *         response=400,
+       *         description="The entered code does not match the code sent to the mailbox",
+       *         @OA\JsonContent(
+       *                type="object",
+       *                @OA\Property(property="success", type="boolean"),
+       *                @OA\Property(
+       *                property="body",
+       *                type="object",
+       *                @OA\Property(property="message", type="string"),
+       *                @OA\Property(property="attempts", type="integer")
+       *         )
+       *      )
+       *   ),
+       * @OA\Response(
+       *         response=403,
+       *         description="Attempts limit reached",
+       *         @OA\JsonContent(
+       *                type="object",
+       *                @OA\Property(property="success", type="boolean"),
+       *                @OA\Property(
+       *                property="body",
+       *                type="object"
+       *         )
+       *      )
+       *    )
+       *  )
+       */
     public function matchCodes(Request $request, ManagerRegistry $doctrine)
     {
         $data = json_decode($request->getContent(), true);

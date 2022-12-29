@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use OpenApi\Annotations as OA;
 
 class PasswordController extends AbstractController
 {
@@ -22,6 +23,45 @@ class PasswordController extends AbstractController
 
     /**
      * @Route("/registration_service/password", name="password", methods={"POST"})
+     *     @OA\Post(
+     *     path="/registration_service/password",
+     *     tags={"Registration Service"},
+     *     description="Match password and send",
+     *     security={{"Bearer": {}}},
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="password", type="string"),
+     *             @OA\Property(property="confirm_password", type="string"),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password saved",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(
+     *                 property="body",
+     *                 type="object",
+     *                 @OA\Property(property="message", type="string"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Passwords do not match",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(
+     *                 property="body",
+     *                 type="object",
+     *                 @OA\Property(property="message", type="string"),
+     *             ),
+     *         ),
+     *      ),
+     *    )
      */
     public function passwordMatch(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher)
     {
