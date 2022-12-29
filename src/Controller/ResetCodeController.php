@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\MatchCodeService;
 use App\Service\TokenService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,10 +13,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class ResetCodeController extends AbstractController
 {
     protected $tokenService;
+    protected $matchCodeService;
 
-    public function __construct(TokenService $tokenService)
+    public function __construct(TokenService $tokenService, MatchCodeService $matchCodeService)
     {
         $this->tokenService = $tokenService;
+        $this->matchCodeService = $matchCodeService;
     }
 
     /**
@@ -24,11 +27,14 @@ class ResetCodeController extends AbstractController
     public function matchResetCodes(Request $request)
     {
         $data = json_decode($request->getContent(), true);
+        $session = $request->getSession();
+        $attempts = $session->get('attempts', ['attempts' => 2, 'email' => 'null']);
 
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
 
         $matchCode = $token->data->code;
+        $matchEmail = $token->data->email;
 
         if (!isset($matchCode)) {
             return new JsonResponse(
@@ -43,12 +49,14 @@ class ResetCodeController extends AbstractController
         }
 
         if ($matchCode != $data['code']) {
+            $this->matchCodeService->matchCode($attempts, $matchEmail, $session);
             return new JsonResponse(
                 [
                     'success' => false,
                     'body' => [
                         'message' => 'The entered code does not match the one sent to the mailbox',
                     ],
+                    'message' => (string) $attempts['attempts'],
                 ],
                 Response::HTTP_BAD_REQUEST
             );
@@ -61,7 +69,7 @@ class ResetCodeController extends AbstractController
                     'message' => 'Codes match',
                 ],
             ],
-            200
+            Response::HTTP_OK
         );
     }
 }
