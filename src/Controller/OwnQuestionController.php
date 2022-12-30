@@ -65,7 +65,6 @@ class OwnQuestionController extends AbstractController
      *     )
      *   )
      */
-
     public function yourQuestion(Request $request, Response $response, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher)
     {
         $data = json_decode($request->getContent(), true);
