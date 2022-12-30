@@ -54,7 +54,6 @@ class LogoutController extends AbstractController
      *     ),
      * )
      */
-
     public function logout(Request $request)
     {
         $authorizationHeader = $request->headers->get('Authorization');
