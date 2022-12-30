@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use OpenApi\Annotations as OA;
 
 class ResetCodeController extends AbstractController
 {
@@ -23,6 +24,44 @@ class ResetCodeController extends AbstractController
 
     /**
      * @Route("/registration_service/resetcode", name="resetcode", methods={"POST"})
+     * @OA\Post(
+     *     path="/registration_service/resetcode",
+     *     tags={"Registration Service"},
+     *     security={{"Bearer": {}}},
+     *     description="Reset password:check verification code",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="code", type="string"),
+     *         )
+     *     ),
+     * @OA\Response(
+     *         response=200,
+     *         description="Codes match",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(
+     *                 property="body",
+     *                 type="object",
+     *                 @OA\Property(property="message", type="string"),
+     *             )
+     *         )
+     *     ),
+     * @OA\Response(
+     *         response=400,
+     *         description="Введенный код не совпадает с присланным на почтовый ящик",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(
+     *                 property="body",
+     *                 type="object",
+     *                 @OA\Property(property="message", type="string"),
+     *             )
+     *         )
+     *     )
+     *  )
      */
     public function matchResetCodes(Request $request)
     {

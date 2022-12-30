@@ -11,6 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 
 class ResetPasswordController extends AbstractController
 {
@@ -23,6 +26,45 @@ class ResetPasswordController extends AbstractController
 
     /**
      * @Route("/registration_service/newpassword", name="newpassword", methods={"POST"})
+     * @OA\Post(
+     *      path="/registration_service/newpassword",
+     *      tags= {"Registration Service"},
+     *      security={{"Bearer": {}}},
+     *      description="Reset password:create new password",
+     *      @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="password", type="string"),
+     *             @OA\Property(property="confirm_password", type="string"),
+     *         )
+     *     ),
+     * @OA\Response(
+     *         response=200,
+     *         description="Password saved",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(
+     *                 property="body",
+     *                 type="object",
+     *                 @OA\Property(property="message", type="string"),
+     *             )
+     *         )
+     *    ),
+     *  @OA\Response(
+     *         response=400,
+     *         description="Passwords do not match",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(
+     *                 property="body",
+     *                 type="object",
+     *                 @OA\Property(property="message", type="string"),
+     *             )
+     *         )
+     *      )
+     *    )
      */
     public function passwordMatch(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher)
     {

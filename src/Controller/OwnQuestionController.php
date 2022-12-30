@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use OpenApi\Annotations as OA;
 
 class OwnQuestionController extends AbstractController
 {
@@ -23,6 +24,46 @@ class OwnQuestionController extends AbstractController
 
     /**
      * @Route("/registration_service/quest", name="question", methods={"POST"})
+     * @OA\Post(
+     *     path="/registration_service/quest",
+     *     tags={"Registration Service"},
+     *     description="Create question",
+     *     security={{"Bearer": {}}},
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="question", type="string"),
+     *             @OA\Property(property="answer", type="string"),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User successfully added question and answer",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(property="token", type="string"),
+     *             @OA\Property(
+     *                 property="body",
+     *                 type="object",
+     *                 @OA\Property(property="message", type="string"),
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Empty input",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(
+     *                 property="body",
+     *                 type="object",
+     *                 @OA\Property(property="message", type="string"),
+     *             )
+     *         )
+     *     )
+     *   )
      */
     public function yourQuestion(Request $request, Response $response, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher)
     {

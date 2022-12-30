@@ -17,6 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
+use OpenApi\Annotations as OA;
 
 class ResetController extends AbstractController
 {
@@ -29,6 +30,39 @@ class ResetController extends AbstractController
 
     /**
      * @Route("/registration_service/reset", name="reset", methods={"POST"})
+     * @OA\Post(
+     *     path="/registration_service/reset",
+     *     description="Reset password:send verification code",
+     *     tags={"Registration Service"},
+     *     @OA\RequestBody(
+     *        required=true,
+     *        @OA\JsonContent(
+     *        required={"passport_id"},
+     *        @OA\Property(property="passport_id", type="string", example="1234567890")
+     *        )
+     *      ),
+     * @OA\Response(
+     *     response=201,
+     *     description="Successfully operation",
+     *     @OA\JsonContent(
+     *       @OA\Property(property="success", type="boolean", example=true),
+     *       @OA\Property(property="body", type="object",
+     *         @OA\Property(property="message", type="string", example="Email has come")
+     *       ),
+     *       @OA\Property(property="token", type="string", example="Bearer XYZ123")
+     *     )
+     * ),
+     * @OA\Response(
+     *     response=400,
+     *     description="Bad request",
+     *     @OA\JsonContent(
+     *       @OA\Property(property="success", type="boolean", example=false),
+     *       @OA\Property(property="body", type="object",
+     *         @OA\Property(property="message", type="string", example="Empty input")
+     *        )
+     *      )
+     *     )
+     *   )
      */
     public function resetById(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator): Response
     {

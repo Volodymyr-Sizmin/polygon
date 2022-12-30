@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use OpenApi\Annotations as OA;
 
 class NonClientRegisterController extends AbstractController
 {
@@ -23,6 +24,61 @@ class NonClientRegisterController extends AbstractController
 
     /**
      * @Route("/registration_service/nonclient", name="nonclient", methods={"POST"})
+     * @OA\Post(
+     *      path="/registration_service/nonclient",
+     *      description="Register as non bank client",
+     *      tags={"Registration Service"},
+     *      security={{"Bearer": {}}},
+     *      @OA\RequestBody(
+     *          @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="first_name", type="string"),
+     *             @OA\Property(property="last_name", type="string"),
+     *             @OA\Property(property="pass_id", type="string"),
+     *             @OA\Property(property="residence", type="string")
+     *       )
+     * ),
+     * @OA\Response(
+     *         response=201,
+     *         description="User has successfully registered",
+     *         @OA\JsonContent(
+     *                type="object",
+     *                @OA\Property(property="success", type="boolean"),
+     *                @OA\Property(property="token", type="string"),
+     *                @OA\Property(
+     *                property="body",
+     *                type="object",
+     *                @OA\Property(property="message", type="string")
+     *         )
+     *      )
+     *   ),
+     * @OA\Response(
+     *         response=400,
+     *         description="User already exists",
+     *         @OA\JsonContent(
+     *                type="object",
+     *                @OA\Property(property="success", type="boolean"),
+     *                @OA\Property(
+     *                property="message",
+     *                type="string",
+     *                @OA\Property(property="message", type="string")
+     *         )
+     *      )
+     *   ),
+     * @OA\Response(
+     *         response=401,
+     *         description="Invalid input",
+     *         @OA\JsonContent(
+     *                type="object",
+     *                @OA\Property(property="success", type="boolean"),
+     *                @OA\Property(
+     *                property="body",
+     *                type="object",
+     *                @OA\Property(property="message", type="string")
+     *         )
+     *      )
+     *   )
+     * )
      */
     public function nonClientRegister(Request $request, ManagerRegistry $doctrine, ValidatorInterface $validator, Response $response)
     {
