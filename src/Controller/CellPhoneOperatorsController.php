@@ -12,8 +12,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CellPhoneOperatorsController extends AbstractController
 {
-    //// реализовать добавление нового оператора и пометка на удаление
-
     protected $CardsInfoService;
     private $entityManager;
 
@@ -50,5 +48,4 @@ class CellPhoneOperatorsController extends AbstractController
             return new JsonResponse($forResponseArr, Response::HTTP_NO_CONTENT);
         }
   }
-
 }
