@@ -11,11 +11,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CardsController extends AbstractController
 {
-    protected $CardsInfoService;
+    protected CardsInfoService $cardsInfoService;
 
-    public function __construct(CardsInfoService $CardsInfoService)
+    public function __construct(CardsInfoService $cardsInfoService)
     {
-        $this->CardsInfoService = $CardsInfoService;
+        $this->cardsInfoService = $cardsInfoService;
     }
 
     /**
@@ -25,21 +25,8 @@ class CardsController extends AbstractController
      */
     public function cardsList(string $email) : JsonResponse
     {
-        $response = $this->CardsInfoService->getCardsInfo($email);
+        $response = $this->cardsInfoService->getCardsInfo($email);
 
-        if (count($response)>0) {
-            $jsonStr = [
-                'success' => true,
-                'cards' => $response
-            ];
-
-            return new JsonResponse($jsonStr, Response::HTTP_OK);
-        } else {
-            $jsonStr = [
-                'success' => true
-            ];
-
-            return new JsonResponse($jsonStr, Response::HTTP_NO_CONTENT);
-        }
+        return (count($response)>0 ? new JsonResponse(['success' => true, 'cards' => $response], Response::HTTP_OK) : new JsonResponse(['success' => true], Response::HTTP_NO_CONTENT));
     }
 }

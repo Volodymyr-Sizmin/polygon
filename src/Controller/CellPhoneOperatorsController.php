@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\CellPhoneOperators;
-use App\Service\CardsInfoService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,22 +11,21 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CellPhoneOperatorsController extends AbstractController
 {
-    protected $CardsInfoService;
-    private $entityManager;
+    protected $entityManager;
 
-    public function __construct(CardsInfoService $CardsInfoService, ManagerRegistry $doctrine)
+    public function __construct( ManagerRegistry $doctrine)
     {
-        $this->CardsInfoService = $CardsInfoService;
         $this -> entityManager = $doctrine->getManager();
     }
 
- /**
-  * @Route("/cell_phone_operators", name="cell_phone_operators", methods={"GET"})
-  */
+    /**
+     * @Route("/service/operators", name="cell_phone_operators", methods={"GET"})
+     * @return JsonResponse
+     */
 
   public function cellPhoneOperatorsList(): JsonResponse
   {
-        $cellPhoneOperatorsList = $this ->entityManager->getRepository(CellPhoneOperators::class)->findAll();
+        $cellPhoneOperatorsList = $this->entityManager->getRepository(CellPhoneOperators::class)->findAll();
 
         $forResponseArr = [];
 
@@ -39,11 +37,11 @@ class CellPhoneOperatorsController extends AbstractController
                    'id' => $item->getId(),
                    'name' => $item->getName()
                ];
+
            array_push($forResponseArr,$forResponse );
            }
 
             return new JsonResponse($forResponseArr, Response::HTTP_OK);
-
         } else {
             return new JsonResponse($forResponseArr, Response::HTTP_NO_CONTENT);
         }
