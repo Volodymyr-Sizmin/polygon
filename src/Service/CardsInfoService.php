@@ -8,8 +8,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class CardsInfoService
 {
     protected TokenService $tokenService;
-
-    private HttpClientInterface $client;
+    protected HttpClientInterface $client;
 
     public function __construct(TokenService $tokenService, HttpClientInterface $client)
     {
