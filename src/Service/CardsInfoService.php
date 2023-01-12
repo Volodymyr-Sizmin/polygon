@@ -30,27 +30,7 @@ class CardsInfoService
         ]);
 
         $content = json_decode($response->getContent());
-        $cards = $content->cards;
-        $arrCards = [];
 
-        if (count($cards) > 0) {
-            foreach ($cards as $card) {
-                $oneCard = [];
-                $oneCard['id'] = $card->id;
-                $oneCard['clientId'] = $card->clientId;
-                $oneCard['name'] = $card->name;
-                $oneCard['number'] = $card->number;
-                $oneCard['expirationDate'] = $card->expirationDate;
-                $oneCard['balance'] = $card->balance;
-                $oneCard['currency'] = $card->currency;
-                $oneCard['limit'] = $card->limit;
-                $oneCard['status'] = $card->status;
-                $oneCard['cardType'] = $card->cardType;
-                $oneCard['pinCode'] = $card->pinCode;
-            }
-            array_push($arrCards, $oneCard);
-        }
-
-        return $arrCards;
+        return  $content->cards;
     }
 }
