@@ -30,6 +30,7 @@ class AccountRepository extends ServiceEntityRepository
     public function add(Account $entity, bool $flush = true): void
     {
         $this->_em->persist($entity);
+
         if ($flush) {
             $this->_em->flush();
         }
@@ -42,6 +43,7 @@ class AccountRepository extends ServiceEntityRepository
     public function remove(Account $entity, bool $flush = true): void
     {
         $this->_em->remove($entity);
+
         if ($flush) {
             $this->_em->flush();
         }

@@ -30,6 +30,7 @@ class PaymentTypeRepository extends ServiceEntityRepository
     public function add(PaymentType $entity, bool $flush = true): void
     {
         $this->_em->persist($entity);
+
         if ($flush) {
             $this->_em->flush();
         }
@@ -42,6 +43,7 @@ class PaymentTypeRepository extends ServiceEntityRepository
     public function remove(PaymentType $entity, bool $flush = true): void
     {
         $this->_em->remove($entity);
+
         if ($flush) {
             $this->_em->flush();
         }
