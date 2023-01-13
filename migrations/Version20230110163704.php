@@ -25,7 +25,7 @@ final class Version20230110163704 extends AbstractMigration
             'notnull' => 1,
             'unsigned' => 1,
         ]);
-        $table->addColumn('user_id', 'biginteger', [
+        $table->addColumn('user_id', 'integer', [
             'notnull' => 1
         ]);
         $table->addColumn('number', 'string', [
@@ -35,7 +35,7 @@ final class Version20230110163704 extends AbstractMigration
         $table->addColumn('currency_id', 'integer', [
             'notnull' => 1
         ]);
-        $table->addColumn('created_at', 'timestamp', [
+        $table->addColumn('created_at', 'datetime', [
             'notnull' => 1
         ]);
         $table->setPrimaryKey(['id']);
