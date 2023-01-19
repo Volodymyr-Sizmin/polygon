@@ -54,4 +54,15 @@ class CardBalanceService
             ], Response::HTTP_OK);
         }
     }
+
+    public function getCardId($email, $cardNumber, $token)
+    {
+        $response = $this->client->request('GET', "https://polygon-application.andersenlab.dev/cards_service/{$email}/cards/{$cardNumber}", [
+            'headers' => [
+                'Authorization' => $token
+            ]
+        ]);
+        $content = json_decode($response->getContent());
+        return $content->id;
+    }
 }

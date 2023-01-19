@@ -26,7 +26,6 @@ class UserService
         $decodedToken = $this->tokenService->decodeToken(substr($token, 7));
         $matchEmail = $decodedToken->data->email;
 
-
         $response = $this->client->request('GET', "https://polygon-application.andersenlab.dev/registration_service/{$matchEmail}", [
             'headers' => [
                 'Authorization' => $token,
@@ -47,7 +46,16 @@ class UserService
         } catch (ClientExceptionInterface|ServerExceptionInterface|RedirectionExceptionInterface|TransportExceptionInterface $e) {
             return $e;
         }
+        $passport_id = $content->passport_id;
+        if (!is_int($passport_id)) {
+            return new JsonResponse(
+                [
+                    'success' => false
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
 
-        return $content->passportId;
+        return $passport_id;
     }
 }
