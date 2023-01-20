@@ -33,9 +33,11 @@ class AutopaymentsController extends AbstractController
     {
         $authorizationHeader = $request->headers->get('Authorization');
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
+
         if (!isset($token)) {
             return new JsonResponse(['status' => 400, 'message' => 'User is unauthorized']);
         }
+
         $email = $token->data->email;
         $cards = $this->cardInfoService->getCardsInfo($email);
 
@@ -78,11 +80,13 @@ class AutopaymentsController extends AbstractController
         $user = $em->getRepository(User::class)->findOneBy(['email' => $matchEmail]);
         $data = json_decode($request->getContent(), true);
         $autopayment = new Autopayments();
+
         if (isset($data['cell_phone_operators'])) {
             $autopayment->setCellPhoneOperators($data['cell_phone_operators']);
         } else {
             $autopayment->setCellPhoneOperators('NULL');
         }
+        
         $autopayment->setUserEmail($user->getEmail())
             ->setNameOfPayment($data['name_of_payment'])
             ->setPaymentCategory($data['payment_category'])
