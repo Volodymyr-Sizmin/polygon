@@ -2,7 +2,7 @@
 
 namespace App\Service\Interfaces;
 
-interface AccountsInterface
+interface Accounts
 {
     public function createAccountByEmail(string $email): string;
 }

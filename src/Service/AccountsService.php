@@ -3,10 +3,10 @@
 namespace App\Service;
 
 use App\Entity\Account;
-use App\Service\Interfaces\AccountsInterface;
+use App\Service\Interfaces\Accounts;
 use Doctrine\ORM\EntityManagerInterface;
 
-class AccountsService implements AccountsInterface
+class AccountsService implements Accounts
 {
     private EntityManagerInterface $entityManager;
 

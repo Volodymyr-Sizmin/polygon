@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Account;
-use App\Service\Interfaces\AccountsInterface;
+use App\Service\Interfaces\Accounts;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -57,7 +57,7 @@ class AccountsController extends AbstractController
     /**
      * @Route("/accounts/{email}/create", name="create_account", methods={"POST"})
      */
-    public function createAccount(string $email, AccountsInterface $accountsService): JsonResponse
+    public function createAccount(string $email, Accounts $accountsService): JsonResponse
     {
         $accountNumber = $accountsService->createAccountByEmail($email);
 
