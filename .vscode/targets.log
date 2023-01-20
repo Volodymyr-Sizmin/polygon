@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Thu Sep  1 13:22:22 2022
+# Make data base, printed on Fri Jan 20 15:45:56 2023
 
 # Variables
 
@@ -17,15 +17,19 @@ GDK_BACKEND = x11
 # environment
 LC_ALL = C
 # environment
-GTK_RC_FILES = /etc/gtk/gtkrc:/home/aleksei/.gtkrc:/home/aleksei/.config/gtkrc
+GTK_RC_FILES = /etc/gtk/gtkrc:/home/ya/.gtkrc:/home/ya/.config/gtkrc
 # environment
-LC_NAME = be_BY.UTF-8
+OSH = /home/ya/.oh-my-bash
 # environment
-LC_NUMERIC = be_BY.UTF-8
+MANDATORY_PATH = /usr/share/gconf/plasma.mandatory.path
 # environment
-VSCODE_CWD = /home/aleksei
+LC_NAME = uk_UA.UTF-8
 # environment
-LC_ADDRESS = be_BY.UTF-8
+LC_NUMERIC = uk_UA.UTF-8
+# environment
+VSCODE_CWD = /home/ya/andersen/poligon
+# environment
+LC_ADDRESS = uk_UA.UTF-8
 # default
 MAKE_COMMAND := make
 # environment
@@ -37,23 +41,25 @@ VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # default
 .VARIABLES := 
 # environment
-PWD = /home/aleksei/Desktop/Banking/manager/symfony-api
+PWD = /home/ya/andersen/poligon/symfony-api
 # automatic
 %D = $(patsubst %/,%,$(dir $%))
 # environment
-XDG_DATA_DIRS = /usr/share/plasma:/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop
+LSCOLORS = Gxfxcxdxdxegedabagacad
+# environment
+XDG_DATA_DIRS = /usr/share/plasma:/usr/local/share:/usr/share:/var/lib/snapd/desktop
 # automatic
 ^D = $(patsubst %/,%,$(dir $^))
 # automatic
 %F = $(notdir $%)
 # environment
-VSCODE_CODE_CACHE_PATH = /home/aleksei/.config/Code/CachedData/e4503b30fc78200f846c62cf8091b76ff5547662
+VSCODE_CODE_CACHE_PATH = /home/ya/.config/Code/CachedData/97dec172d3256f8ca4bfb2143f3f76b503ca0534
 # environment
-XDG_SESSION_PATH = /org/freedesktop/DisplayManager/Session1
+XDG_SESSION_PATH = /org/freedesktop/DisplayManager/Session0
 # environment
 LANG = C
 # environment
-XAUTHORITY = /home/aleksei/.Xauthority
+XAUTHORITY = /home/ya/.Xauthority
 # default
 .LOADED := 
 # default
@@ -61,7 +67,7 @@ XAUTHORITY = /home/aleksei/.Xauthority
 # makefile
 MAKEFLAGS = pqrR
 # makefile
-CURDIR := /home/aleksei/Desktop/Banking/manager/symfony-api
+CURDIR := /home/ya/andersen/poligon/symfony-api
 # environment
 APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
 # environment
@@ -69,15 +75,15 @@ LESSOPEN = | /usr/bin/lesspipe %s
 # automatic
 *D = $(patsubst %/,%,$(dir $*))
 # environment
-PAM_KWALLET5_LOGIN = /run/user/1000/kwallet5.socket
-# environment
 MFLAGS = -pqrR
 # environment
-SSH_AUTH_SOCK = /tmp/ssh-XXXXXXuRrp8Y/agent.3272
+SSH_AUTH_SOCK = /tmp/ssh-XXXXXXdQL3KC/agent.1429
 # default
 .SHELLFLAGS := -c
 # environment
-XDG_CONFIG_DIRS = /home/aleksei/.config/kdedefaults:/etc/xdg/xdg-plasma:/etc/xdg:/usr/share/kubuntu-default-settings/kf5-settings
+HISTSIZE = 
+# environment
+XDG_CONFIG_DIRS = /home/ya/.config/kdedefaults:/etc/xdg/xdg-plasma:/etc/xdg:/usr/share/kubuntu-default-settings/kf5-settings
 # automatic
 +D = $(patsubst %/,%,$(dir $+))
 # environment
@@ -89,13 +95,15 @@ MAKEFILE_LIST := Makefile
 # automatic
 @F = $(notdir $@)
 # environment
-VSCODE_PID = 65030
+VSCODE_PID = 44595
+# environment
+HISTIGNORE = &:[ ]*:exit:ls:bg:fg:history:clear
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/aleksei:@/tmp/.ICE-unix/3550,unix/aleksei:/tmp/.ICE-unix/3550
+SESSION_MANAGER = local/ya-ASUS-EXPERTBOOK-L1500CDAY-L1500CDA:@/tmp/.ICE-unix/1742,unix/ya-ASUS-EXPERTBOOK-L1500CDAY-L1500CDA:/tmp/.ICE-unix/1742
 # automatic
 *F = $(notdir $*)
 # environment
@@ -105,7 +113,9 @@ DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
 # automatic
 <D = $(patsubst %/,%,$(dir $<))
 # environment
-VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
+VSCODE_NLS_CONFIG = {"locale":"ru","availableLanguages":{},"_languagePackSupport":true}
+# environment
+HISTFILESIZE = 
 # default
 MAKE_HOST := x86_64-pc-linux-gnu
 # makefile (from 'Makefile', line 1)
@@ -121,17 +131,19 @@ MAKELEVEL := 0
 # default
 MAKE = $(MAKE_COMMAND)
 # environment
-PATH = /home/aleksei/.local/bin:/home/aleksei/bin:/home/aleksei/.composer/vendor/bin:/home/aleksei/.config/composer/vendor/bin:/home/aleksei/.cache/activestate/bin:/home/aleksei/.komodoide/12.0/XRE/state/bin:/home/aleksei/.local/bin:/home/aleksei/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+PATH = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
 # default
 MAKEFILES := 
 # environment
-LC_MONETARY = be_BY.UTF-8
+LANGUAGE = ru:en_US
+# environment
+LC_MONETARY = uk_UA.UTF-8
 # automatic
 ^F = $(notdir $^)
 # environment
-LC_TIME = be_BY.UTF-8
+LC_TIME = uk_UA.UTF-8
 # environment
-LC_TELEPHONE = be_BY.UTF-8
+LC_TELEPHONE = uk_UA.UTF-8
 # environment
 LESSCLOSE = /usr/bin/lesspipe %s %s
 # automatic
@@ -151,6 +163,8 @@ LS_COLORS =
 # environment
 XDG_SEAT_PATH = /org/freedesktop/DisplayManager/Seat0
 # environment
+LESS = -R
+# environment
 DESKTOP_SESSION = plasma
 # environment
 ORIGINAL_XDG_CURRENT_DESKTOP = KDE
@@ -159,49 +173,60 @@ GNUMAKEFLAGS :=
 # environment
 CLUTTER_IM_MODULE = ibus
 # environment
-LOGNAME = aleksei
+LOGNAME = ya
+# environment
+define COMP_WORDBREAKS
+ 	
+"'><=;|&(
+endef
 # environment
 XDG_VTNR = 1
 # makefile
 .DEFAULT_GOAL := tests
 # environment
-SYSTEMD_EXEC_PID = 3250
+SYSTEMD_EXEC_PID = 1410
 # environment
 DISPLAY = :0
 # environment
-USER = aleksei
+USER = ya
+# environment
+DEFAULTS_PATH = /usr/share/gconf/plasma.default.path
+# environment
+KDE_SESSION_UID = 1000
 # default
 MAKE_VERSION := 4.3
 # environment
-KDE_SESSION_UID = 1000
+LC_MEASUREMENT = uk_UA.UTF-8
 # environment
-LC_MEASUREMENT = be_BY.UTF-8
+SSH_AGENT_PID = 1502
 # environment
-SSH_AGENT_PID = 3335
+PAGER = less
 # environment
 _ = /usr/share/code/code
 # environment
-LC_PAPER = be_BY.UTF-8
+LC_PAPER = uk_UA.UTF-8
 # environment
 XDG_RUNTIME_DIR = /run/user/1000
 # environment
 GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
+LC_CTYPE = en_US.UTF-8
+# environment
 XDG_SESSION_CLASS = user
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
-GTK2_RC_FILES = /etc/gtk-2.0/gtkrc:/home/aleksei/.gtkrc-2.0:/home/aleksei/.config/gtkrc-2.0
+GTK2_RC_FILES = /etc/gtk-2.0/gtkrc:/home/ya/.gtkrc-2.0:/home/ya/.config/gtkrc-2.0
 # environment
-HOME = /home/aleksei
+HOME = /home/ya
 # environment
 QT_IM_MODULE = ibus
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # environment
-VSCODE_IPC_HOOK = /run/user/1000/vscode-3d377c9f-1.70.2-main.sock
+VSCODE_IPC_HOOK = /run/user/1000/vscode-e853e479-1.74.3-main.sock
 # environment
-XDG_SESSION_ID = 3
+XDG_SESSION_ID = 1
 # environment
 XCURSOR_SIZE = 24
 # environment
@@ -221,9 +246,9 @@ KDE_SESSION_VERSION = 5
 # environment
 KDE_FULL_SESSION = true
 # environment
-LC_IDENTIFICATION = be_BY.UTF-8
+LC_IDENTIFICATION = uk_UA.UTF-8
 # variable set hash-table stats:
-# Load=105/1024=10%, Rehash=0, Collisions=3/137=2%
+# Load=116/1024=11%, Rehash=0, Collisions=7/148=5%
 
 # Pattern-specific Variable Values
 
@@ -231,9 +256,9 @@ LC_IDENTIFICATION = be_BY.UTF-8
 
 # Directories
 
-# . (device 66306, inode 3945018): 34 files, no impossibilities.
+# . (device 2054, inode 521502): 36 files, no impossibilities.
 
-# 34 files, no impossibilities in 1 directories.
+# 36 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -244,7 +269,7 @@ LC_IDENTIFICATION = be_BY.UTF-8
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-04-18 12:56:37.406973566
+#  Last modified 2023-01-18 09:55:04.234727556
 #  File has been updated.
 #  Successfully updated.
 
@@ -257,6 +282,7 @@ tests:
 #  File has not been updated.
 # variable set hash-table stats:
 # Load=1/32=3%, Rehash=0, Collisions=0/2=0%
+ 
 #  recipe to execute (from 'Makefile', line 5):
 	php bin/console doctrine:database:drop --force || true
 	php bin/console doctrine:database:create
@@ -290,13 +316,12 @@ all:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 40 / storage = 395 B / avg = 9 B
-# current buf: size = 8162 B / used = 395 B / count = 40 / avg = 9 B
+# strcache buffers: 1 (0) / strings = 42 / storage = 425 B / avg = 10 B
+# current buf: size = 8162 B / used = 425 B / count = 42 / avg = 10 B
 
-# strcache performance: lookups = 50 / hit rate = 20%
+# strcache performance: lookups = 52 / hit rate = 19%
 # hash-table stats:
- 
-# Load=40/8192=0%, Rehash=0, Collisions=0/50=0%
-# Finished Make data base on Thu Sep  1 13:22:22 2022
+# Load=42/8192=1%, Rehash=0, Collisions=0/52=0%
+# Finished Make data base on Fri Jan 20 15:45:56 2023
 
  

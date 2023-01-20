@@ -3,10 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Account;
+use App\Service\Interfaces\AccountsInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -25,33 +25,42 @@ class AccountsController extends AbstractController
      */
     public function getAccounts(string $email): JsonResponse
     {
-        $accounts = $this->em->getRepository(Account::class)->findBy(['user_id'=>$email]);
-        $account_arr=[];
-        /** @var  $one_account  Account */
-        foreach ($accounts as $one_account){
-
-            $foreResponse=[
+        $accounts = $this->em->getRepository(Account::class)->findBy(['user_id' => $email]);
+        $account_arr = [];
+        /** @var $one_account Account */
+        foreach ($accounts as $one_account) {
+            $foreResponse = [
                 'id' => $one_account->getId(),
                 'user_id' => $one_account->getUserId(),
-                'number'=> $one_account->getNumber(),
-                'currency_id'=>$one_account->getCurrencyId()
+                'number' => $one_account->getNumber(),
+                'currency_id' => $one_account->getCurrencyId(),
             ];
 
-            array_push($account_arr,$foreResponse);
+            array_push($account_arr, $foreResponse);
         }
+
         return new JsonResponse($account_arr, Response::HTTP_OK);
     }
 
     /**
      *@Route("/accounts/{email}/{number}", name="one_account", methods={"GET"})
-     * @return JsonResponse
      */
-
     public function getAccount(string $email, string $number, SerializerInterface $serializer): JsonResponse
     {
-        /** @var  $account  Account */
-        $account = $this->em->getRepository(Account::class)->findOneBy(['number'=>$number]);
-        $content = $serializer->serialize($account,'json');
+        /** @var $account Account */
+        $account = $this->em->getRepository(Account::class)->findOneBy(['number' => $number]);
+        $content = $serializer->serialize($account, 'json');
+
         return new JsonResponse(json_decode($content), Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/accounts/{email}/create", name="create_account", methods={"POST"})
+     */
+    public function createAccount(string $email, AccountsInterface $accountsService): JsonResponse
+    {
+        $accountNumber = $accountsService->createAccountByEmail($email);
+
+        return new JsonResponse($accountNumber, Response::HTTP_OK);
     }
 }
