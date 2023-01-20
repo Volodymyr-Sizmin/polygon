@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Account;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,26 +20,23 @@ class AccountsController extends AbstractController
     }
 
     /**
-     * @Route("/{email}/accounts", name: "app_accounts", methods={"GET"})
+     * @Route("/{email}/accounts", name= "app_accounts", methods={"GET"})
      */
-
-    public function getAccounts(string $email)
+    public function getAccounts(string $email): JsonResponse
     {
-
         $accounts = $this->em->getRepository(Account::class)->findBy(['user_id'=>$email]);
 
-       dd($accounts);
-
-        return $accounts;
+        return new JsonResponse($accounts, Response::HTTP_OK);
     }
 
     /**
-     *@Route("/accounts/{email}/{card_number}", name: "one_accounts", methods={"GET"})
+     *@Route("/accounts/{email}/{number}", name="one_account", methods={"GET"})
+     */
 
-    public function getAccount(): Response
+    public function getAccount(string $email, string $number): JsonResponse
     {
-        return $this->render('accounts/index.html.twig', [
-            'controller_name' => 'AccountsController',
-        ]);
-    }*/
+        $account = $this->em->getRepository(Account::class)->findOneBy(['number'=>$number]);
+
+        return new JsonResponse($account, Response::HTTP_OK);
+    }
 }
