@@ -24,6 +24,11 @@ class PaymentType
     private $name;
 
     /**
+     * @ORM\Column(type="string", length=1)
+     */
+    private $on_the_main_page;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $name_id;
@@ -38,6 +43,11 @@ class PaymentType
         return $this->name;
     }
 
+    public function isOnTheMainPage(): ?int
+    {
+        return $this->on_the_main_page;
+    }
+
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -48,6 +58,11 @@ class PaymentType
     public function getNameId(): ?string
     {
         return $this->name_id;
+    }
+
+    public function setOnTheMainPage(): ?int
+    {
+        return $this->on_the_main_page;
     }
 
     public function setNameId(string $name_id): self

@@ -29,6 +29,10 @@ final class Version20230110162919 extends AbstractMigration
             'length' => 255,
             'notnull' => 1
         ]);
+        $table->addColumn('on_the_main_page', 'integer', [
+            'length' => 1,
+            'notnull' => 1
+        ]);
         $table->addColumn('name_id', 'string', [
             'length' => 255,
             'notnull' => 1
