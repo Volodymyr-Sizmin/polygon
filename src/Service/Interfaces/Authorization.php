@@ -6,8 +6,5 @@ use App\Service\TokenService;
 
 interface Authorization
 {
-    public function getEmailFromHeaderToken(
-        string $authorizationToken,
-        TokenService $tokenService
-    ): string;
+    public function getEmailFromHeaderToken(string $authorizationToken): string;
 }

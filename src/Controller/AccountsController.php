@@ -65,7 +65,7 @@ class AccountsController extends AbstractController
         AuthorizationService $authorizationService
     ): JsonResponse {
         $authToken = $request->headers->get('Authorization') ?? '';
-        $email = $authorizationService->extractEmailFromToken($authToken);
+        $email = $authorizationService->getEmailFromHeaderToken($authToken);
         $accountNumber = $accountsService->createAccountByEmail($email);
 
         return new JsonResponse($accountNumber, Response::HTTP_OK);
