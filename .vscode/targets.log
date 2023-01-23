@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Fri Jan 20 15:45:56 2023
+# Make data base, printed on Mon Jan 23 14:37:43 2023
 
 # Variables
 
@@ -77,7 +77,7 @@ LESSOPEN = | /usr/bin/lesspipe %s
 # environment
 MFLAGS = -pqrR
 # environment
-SSH_AUTH_SOCK = /tmp/ssh-XXXXXXdQL3KC/agent.1429
+SSH_AUTH_SOCK = /tmp/ssh-XXXXXXCAx1Dr/agent.1427
 # default
 .SHELLFLAGS := -c
 # environment
@@ -95,7 +95,7 @@ MAKEFILE_LIST := Makefile
 # automatic
 @F = $(notdir $@)
 # environment
-VSCODE_PID = 44595
+VSCODE_PID = 14008
 # environment
 HISTIGNORE = &:[ ]*:exit:ls:bg:fg:history:clear
 # environment
@@ -103,7 +103,7 @@ XDG_SESSION_TYPE = x11
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/ya-ASUS-EXPERTBOOK-L1500CDAY-L1500CDA:@/tmp/.ICE-unix/1742,unix/ya-ASUS-EXPERTBOOK-L1500CDAY-L1500CDA:/tmp/.ICE-unix/1742
+SESSION_MANAGER = local/ya-ASUS-EXPERTBOOK-L1500CDAY-L1500CDA:@/tmp/.ICE-unix/1740,unix/ya-ASUS-EXPERTBOOK-L1500CDAY-L1500CDA:/tmp/.ICE-unix/1740
 # automatic
 *F = $(notdir $*)
 # environment
@@ -184,7 +184,7 @@ XDG_VTNR = 1
 # makefile
 .DEFAULT_GOAL := tests
 # environment
-SYSTEMD_EXEC_PID = 1410
+SYSTEMD_EXEC_PID = 1413
 # environment
 DISPLAY = :0
 # environment
@@ -198,7 +198,7 @@ MAKE_VERSION := 4.3
 # environment
 LC_MEASUREMENT = uk_UA.UTF-8
 # environment
-SSH_AGENT_PID = 1502
+SSH_AGENT_PID = 1507
 # environment
 PAGER = less
 # environment
@@ -282,8 +282,8 @@ tests:
 #  File has not been updated.
 # variable set hash-table stats:
 # Load=1/32=3%, Rehash=0, Collisions=0/2=0%
- 
 #  recipe to execute (from 'Makefile', line 5):
+ 
 	php bin/console doctrine:database:drop --force || true
 	php bin/console doctrine:database:create
 	bin/console doctrine:schema:create
@@ -322,6 +322,6 @@ all:
 # strcache performance: lookups = 52 / hit rate = 19%
 # hash-table stats:
 # Load=42/8192=1%, Rehash=0, Collisions=0/52=0%
-# Finished Make data base on Fri Jan 20 15:45:56 2023
+# Finished Make data base on Mon Jan 23 14:37:43 2023
 
  

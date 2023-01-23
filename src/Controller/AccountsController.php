@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Account;
+use App\Service\AuthorizationService;
 use App\Service\Interfaces\Accounts;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -55,10 +57,15 @@ class AccountsController extends AbstractController
     }
 
     /**
-     * @Route("/accounts/{email}/create", name="create_account", methods={"POST"})
+     * @Route("/accounts/create", name="create_account", methods={"POST"})
      */
-    public function createAccount(string $email, Accounts $accountsService): JsonResponse
-    {
+    public function createAccount(
+        Request $request,
+        Accounts $accountsService,
+        AuthorizationService $authorizationService
+    ): JsonResponse {
+        $authToken = $request->headers->get('Authorization') ?? '';
+        $email = $authorizationService->extractEmailFromToken($authToken);
         $accountNumber = $accountsService->createAccountByEmail($email);
 
         return new JsonResponse($accountNumber, Response::HTTP_OK);
