@@ -10,7 +10,8 @@ class AuthorizationService implements Authorization
 {
     private TokenService $tokenService;
 
-    public function __construct(TokenService $tokenService) {
+    public function __construct(TokenService $tokenService)
+    {
         $this->tokenService = $tokenService;
     }
 
@@ -27,4 +28,5 @@ class AuthorizationService implements Authorization
 
         return $email;
     }
+
 }
