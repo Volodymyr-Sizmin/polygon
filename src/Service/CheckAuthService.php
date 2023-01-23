@@ -25,7 +25,7 @@ class CheckAuthService
             return  ["success" => "false", "message" => "you are not authorized"];
         }
 
-        $token = $this->tokenService->decodeToken(trim(substr($authorizationHeader, 7)));
+        $token = $this->tokenService->decodeTokenHS256(trim(substr($authorizationHeader, 7)));
 
         $tokenEmail = $token->aud;
 
