@@ -7,12 +7,14 @@ namespace App\EventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class ExceptionListener
 {
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
+        $request = $event->getRequest();
 
         if ($exception instanceof NotFoundHttpException) {
             $event->setResponse(
@@ -25,6 +27,27 @@ class ExceptionListener
                         ],
                     ],
                     $exception->getStatusCode()
+                )
+            );
+        }
+
+        // Only json exceptions are caught here
+        if ('json' !== $request->getContentType()) {
+            return;
+        }
+        if (
+            $exception instanceof \DomainException
+            || $exception instanceof AuthenticationException
+        ) {
+            $event->setResponse(
+                new JsonResponse(
+                    [
+                        'success' => false,
+                        'body' => [
+                            'message' => $exception->getMessage(),
+                        ],
+                    ],
+                    $exception->getCode()
                 )
             );
         }
