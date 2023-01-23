@@ -39,4 +39,9 @@ class TokenService
 
         return $token;
     }
+
+    public function getToken($request)
+    {
+        return $request->headers->get('Authorization');
+    }
 }
