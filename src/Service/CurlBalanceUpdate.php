@@ -4,8 +4,7 @@ namespace App\Service;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-
-class CardsInfoService
+class CurlBalanceUpdate
 {
     protected TokenService $tokenService;
     protected HttpClientInterface $client;
@@ -16,21 +15,17 @@ class CardsInfoService
         $this->client = $client;
     }
 
-    public function getCardsInfo(string $email): array
+    public function curlBalanceUpd(string $email, string $cardNumber, int $balance)
     {
-        $dataEmail = ['email' => $email];
-        $token = $this->tokenService->createToken(
-            $dataEmail,
-        );
 
-        $response = $this->client->request('GET', 'https://polygon-application.andersenlab.dev/cards_service/' . $email . '/cards', [
+        $dataEmail = ['email' => $email];
+        $token = $this->tokenService->createToken($dataEmail);
+
+        $this->client->request('PUT', 'https://polygon-application.andersenlab.dev/cards_service/' . $email . '/cards/' . $cardNumber, [
             'headers' => [
                 'Authorization' => "Bearer $token",
             ],
+            'json' => ['balance' => $balance],
         ]);
-
-        $content = json_decode($response->getContent());
-
-        return $content->cards;
     }
 }
