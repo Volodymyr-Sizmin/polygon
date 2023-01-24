@@ -16,16 +16,10 @@ class CheckAuthService
         $this->client = $client;
     }
 
-    public function checkAuthentication(string $email, Request $request)
+    public function checkAuthentication(string $email, $strToken)
     {
-        $authorizationHeader = $request->headers->get('Authorization');
 
-        if (!isset($authorizationHeader)) {
-
-            return  ["success" => "false", "message" => "you are not authorized"];
-        }
-
-        $token = $this->tokenService->decodeTokenHS256(trim(substr($authorizationHeader, 7)));
+        $token = $this->tokenService->decodeTokenHS256(trim(substr($strToken, 7)));
 
         $tokenEmail = $token->aud;
 

@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use function PHPUnit\Framework\throwException;
 
 class PaymentService
 {
@@ -27,28 +28,21 @@ class PaymentService
         $this->em = $em;
     }
 
-    public function paymentService(string $email, Request $request): array
+    public function paymentService(string $email, $params): array
     {
-        $params = json_decode($request->getContent(), true);
-        print_r($params);
-        $amount = $params['amount'];
-        $cardNumber = $params['cardNumber'];
+       /*$params = json_decode($request->getContent(), true);
+        print_r($params);*/
+        $amount = $params->amount;
+        $cardNumber = $params->cardNumber;
+
         $timestamp = new DateTimeImmutable(date('d.m.Y H:i:s'));
 
-        if (isset($params['account_debit'])) {
-            $account_debit = $params['account_debit'];
-        } else {
-            $account_debit = 1111;
-        }
-
-        if (isset($params['subject'])) {
-            $subject = $params['subject'];
-        } else {
-            $subject = 'Subject is not specified';
-        }
+        $account_debit = $params->account_debit ?? 1111;;
+        $subject = $params->subject ?? 'Subject is not specified';
+        $token = $params->headersAuth ?? '';
 
         try {
-            $checkAuthResponse = $this->checkAuth->checkAuthentication($email, $request);
+            $checkAuthResponse = $this->checkAuth->checkAuthentication($email, $token);
 
             if ($checkAuthResponse['success'] == 'true') {
                 $oneCardInfoResponse = $this->oneCardInfo->getCardsInfo($email, $cardNumber);
@@ -73,10 +67,10 @@ class PaymentService
                     $this->em->getConnection()->commit();
                 }
             }
-
         } catch (\Exception $exception) {
             $this->em->rollback();
             $newBalance = $oldBalance;
+            throw new \Exception;
         } finally {
             $this->curlBalanceUpd->curlBalanceUpd($email, $cardNumber, $newBalance);
         }
