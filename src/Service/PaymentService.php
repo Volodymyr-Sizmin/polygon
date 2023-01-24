@@ -5,9 +5,6 @@ namespace App\Service;
 use App\Entity\Payment;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use function PHPUnit\Framework\throwException;
 
@@ -30,16 +27,12 @@ class PaymentService
 
     public function paymentService(string $email, $params): array
     {
-       /*$params = json_decode($request->getContent(), true);
-        print_r($params);*/
         $amount = $params->amount;
         $cardNumber = $params->cardNumber;
-
-        $timestamp = new DateTimeImmutable(date('d.m.Y H:i:s'));
-
         $account_debit = $params->account_debit ?? 1111;;
         $subject = $params->subject ?? 'Subject is not specified';
         $token = $params->headersAuth ?? '';
+        $timestamp = new DateTimeImmutable(date('d.m.Y H:i:s'));
 
         try {
             $checkAuthResponse = $this->checkAuth->checkAuthentication($email, $token);
