@@ -30,7 +30,6 @@ class PaymentByCardNumberController extends AbstractController
 
     public function phonePayment(string $email, Request $request) : JsonResponse
     {
-        //$result = $this->paymentService->paymentService($email, $params);
         $authorizationHeader = $request->headers->get('Authorization');
         $strForDTO = json_decode($request->getContent(), true);
         $strForDTO['subject'] = 'By card number';
