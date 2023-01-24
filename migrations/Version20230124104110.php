@@ -20,6 +20,7 @@ final class Version20230124104110 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('DROP TABLE utilities_provider');
         $this->addSql('CREATE TABLE utilities_provider (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, utility VARCHAR(255) NOT NULL, account_id INT(10) UNSIGNED NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
     }
 
