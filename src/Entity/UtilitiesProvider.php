@@ -28,10 +28,9 @@ class UtilitiesProvider
     private $utility;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Account::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="integer", options={"unsigned"=true})
      */
-    private $account;
+    private $account_id;
 
     public function getId(): ?int
     {
@@ -62,14 +61,14 @@ class UtilitiesProvider
         return $this;
     }
 
-    public function getAccount(): ?Account
+    public function getAccount(): ?int
     {
-        return $this->account;
+        return $this->account_id;
     }
 
-    public function setAccount(?Account $account): self
+    public function setAccount(?int $account_id): self
     {
-        $this->account = $account;
+        $this->account_id = $account_id;
 
         return $this;
     }
