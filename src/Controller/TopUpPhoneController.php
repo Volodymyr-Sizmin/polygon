@@ -45,5 +45,4 @@ class TopUpPhoneController extends AbstractController
 
         return new JsonResponse($result,Response::HTTP_OK);
     }
-
 }
