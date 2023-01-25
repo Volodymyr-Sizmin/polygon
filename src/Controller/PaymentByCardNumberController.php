@@ -24,7 +24,7 @@ class PaymentByCardNumberController extends AbstractController
 
     /**
      * @Route("/service/payments/{email}/bycardnumber", name="bycardnumber", methods={"POST"})
-     * @param $params{'cardNumber', 'amount','cardNumberRecipient', 'subject'}
+     * @param $params{'cardNumber', 'amount','cardNumberRecipient'}
      * @return JsonResponse
      */
 
@@ -38,6 +38,6 @@ class PaymentByCardNumberController extends AbstractController
         $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestDTO::class, 'json');
         $result = $this->paymentService->paymentService($email, $resultDTO);
 
-        return new JsonResponse($result,Response::HTTP_OK);
+        return new JsonResponse($result, Response::HTTP_OK);
     }
 }
