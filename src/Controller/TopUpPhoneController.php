@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller;
 
-use App\DTO\RequestDTO;
+use App\DTO\RequestPaymentDTO;
 use App\Entity\CellPhoneOperators;
 use App\Service\PaymentService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -40,7 +40,7 @@ class TopUpPhoneController extends AbstractController
         $strForDTO['subject'] = 'Top Up Phone';
         $strForDTO['headersAuth'] = $authorizationHeader;
         $strForDTO['account_debit'] = $cellPhoneOperators->getAccount();
-        $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestDTO::class, 'json');
+        $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
         $result = $this->paymentService->paymentService($email, $resultDTO);
 
         return new JsonResponse($result,Response::HTTP_OK);
