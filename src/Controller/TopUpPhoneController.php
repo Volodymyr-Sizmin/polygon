@@ -14,9 +14,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class TopUpPhoneController extends AbstractController
 {
-    public Request $request;
-    private PaymentService $paymentService;
-    private SerializerInterface $serializer;
+    protected Request $request;
+    protected PaymentService $paymentService;
+    protected SerializerInterface $serializer;
     protected $em;
 
     public function __construct(PaymentService $paymentService, SerializerInterface $serializer, EntityManagerInterface $em)
