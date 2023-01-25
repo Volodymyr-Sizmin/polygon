@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\DTO\RequestPaymentDTO;
 use App\Entity\Payment;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,14 +26,15 @@ class PaymentService
         $this->em = $em;
     }
 
-    public function paymentService(string $email, $params): array
+    public function paymentService(string $email, RequestPaymentDTO $params): array
     {
-        $amount = $params->amount;
-        $cardNumber = $params->cardNumber;
-        $account_debit = $params->account_debit ?? 1111;;
-        $subject = $params->subject ?? 'Subject is not specified';
-        $token = $params->headersAuth ?? '';
+        $amount = $params->getAmount();
+        $cardNumber = $params->getCardNumber();
+        $account_debit = $params->getAccountDebit() ?? 1111;;
+        $subject = $params->getSubject() ?? 'Subject is not specified';
+        $token = $params->getHeadersAuth() ?? '';
         $timestamp = new DateTimeImmutable(date('d.m.Y H:i:s'));
+
 
         try {
             $checkAuthResponse = $this->checkAuth->checkAuthentication($email, $token);
@@ -44,6 +46,7 @@ class PaymentService
 
                 if ($oldBalance > $amount) {
                     $newBalance = ($oldBalance * 100 - $amount * 100) / 100;
+                    echo 'Hello';
                     $this->em->getConnection()->beginTransaction();
                     $payment = new Payment();
                     $payment->setAmount($amount);
