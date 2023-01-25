@@ -1,7 +1,7 @@
 <?php
 namespace App\Controller;
 
-use App\DTO\RequestDTO;
+use App\DTO\RequestPaymentDTO;
 use App\Service\PaymentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,7 +35,7 @@ class PaymentByCardNumberController extends AbstractController
         $strForDTO['subject'] = 'By card number';
         $strForDTO['headersAuth'] = $authorizationHeader;
 
-        $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestDTO::class, 'json');
+        $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
         $result = $this->paymentService->paymentService($email, $resultDTO);
 
         return new JsonResponse($result, Response::HTTP_OK);
