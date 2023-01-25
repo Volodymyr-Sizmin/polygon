@@ -64,7 +64,7 @@ class UtilitiesProviderRepository extends ServiceEntityRepository
     /**
      * @return string[] Returns an array of all utilities present
      */
-    public function getUtilitites(): array
+    public function getUtilities(): array
     {
         return $this->createQueryBuilder('utilityProvider')
             ->select('utilityProvider.utility')
