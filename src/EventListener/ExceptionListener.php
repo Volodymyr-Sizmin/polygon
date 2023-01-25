@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\EventListener;
 
+use DomainException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class ExceptionListener
 {
@@ -35,16 +35,14 @@ class ExceptionListener
         if ('json' !== $request->getContentType()) {
             return;
         }
-        if (
-            $exception instanceof \DomainException
-            || $exception instanceof AuthenticationException
-        ) {
+        if ($exception instanceof DomainException) {
             $event->setResponse(
                 new JsonResponse(
                     [
                         'success' => false,
                         'body' => [
                             'message' => $exception->getMessage(),
+                            'code' => $exception->getCode(),
                         ],
                     ],
                     $exception->getCode()
