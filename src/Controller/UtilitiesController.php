@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\UtilitiesProvider;
+use App\Repository\UtilitiesProviderRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,10 +13,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class UtilitiesController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
+    private UtilitiesProviderRepository $utilitiesProviderRepository;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+        $this->utilitiesProviderRepository = getRepository(UtilitiesProvider::class);
     }
 
     /**
@@ -23,7 +26,7 @@ class UtilitiesController extends AbstractController
      */
     public function getAll(): JsonResponse
     {
-        $providers = $this->entityManager->getRepository(UtilitiesProvider::class)->findAll();
+        $providers = $this->utilitiesProviderRepository->findAll();
 
         return $this->json($providers, Response::HTTP_OK);
     }
@@ -33,7 +36,7 @@ class UtilitiesController extends AbstractController
      */
     public function getByUtility(string $utility): JsonResponse
     {
-        $providers = $this->entityManager->getRepository(UtilitiesProvider::class)->findByUtility($utility);
+        $providers = $this->utilitiesProviderRepository->findByUtility($utility);
 
         return $this->json($providers, Response::HTTP_OK);
     }
@@ -43,7 +46,7 @@ class UtilitiesController extends AbstractController
      */
     public function getUtilities(): JsonResponse
     {
-        $utilities = $this->entityManager->getRepository(UtilitiesProvider::class)->getUtilities();
+        $utilities = $this->utilitiesProviderRepository->getUtilities();
 
         return $this->json($utilities, Response::HTTP_OK);
     }
