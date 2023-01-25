@@ -46,7 +46,6 @@ class PaymentService
 
                 if ($oldBalance > $amount) {
                     $newBalance = ($oldBalance * 100 - $amount * 100) / 100;
-                    echo 'Hello';
                     $this->em->getConnection()->beginTransaction();
                     $payment = new Payment();
                     $payment->setAmount($amount);
