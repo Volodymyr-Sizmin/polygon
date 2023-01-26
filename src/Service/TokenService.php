@@ -49,7 +49,7 @@ class TokenService
         return $request->headers->get('Authorization');
     }
 
-    public function getEmailFromToken($token)
+    public function getEmailFromToken($token):string
     {
         if (!isset($token)) {
             throw new \DomainException('Not authenticated', 401);

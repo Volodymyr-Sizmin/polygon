@@ -11,29 +11,31 @@ class FastPaymentService
 {
     protected TokenService $tokenService;
     protected  CardBalanceService $cardBalanceService;
+    protected ManagerRegistry $doctrine;
 
-    public function __construct(TokenService $tokenService, CardBalanceService $cardBalanceService)
+    public function __construct(TokenService $tokenService, CardBalanceService $cardBalanceService, ManagerRegistry $doctrine)
     {
         $this->tokenService = $tokenService;
         $this->cardBalanceService = $cardBalanceService;
+        $this->doctrine = $doctrine;
     }
 
-   public function getFastPayments($dto, $doctrine):array
+   public function getFastPayments(FastPaymentDTO $dto):array
     {
        $email = $this->tokenService->getEmailFromToken($dto->token);
 
-       $templatesList = $doctrine->getRepository(FastPayments::class)->findBy(['user_email' => $email]);
+       $templatesList = $this->doctrine->getRepository(FastPayments::class)->findBy(['user_email' => $email]);
        if(!$templatesList){
            throw new \DomainException('No templates found', 404);
        }
        return $templatesList;
     }
 
-   public function getFastPaymentInfo(FastPaymentDTO $dto, ManagerRegistry $doctrine):array
+   public function getFastPaymentInfo(FastPaymentDTO $dto):array
     {
         $email = $this->tokenService->getEmailFromToken($dto->token);
         $cards = $this->cardBalanceService->showCards($email, $dto->token);
-        $fast_payment =  $doctrine->getRepository(FastPayments::class)->find($dto->templateId);
+        $fast_payment =  $this->doctrine->getRepository(FastPayments::class)->find($dto->templateId);
 
         if (!$fast_payment || $fast_payment->getUserEmail() !== $email) {
             throw new \DomainException("No template found with id  $dto->templateId ", 404);
@@ -42,11 +44,11 @@ class FastPaymentService
        return [$fast_payment, $cards];
     }
 
-   public function updateFastPayment($dto, $doctrine):array
+   public function updateFastPayment(FastPaymentDTO $dto):array
        {
            $email = $this->tokenService->getEmailFromToken($dto->token);
 
-           $entityManager = $doctrine->getManager();
+           $entityManager = $this->doctrine->getManager();
            $fast_payment = $entityManager->getRepository(FastPayments::class)->find($dto->templateId);
 
             if (!$fast_payment || $fast_payment->getUserEmail() !== $email) {
@@ -68,11 +70,11 @@ class FastPaymentService
             return ['success' => true, 'message' => 'Payment template was successfully updated'];
     }
 
-    public function deleteTemplate(FastPaymentDTO $dto, ManagerRegistry $doctrine):array
+    public function deleteTemplate(FastPaymentDTO $dto):array
     {
         $email = $this->tokenService->getEmailFromToken($dto->token);
 
-        $em = $doctrine->getManager();
+        $em = $this->doctrine->getManager();
         $fast_payment = $em->getRepository(FastPayments::class)->find($dto->templateId);
         if (!$fast_payment || $fast_payment->getUserEmail() !== $email) {
             throw new \DomainException("No template found with id  $dto->templateId ", 404);
