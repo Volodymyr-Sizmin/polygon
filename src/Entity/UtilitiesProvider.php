@@ -2,14 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\PaymentTypeRepository;
+use App\Repository\UtilitiesProviderRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="payment_types")
- * @ORM\Entity(repositoryClass=PaymentTypeRepository::class)
+ * @ORM\Entity(repositoryClass=UtilitiesProviderRepository::class)
  */
-class PaymentType
+class UtilitiesProvider
 {
     /**
      * @ORM\Id
@@ -26,12 +25,12 @@ class PaymentType
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name_id;
+    private $utility;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", options={"unsigned"=true})
      */
-    private $on_the_main_page;
+    private $account_id;
 
     public function getId(): ?int
     {
@@ -50,26 +49,26 @@ class PaymentType
         return $this;
     }
 
-    public function getNameId(): ?string
+    public function getUtility(): ?string
     {
-        return $this->name_id;
+        return $this->utility;
     }
 
-    public function setNameId(string $name_id): self
+    public function setUtility(string $utility): self
     {
-        $this->name_id = $name_id;
+        $this->utility = $utility;
 
         return $this;
     }
 
-    public function getOnTheMainPage(): ?int
+    public function getAccount(): ?int
     {
-        return $this->on_the_main_page;
+        return $this->account_id;
     }
 
-    public function setOnTheMainPage(int $on_the_main_page): self
+    public function setAccount(?int $account_id): self
     {
-        $this->on_the_main_page = $on_the_main_page;
+        $this->account_id = $account_id;
 
         return $this;
     }
