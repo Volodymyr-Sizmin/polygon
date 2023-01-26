@@ -2,6 +2,8 @@
 
 namespace App\Service\CardGatewayAdapter\Interfaces;
 
+
+
 interface CardGatewayAdapter
 {
     /**
@@ -20,11 +22,16 @@ interface CardGatewayAdapter
     public function getCardDataByNumber(string $email, string $cardNumber, string $token): object;
 
     /**
-     * @deprecated we will move this to our service?
      * @param float $newBalance
      * @param string $email
      * @param string $cardNumber
      * @param string $token
+     * @deprecated we will move this to our service?
      */
-    public function updateCardBalance(float $newBalance, string $email, string $cardNumber, string $token): void;
+    public function updateCardBalance(
+        float $newBalance,
+        string $email,
+        string $cardNumber,
+        string $token
+    ): object;
 }

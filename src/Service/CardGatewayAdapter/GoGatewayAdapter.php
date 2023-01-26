@@ -36,10 +36,13 @@ class GoGatewayAdapter implements Interfaces\CardGatewayAdapter
         return json_decode($responseBody, false);
     }
 
-    public function updateCardBalance(float $newBalance, string $email, string $cardNumber, string $token): void
+    public function updateCardBalance(float $newBalance, string $email, string $cardNumber, string $token): object
     {
+        $endpoint = $email . '/cards/' . $cardNumber;
         $jsonBody = ['balance' => $newBalance];
-        $this->apiClient(self::HTTP_METHOD_PUT, $email, $cardNumber, $jsonBody);
+        $responseBody = $this->apiClient(self::HTTP_METHOD_PUT, $endpoint, $token, $jsonBody);
+
+        return json_decode($responseBody, false);
     }
 
     private function apiClient(string $method, string $endpoint, string $token, array $jsonBody = []): string
@@ -67,7 +70,6 @@ class GoGatewayAdapter implements Interfaces\CardGatewayAdapter
         if ($jsonBody) {
             $parameters['json'] = $jsonBody;
         }
-
         return $parameters;
     }
 }
