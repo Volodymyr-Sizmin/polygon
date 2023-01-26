@@ -11,6 +11,8 @@ class GoGatewayAdapter implements Interfaces\CardGatewayAdapter
     private const GO_API_ENDPOINT = 'https://polygon-application.andersenlab.dev/cards_service/';
     private const HTTP_METHOD_GET = 'GET';
     private const HTTP_METHOD_POST = 'POST';
+    private const HTTP_METHOD_PUT = 'PUT';
+
     private HttpClientInterface $httpClient;
 
     public function __construct(HttpClientInterface $httpClient, TokenService $tokenService)
@@ -34,9 +36,10 @@ class GoGatewayAdapter implements Interfaces\CardGatewayAdapter
         return json_decode($responseBody, false);
     }
 
-    public function updateCardBalance(string $email, string $cardNumber, string $token): void
+    public function updateCardBalance(float $newBalance, string $email, string $cardNumber, string $token): void
     {
-        // TODO: Implement updateCardBalance() method.
+        $jsonBody = ['balance' => $newBalance];
+        $this->apiClient(self::HTTP_METHOD_PUT, $email, $cardNumber, $jsonBody);
     }
 
     private function apiClient(string $method, string $endpoint, string $token, array $jsonBody = []): string
