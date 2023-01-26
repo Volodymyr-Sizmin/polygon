@@ -2,8 +2,12 @@
 
 namespace App\Service;
 
+use App\EventListener\ExceptionListener;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class TokenService
 {
@@ -38,5 +42,20 @@ class TokenService
         $token = $user->getToken();
 
         return $token;
+    }
+
+    public function getToken($request)
+    {
+        return $request->headers->get('Authorization');
+    }
+
+    public function getEmailFromToken($token):string
+    {
+        if (!isset($token)) {
+            throw new \DomainException('Not authenticated', 401);
+        }
+        $decodedToken  = $this->decodeToken(substr($token, 7));
+
+        return  $decodedToken->data->email;
     }
 }
