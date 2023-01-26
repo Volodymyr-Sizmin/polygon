@@ -62,6 +62,11 @@ class Autopayments
      */
     private $auto_charge_off;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $created_at;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -171,6 +176,18 @@ class Autopayments
     public function setAutoChargeOff(bool $auto_charge_off): self
     {
         $this->auto_charge_off = $auto_charge_off;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): self
+    {
+        $this->created_at = $created_at;
 
         return $this;
     }
