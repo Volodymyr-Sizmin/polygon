@@ -50,7 +50,7 @@ final class Version20230122085730 extends AbstractMigration
             'unsigned' => 1,
             'notnull' => 1
         ]);
-        $table->addColumn('adress','string',[
+        $table->addColumn('address','string',[
             'length' => 255,
         ]);$table->addColumn('recepient_name','string',[
         'length' => 255,

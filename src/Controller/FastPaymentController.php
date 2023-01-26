@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\Transformer\FastPaymentTransformerDTO;
 use App\Service\FastPaymentService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,39 +26,95 @@ class FastPaymentController extends AbstractController
      */
     public function getFastPayments(ManagerRegistry $doctrine, SerializerInterface $serializer, Request $request): JsonResponse
     {
-        $fast_payments = $this->fastPaymentService->getFastPayments($request, $doctrine);
-        $result = $serializer->serialize($fast_payments, 'json');
-        return new JsonResponse($result, Response::HTTP_OK, [], true );
+        try{
+            $dto = FastPaymentTransformerDTO::transformerDTO($request);
+            $fast_payments = $this->fastPaymentService->getFastPayments($dto, $doctrine);
+            $result = $serializer->serialize($fast_payments, 'json');
+            return new JsonResponse($result, Response::HTTP_OK, [], true );
+        } catch (\Exception $e){
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'exception' => get_class($e),
+                        'message' => $e->getMessage(),
+                        'status' => $e->getCode(),
+                    ],
+                ],
+                $e->getCode());
+        }
     }
 
     /**
      * @Route("/payments_and_transfers/fast_payments/{id}", name="fast_payment", methods={"GET"})
      */
-    public function getFastPaymentInfo($id, ManagerRegistry $doctrine, SerializerInterface $serializer, Request $request): JsonResponse
+    public function getFastPaymentInfo(int $id, ManagerRegistry $doctrine, SerializerInterface $serializer, Request $request): JsonResponse
     {
-      $fast_payment = $this->fastPaymentService->getFastPaymentInfo($id, $request, $doctrine);
-      $result = $serializer->serialize($fast_payment, 'json');
-      return new JsonResponse($result, Response::HTTP_OK, [], true );
+        try{
+            $dto = FastPaymentTransformerDTO::transformerDTO($request, $id);
+            $fast_payment = $this->fastPaymentService->getFastPaymentInfo($dto, $doctrine);
+            $result = $serializer->serialize($fast_payment, 'json');
+            return new JsonResponse($result, Response::HTTP_OK, [], true );
 
+        }catch (\Exception $e){
+        return new JsonResponse(
+            [
+                'success' => false,
+                'body' => [
+                    'exception' => get_class($e),
+                    'message' => $e->getMessage(),
+                    'status' => $e->getCode(),
+                ],
+            ],
+            $e->getCode());
+        }
     }
 
     /**
      * @Route("/payments_and_transfers/fast_payments/{id}", name="edit_payment", methods={"PUT"})
      */
-    public function updateTemplate($id, ManagerRegistry $doctrine, SerializerInterface $serializer, Request $request):JsonResponse
+    public function updateTemplate(int $id, ManagerRegistry $doctrine, SerializerInterface $serializer, Request $request):JsonResponse
     {
-        $fast_payment = $this->fastPaymentService->updateFastPayment($id, $doctrine, $request);
-        $result = $serializer->serialize($fast_payment, 'json');
-        return new JsonResponse($result, Response::HTTP_OK, [], true );
+        try{
+            $dto = FastPaymentTransformerDTO::transformerDTO($request, $id);
+            $fast_payment = $this->fastPaymentService->updateFastPayment($dto, $doctrine);
+            $result = $serializer->serialize($fast_payment, 'json');
+            return new JsonResponse($result, Response::HTTP_OK, [], true );
+        }catch (\Exception $e){
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'exception' => get_class($e),
+                        'message' => $e->getMessage(),
+                        'status' => $e->getCode(),
+                    ],
+                ],
+                $e->getCode());
+        }
     }
 
     /**
      * @Route("/payments_and_transfers/fast_payments/{id}", name="templates_delete", methods={"DELETE"})
      */
-    public function deleteTemplate($id, Request $request, ManagerRegistry $doctrine,  SerializerInterface $serializer):JsonResponse
+    public function deleteTemplate(int $id, Request $request, ManagerRegistry $doctrine,  SerializerInterface $serializer):JsonResponse
     {
-        $fast_payment = $this->fastPaymentService->deleteTemplate($id, $request, $doctrine);
-        $result = $serializer->serialize($fast_payment, 'json');
-        return new JsonResponse($result, Response::HTTP_OK, [], true );
+        try{
+            $dto = FastPaymentTransformerDTO::transformerDTO($request, $id);
+            $fast_payment = $this->fastPaymentService->deleteTemplate($dto, $doctrine);
+            $result = $serializer->serialize($fast_payment, 'json');
+            return new JsonResponse($result, Response::HTTP_OK, [], true );
+        }catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'exception' => get_class($e),
+                        'message' => $e->getMessage(),
+                        'status' => $e->getCode(),
+                    ],
+                ],
+                $e->getCode());
+        }
     }
 }
