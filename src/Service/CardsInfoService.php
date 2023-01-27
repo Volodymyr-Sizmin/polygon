@@ -22,7 +22,7 @@ class CardsInfoService
         $token = $this->tokenService->createToken(
             $dataEmail,
         );
-
+       //http://10.10.14.46:8686/
         $response = $this->client->request('GET', 'https://polygon-application.andersenlab.dev/cards_service/' . $email . '/cards', [
             'headers' => [
                 'Authorization' => "Bearer $token",

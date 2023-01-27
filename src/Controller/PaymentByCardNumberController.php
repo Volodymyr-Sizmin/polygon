@@ -30,6 +30,8 @@ class PaymentByCardNumberController extends AbstractController
 
     public function phonePayment(string $email, Request $request) : JsonResponse
     {
+
+       try{
         $authorizationHeader = $request->headers->get('Authorization');
         $strForDTO = json_decode($request->getContent(), true);
         $strForDTO['subject'] = 'By card number';
@@ -37,6 +39,21 @@ class PaymentByCardNumberController extends AbstractController
 
         $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
         $result = $this->paymentService->paymentService($email, $resultDTO);
+        } catch (\Exception $exception){
+           return new JsonResponse(
+               [
+                   'success' => false,
+                   'body' => [
+                       'exception' => get_class($exception),
+                       'message' => $exception->getMessage(),
+                       'status' => $exception->getCode(),
+                       'line' => $exception->getLine(),
+                       'file' => $exception->getFile(),
+                   ],
+               ],
+               $exception->getCode());
+       }
+
 
         return new JsonResponse($result, Response::HTTP_OK);
     }

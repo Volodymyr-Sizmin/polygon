@@ -15,7 +15,7 @@ class PaymentService
     protected OneCardInfoService $oneCardInfo;
     protected CheckAuthService $checkAuth;
     protected CurlBalanceUpdate $curlBalanceUpd;
-    protected $em;
+    protected EntityManagerInterface $em;
 
     public function __construct(HttpClientInterface $client, OneCardInfoService $oneCardInfo, CheckAuthService $checkAuth, EntityManagerInterface $em, CurlBalanceUpdate $curlBalanceUpd)
     {
@@ -30,9 +30,15 @@ class PaymentService
     {
         $amount = $params->getAmount();
         $cardNumber = $params->getCardNumber();
-        $account_debit = $params->getAccountDebit() ?? 1111;;
+        $account_debit = $params->getAccountDebit() ?? 'mock-1111-1111-1111';;
         $subject = $params->getSubject() ?? 'Subject is not specified';
         $token = $params->getHeadersAuth() ?? '';
+        $currencyId = $params->getCurrency() ?? 1;
+        $name= $params->getName() ?? 'NoName';
+        $statusId = 1;
+        $typeId = 1;
+
+
         $timestamp = new DateTimeImmutable(date('d.m.Y H:i:s'));
 
 
@@ -53,10 +59,10 @@ class PaymentService
                     $payment->setAccountCreditId($oneCardInfoResponse['id']);
                     $payment->setAccountDebitId($account_debit);
                     $payment->setUserId($email);
-                    $payment->setCurrencyId(1);
+                    $payment->setCurrencyId($currencyId);
                     $payment->setCreatedAt($timestamp);
-                    $payment->setStatusId(1);
-                    $payment->setTypeId(1);
+                    $payment->setStatusId($statusId);
+                    $payment->setTypeId($typeId);
                     $this->em->persist($payment);
                     $this->em->flush($payment);
                     $this->em->getConnection()->commit();
@@ -65,7 +71,7 @@ class PaymentService
         } catch (\Exception $exception) {
             $this->em->rollback();
             $newBalance = $oldBalance;
-            throw new \Exception;
+            throw new \DomainException('Transaction failed', 400);
         } finally {
             $this->curlBalanceUpd->curlBalanceUpd($email, $cardNumber, $newBalance);
         }
