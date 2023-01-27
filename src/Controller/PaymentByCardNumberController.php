@@ -37,13 +37,13 @@ class PaymentByCardNumberController extends AbstractController
         $authorizationHeader = $request->headers->get('Authorization');
         $strForDTO = json_decode($request->getContent(), true);
         $cardNumber = $strForDTO['cardNumber'];
-        $account_debit = $em->getRepository(Account::class)->findOneBy(['card_number'=>$cardNumber])->getNumber();
-        echo $account_debit;
+        $account_debit = $em->getRepository(Account::class)->findOneBy(['cardNumber'=>$cardNumber])->getNumber();
         $strForDTO['subject'] = 'By card number';
         $strForDTO['headersAuth'] = $authorizationHeader;
         $strForDTO['account_debit'] = $account_debit;
 
         $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
+
         $result = $this->paymentService->paymentService($email, $resultDTO);
         } catch (\Exception $exception){
            return new JsonResponse(
