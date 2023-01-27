@@ -32,13 +32,14 @@ class PaymentByCardNumberController extends AbstractController
 
     public function phonePayment(string $email, Request $request, EntityManagerInterface $em) : JsonResponse
     {
+        $subject = 'By card number';
 
        try{
         $authorizationHeader = $request->headers->get('Authorization');
         $strForDTO = json_decode($request->getContent(), true);
         $cardNumber = $strForDTO['cardNumber'];
         $account_debit = $em->getRepository(Account::class)->findOneBy(['cardNumber'=>$cardNumber])->getNumber();
-        $strForDTO['subject'] = 'By card number';
+        $strForDTO['subject'] = $subject;
         $strForDTO['headersAuth'] = $authorizationHeader;
         $strForDTO['account_debit'] = $account_debit;
 
