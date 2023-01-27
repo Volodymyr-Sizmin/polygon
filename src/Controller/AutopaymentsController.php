@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Service\AutopaymentService;
 use App\Service\CardsInfoService;
+use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,11 +15,13 @@ class AutopaymentsController extends AbstractController
 {
     protected CardsInfoService $cardInfoService;
     protected AutopaymentService $autopaymentService;
+    protected TokenService $tokenService;
 
-    public function __construct(CardsInfoService $cardInfoService, AutopaymentService $autopaymentService)
+    public function __construct(CardsInfoService $cardInfoService, AutopaymentService $autopaymentService, TokenService $tokenService)
     {
         $this->cardInfoService = $cardInfoService;
         $this->autopaymentService = $autopaymentService;
+        $this->tokenService = $tokenService;
     }
 
     /**
@@ -26,7 +29,7 @@ class AutopaymentsController extends AbstractController
      */
     public function getAutopayments(Request $request, ManagerRegistry $doctrine)
     {
-        $this->autopaymentService->getAutopayment($request, $doctrine);
+        return $this->autopaymentService->getAutopayment($request, $doctrine);
     }
 
     /**
@@ -34,6 +37,6 @@ class AutopaymentsController extends AbstractController
      */
     public function createAutopayment(Request $request, ManagerRegistry $doctrine)
     {
-        $this->autopaymentService->createAutopayment($request, $doctrine);
+       return $this->autopaymentService->createAutopayment($request, $doctrine);
     }
 }

@@ -3,13 +3,17 @@
 namespace App\Entity;
 
 use App\Repository\AutopaymentsRepository;
+use App\Traits\Timestamps;
 use Doctrine\ORM\Mapping as ORM;
+
 
 /**
  * @ORM\Entity(repositoryClass=AutopaymentsRepository::class)
  */
 class Autopayments
 {
+    use Timestamps;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -62,10 +66,11 @@ class Autopayments
      */
     private $auto_charge_off;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $created_at;
+    public function __construct()
+    {
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
+    }
 
     public function getId(): ?int
     {
@@ -180,15 +185,15 @@ class Autopayments
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->created_at;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $created_at): self
-    {
-        $this->created_at = $created_at;
-
-        return $this;
-    }
+//    public function getCreatedAt(): ?\DateTimeInterface
+//    {
+//        return $this->created_at;
+//    }
+//
+//    public function setCreatedAt($created_at): self
+//    {
+//        $this->created_at = $created_at;
+//
+//        return $this;
+//    }
 }
