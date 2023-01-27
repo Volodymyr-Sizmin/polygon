@@ -2,25 +2,29 @@
 
 namespace App\Controller;
 
-use App\Entity\Service;
+use App\Service\MainPageService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\Persistence\ManagerRegistry;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 use Symfony\Component\Serializer\SerializerInterface;
 
-
-class ServiceController extends AbstractController
+class MainPageController extends AbstractController
 {
-    /**
-     * @Route("/payments_and_transfers/services", name="services", methods={"GET"})
-     */
-    public function getServices(ManagerRegistry $managerRegistry, SerializerInterface $serializer): JsonResponse
+    protected MainPageService $mainPageService;
+
+    public function __construct(MainPageService $mainPageService)
     {
-        $data = $managerRegistry->getManager()->getRepository(Service::class)->findAll();
+        $this->mainPageService = $mainPageService;
+    }
+
+    /**
+     * @Route("/payments_and_transfers/payment_types", name="payment_types", methods={"GET"})
+     */
+    public function getPaymentTypes(SerializerInterface $serializer): JsonResponse
+    {
+        $data = $this->mainPageService->getPaymentTypeList();
         $result = $serializer->serialize($data, 'json');
 
         return new JsonResponse($result, Response::HTTP_OK, [], true);

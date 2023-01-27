@@ -24,14 +24,14 @@ class PaymentType
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name_id;
-
-    /**
      * @ORM\Column(type="integer")
      */
     private $on_the_main_page;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name_id;
 
     public function getId(): ?int
     {
