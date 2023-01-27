@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\PaymentType;
-//use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 class MainPageService
@@ -13,30 +12,6 @@ class MainPageService
     public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
-    }
-
-    public function getFastPaymentsList(): array
-    {
-        //return $managerRegistry->getManager()->getRepository(FastPayment::class)->findAll();
-
-        $connection = $this->managerRegistry->getConnection("default");
-        return $connection
-            ->prepare("SELECT * FROM fast_payments")
-            ->executeQuery()
-            ->fetchAllAssociative()
-        ;
-    }
-
-    public function getAutoPaymentsList(): array
-    {
-        //return $managerRegistry->getManager()->getRepository(AutoPayments::class)->findAll();
-
-        $connection = $this->managerRegistry->getConnection("default");
-        return $connection
-            ->prepare("SELECT * FROM autopayments")
-            ->executeQuery()
-            ->fetchAllAssociative()
-            ;
     }
 
     public function getPaymentTypeList(): array
