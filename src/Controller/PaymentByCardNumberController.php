@@ -2,7 +2,9 @@
 namespace App\Controller;
 
 use App\DTO\RequestPaymentDTO;
+use App\Entity\Account;
 use App\Service\PaymentService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,14 +30,18 @@ class PaymentByCardNumberController extends AbstractController
      * @return JsonResponse
      */
 
-    public function phonePayment(string $email, Request $request) : JsonResponse
+    public function phonePayment(string $email, Request $request, EntityManagerInterface $em) : JsonResponse
     {
 
        try{
         $authorizationHeader = $request->headers->get('Authorization');
         $strForDTO = json_decode($request->getContent(), true);
+        $cardNumber = $strForDTO['cardNumber'];
+        $account_debit = $em->getRepository(Account::class)->findOneBy(['card_number'=>$cardNumber])->getNumber();
+        echo $account_debit;
         $strForDTO['subject'] = 'By card number';
         $strForDTO['headersAuth'] = $authorizationHeader;
+        $strForDTO['account_debit'] = $account_debit;
 
         $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
         $result = $this->paymentService->paymentService($email, $resultDTO);

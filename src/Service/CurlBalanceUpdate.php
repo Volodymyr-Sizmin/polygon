@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use phpDocumentor\Reflection\Types\Mixed_;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class CurlBalanceUpdate
@@ -22,7 +21,7 @@ class CurlBalanceUpdate
         $dataEmail = ['email' => $email];
         $token = $this->tokenService->createToken($dataEmail);
 
-        $this->client->request('PUT', 'http://10.10.14.46:8686/' . $email . '/cards/' . $cardNumber, [
+        $this->client->request('PUT', 'https://polygon-application.andersenlab.dev/cards_service/' . $email . '/cards/' . $cardNumber, [
             'headers' => [
                 'Authorization' => "Bearer $token",
             ],
