@@ -11,7 +11,6 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class TokenService
 {
-
     public function createToken(...$params)
     {
         $private_key = 'nZr4u7x!A%D*G-KaPdSgVkYp2s5v8y/B?E(H+MbQeThWmZq4t6w9z_C&F)J@NcRf';
@@ -49,13 +48,27 @@ class TokenService
         return $request->headers->get('Authorization');
     }
 
-    public function getEmailFromToken($token):string
+    public function getEmailFromToken($token): string
     {
         if (!isset($token)) {
             throw new \DomainException('Not authenticated', 401);
         }
-        $decodedToken  = $this->decodeToken(substr($token, 7));
+        $decodedToken  = $this->decodeToken($this->getShortifiedToken($token));
 
         return  $decodedToken->data->email;
+    }
+
+    public function getFullToken(string $token): string
+    {
+        return mb_stripos($token, 'bearer') === false
+            ? "Bearer " . $token
+            : $token;
+    }
+
+    public function getShortifiedToken(string $token): string
+    {
+        return mb_stripos($token, 'bearer') === false
+            ? $token
+            : substr($token, 7);
     }
 }

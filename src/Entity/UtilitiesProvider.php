@@ -6,7 +6,7 @@ use App\Repository\UtilitiesProviderRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=App\Repository\UtilitiesProviderRepository)
+ * @ORM\Entity(repositoryClass="App\Repository\UtilitiesProviderRepository")
  */
 class UtilitiesProvider
 {

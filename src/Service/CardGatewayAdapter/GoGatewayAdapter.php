@@ -14,13 +14,15 @@ class GoGatewayAdapter implements Interfaces\CardGatewayAdapter
     private const HTTP_METHOD_PUT = 'PUT';
 
     private HttpClientInterface $httpClient;
+    private TokenService $tokenService;
 
     public function __construct(HttpClientInterface $httpClient, TokenService $tokenService)
     {
         $this->httpClient = $httpClient;
+        $this->tokenService = $tokenService;
     }
 
-    public function getAllCardsForClient(string $email, string $token): object
+    public function getAllCardsForEmail(string $email, string $token): object
     {
         $endpoint = $email . '/cards';
         $responseBody = $this->apiClient(self::HTTP_METHOD_GET, $endpoint, $token);
@@ -36,6 +38,11 @@ class GoGatewayAdapter implements Interfaces\CardGatewayAdapter
         return json_decode($responseBody, false);
     }
 
+    public function getCardBalance(string $email, string $cardNumber, string $token): float
+    {
+        return (float)$this->getCardDataByNumber($email, $cardNumber, $token)->balance;
+    }
+
     public function updateCardBalance(float $newBalance, string $email, string $cardNumber, string $token): object
     {
         $endpoint = $email . '/cards/' . $cardNumber;
@@ -47,6 +54,7 @@ class GoGatewayAdapter implements Interfaces\CardGatewayAdapter
 
     private function apiClient(string $method, string $endpoint, string $token, array $jsonBody = []): string
     {
+        $fullToken = $this->tokenService->getFullToken($token);
         $parameters = $this->setUpApiClientParameters($token, $jsonBody);
 
         try {

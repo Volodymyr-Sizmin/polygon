@@ -10,23 +10,22 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UtilitiesController extends AbstractController
+class UtilitiyProvidersController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
-    private UtilitiesProviderRepository $utilitiesProviderRepository;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
-        $this->utilitiesProviderRepository = getRepository(UtilitiesProvider::class);
     }
 
     /**
-     * @Route("/utilities-providers", name="utilities-providers", methods={"GET"})
+     * @Route("/utilities-providers", name="utilities_providers", methods={"GET"})
      */
     public function getAll(): JsonResponse
     {
-        $providers = $this->utilitiesProviderRepository->findAll();
+        $utilitiesProviderRepository = $this->entityManager->getRepository(UtilitiesProvider::class);
+        $providers = $utilitiesProviderRepository->$this->utilitiesProviderRepository->findAll();
 
         return $this->json($providers, Response::HTTP_OK);
     }
@@ -36,7 +35,8 @@ class UtilitiesController extends AbstractController
      */
     public function getByUtility(string $utility): JsonResponse
     {
-        $providers = $this->utilitiesProviderRepository->findByUtility($utility);
+        $utilitiesProviderRepository = $this->entityManager->getRepository(UtilitiesProvider::class);
+        $providers = $utilitiesProviderRepository->findByUtility($utility);
 
         return $this->json($providers, Response::HTTP_OK);
     }
@@ -46,7 +46,8 @@ class UtilitiesController extends AbstractController
      */
     public function getUtilities(): JsonResponse
     {
-        $utilities = $this->utilitiesProviderRepository->getUtilities();
+        $utilitiesProviderRepository = $this->entityManager->getRepository(UtilitiesProvider::class);
+        $utilities = $utilitiesProviderRepository->getUtilities();
 
         return $this->json($utilities, Response::HTTP_OK);
     }

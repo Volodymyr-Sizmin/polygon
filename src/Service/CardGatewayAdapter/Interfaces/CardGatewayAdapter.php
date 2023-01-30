@@ -2,8 +2,6 @@
 
 namespace App\Service\CardGatewayAdapter\Interfaces;
 
-
-
 interface CardGatewayAdapter
 {
     /**
@@ -11,7 +9,7 @@ interface CardGatewayAdapter
      * @param string $token
      * @return object
      */
-    public function getAllCardsForClient(string $email, string $token): object;
+    public function getAllCardsForEmail(string $email, string $token): object;
 
     /**
      * @param string $email
@@ -34,4 +32,16 @@ interface CardGatewayAdapter
         string $cardNumber,
         string $token
     ): object;
+
+    /**
+     * @param string $email
+     * @param string $cardNumber
+     * @param string $token
+     * @return float
+     */
+    public function getCardBalance(
+        string $email,
+        string $cardNumber,
+        string $token
+    ): float;
 }
