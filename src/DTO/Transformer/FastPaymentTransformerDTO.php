@@ -7,9 +7,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class FastPaymentTransformerDTO
 {
-    /**
-     * @throws \App\Exception\ValidationServiceException
-     */
     public static function transformerDTO(Request $request,  int $id=0): FastPaymentDTO
     {
         $body = json_decode($request->getContent());
@@ -23,7 +20,6 @@ class FastPaymentTransformerDTO
         $dto->address = $body->address ?? null;
         $dto->recepientName = $body->recepient_name ?? null;
         $dto->templateId = $id;
-
         return $dto;
     }
 }

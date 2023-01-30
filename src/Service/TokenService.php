@@ -36,6 +36,12 @@ class TokenService
         return JWT::decode($token, new Key($private_key, 'HS512'));
     }
 
+    public function decodeTokenHS256($token)
+    {
+        $private_key = 'nZr4u7x!A%D*G-KaPdSgVkYp2s5v8y/B?E(H+MbQeThWmZq4t6w9z_C&F)J@NcRf';
+        return JWT::decode($token, new Key($private_key, 'HS256'));
+    }
+
     public function fetchToken($user)
     {
         $token = $user->getToken();
