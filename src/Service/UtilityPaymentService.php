@@ -9,7 +9,7 @@ use App\Entity\Currency;
 use App\Entity\UtilitiesProvider;
 use App\Repository\AccountRepository;
 use App\Service\Interfaces\MoneyTransfer;
-use App\Service\Interfaces\Payment;
+use App\Service\Interfaces\CreatePayment;
 use App\Service\Interfaces\UtilityPayment;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 class UtilityPaymentService implements UtilityPayment
 {
     private const UTILITY_PAYMENT_TYPE_ID = 3;
+    private const UTILITY_PAYMENT_STATUS_ID = 1; //TODO: refactor this!!!
 
     private EntityManagerInterface $entityManager;
     private MoneyTransfer $moneyTransfer;
@@ -25,7 +26,7 @@ class UtilityPaymentService implements UtilityPayment
     public function __construct(
         EntityManagerInterface $entityManager,
         MoneyTransfer $moneyTransfer,
-        Payment $paymentService
+        CreatePayment $paymentService
     ) {
         $this->entityManager = $entityManager;
         $this->moneyTransfer = $moneyTransfer;
@@ -98,10 +99,11 @@ class UtilityPaymentService implements UtilityPayment
         $paymentDTO->setAccountCreditId($providerAccount->getNumber());
         $paymentDTO->setAmount($utilityPaymentDTO->paymentAmount);
         $paymentDTO->setCurrencyId($currencyId);
-        $paymentDTO->setTypeId(UtilityPaymentService::UTILITY_PAYMENT_TYPE_ID);
+        $paymentDTO->setTypeId(self::UTILITY_PAYMENT_TYPE_ID);
         $paymentDTO->setSubject($utilityPaymentDTO->subject);
         $paymentDTO->setCardDebitNumber($payerAccount->getCardNumber());
         $paymentDTO->setCardCreditNumber($providerAccount->getCardNumber());
+        $paymentDTO->setStatusId(self::UTILITY_PAYMENT_STATUS_ID);
 
         $this->paymentService->createFromDto($paymentDTO);
     }

@@ -6,7 +6,7 @@ use App\DTO\PaymentServiceDTO;
 use App\Entity\Payment;
 use Doctrine\ORM\EntityManagerInterface;
 
-class PaymentService implements Interfaces\Payment
+class CreatePaymentService implements Interfaces\CreatePayment
 {
     private EntityManagerInterface $entityManager;
     public function __construct(EntityManagerInterface $entityManager)
@@ -23,6 +23,8 @@ class PaymentService implements Interfaces\Payment
         $payment->setCurrencyId($dto->getCurrencyId());
         $payment->setSubject($dto->getSubject());
         $payment->setTypeId($dto->getTypeId());
+        $payment->setStatusId($dto->getStatusId());
+        $payment->setCreatedAt(new \DateTimeImmutable());
 
         $this->entityManager->persist($payment);
         $this->entityManager->flush();
