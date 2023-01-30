@@ -39,4 +39,12 @@ class AutopaymentsController extends AbstractController
     {
        return $this->autopaymentService->createAutopayment($request, $doctrine);
     }
+
+    /**
+     * @Route("/payments_and_transfers/autopayments", name="autopayment_post", methods={"GET"})
+     */
+    public function listOfAutopayments(Request $request, ManagerRegistry $doctrine)
+    {
+        return $this->autopaymentService->listOfAutopayments($request, $doctrine);
+    }
 }

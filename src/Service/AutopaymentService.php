@@ -6,7 +6,6 @@ use App\Entity\Autopayments;
 use App\Entity\CellPhoneOperators;
 use App\Entity\User;
 use App\Entity\UtilityServices;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -81,6 +80,35 @@ class AutopaymentService
         $em->flush();
         return new JsonResponse(
             ['message' => 'Autopayment has been created successfully'],
+            Response::HTTP_OK);
+    }
+
+    public function listOfAutopayments($request, $doctrine): JsonResponse
+    {
+        $authorizationHeader = $this->tokenService->getToken($request);
+        $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
+        $matchEmail = $token->data->email;
+        $em = $doctrine->getManager();
+
+        $autopaymentsList = $em->getRepository(Autopayments::class)->findBy(['user_email' => $matchEmail]);
+
+        foreach ($autopaymentsList as $item) {
+            $autopayment[] = [
+                'id' => $item->getId(),
+                'name_of_payment' => $item->getNameOfPayment(),
+                'payment_category' => $item->getPaymentCategory(),
+                'created_at' => $item->getCreatedAt(),
+            ];
+        }
+
+        if (empty($autopayment)) {
+            return new JsonResponse(
+                ['message' => 'Autopayments not found'],
+                Response::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse(
+            $autopayment,
             Response::HTTP_OK);
     }
 }
