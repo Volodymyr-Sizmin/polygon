@@ -24,4 +24,8 @@ class UtilityPaymentDTO
      */
     public float $paymentAmount;
 
+    /**
+     * @Assert\NotBlank()
+     */
+    public string $currency;
 }
