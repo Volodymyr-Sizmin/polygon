@@ -103,8 +103,8 @@ class AutopaymentService
 
         if (empty($autopayment)) {
             return new JsonResponse(
-                ['message' => 'Autopayments not found'],
-                Response::HTTP_NOT_FOUND);
+                [],
+                Response::HTTP_OK);
         }
 
         return new JsonResponse(
