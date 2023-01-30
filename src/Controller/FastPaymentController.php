@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\DTO\Transformer\FastPaymentTransformerDTO;
+use App\Service\CardBalanceService;
 use App\Service\FastPaymentService;
+use App\Service\TokenService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -50,12 +52,13 @@ class FastPaymentController extends AbstractController
     /**
      * @Route("/payments_and_transfers/fast_payments/{id}", name="fast_payment", methods={"GET"})
      */
-    public function getFastPaymentInfo(int $id, Request $request): JsonResponse
+    public function getFastPaymentInfo(int $id, Request $request, CardBalanceService $balanceService): JsonResponse
     {
         try{
             $dto = FastPaymentTransformerDTO::transformerDTO($request, $id);
-            $fast_payment = $this->fastPaymentService->getFastPaymentInfo($dto);
-            $result = $this->serializer->serialize($fast_payment, 'json');
+            $fastPayment = $this->fastPaymentService->getFastPaymentInfo($dto);
+            $cards = $balanceService->showCards($request);
+            $result = $this->serializer->serialize([$fastPayment, $cards],  'json');
             return new JsonResponse($result, Response::HTTP_OK, [], true );
 
         }catch (\Exception $e){
@@ -107,6 +110,38 @@ class FastPaymentController extends AbstractController
             $result = $this->serializer->serialize($fast_payment, 'json');
             return new JsonResponse($result, Response::HTTP_OK, [], true );
         }catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'exception' => get_class($e),
+                        'message' => $e->getMessage(),
+                        'status' => $e->getCode(),
+                    ],
+                ],
+                $e->getCode());
+        }
+    }
+
+    /**
+     * @Route("/payments_and_transfers/fast_payments/{id}", name="making_payment", methods={"POST"})
+     */
+    public function makePayment(int $id, Request $request, TokenService $tokenService)
+    {
+        try{
+            $dto = FastPaymentTransformerDTO::transformerDTO($request, $id);
+            $fastPayment = $this->fastPaymentService->getFastPaymentInfo($dto);
+            $this->fastPaymentService->updateBalance($dto, $fastPayment);
+
+            return new JsonResponse(
+                [
+                    'success' => true,
+                    'body' => [
+                        'message' => 'Payment successful',
+                    ],
+                ],
+                200);
+        }catch (\Exception $e){
             return new JsonResponse(
                 [
                     'success' => false,
