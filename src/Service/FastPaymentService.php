@@ -15,6 +15,7 @@ class FastPaymentService
     protected TokenService $tokenService;
     protected ManagerRegistry $doctrine;
     protected HttpClientInterface $client;
+    const GO_URL = 'https://polygon-application.andersenlab.dev/';
 
     public function __construct(HttpClientInterface $client, TokenService $tokenService, ManagerRegistry $doctrine)
     {
@@ -27,11 +28,7 @@ class FastPaymentService
     {
        $email = $this->tokenService->getEmailFromToken($dto->token);
 
-       $templatesList = $this->doctrine->getRepository(FastPayments::class)->findBy(['user_email' => $email]);
-       if(!$templatesList){
-           throw new \DomainException('No templates found', 404);
-       }
-       return $templatesList;
+       return $this->doctrine->getRepository(FastPayments::class)->findBy(['user_email' => $email]);
     }
 
    public function getFastPaymentInfo(FastPaymentDTO $dto):object
@@ -91,7 +88,7 @@ class FastPaymentService
 
     public function updateBalance(FastPaymentDTO $dto, string $email):bool
     {
-        $response = $this->client->request('GET', "https://polygon-application.andersenlab.dev/cards_service/$email/cards/$dto->cardNumber", [
+        $response = $this->client->request('GET', self::GO_URL."cards_service/$email/cards/$dto->cardNumber", [
             'headers' => [
                 'Authorization' => $dto->token,
             ]
@@ -104,7 +101,7 @@ class FastPaymentService
         }
 
         $newBalance = $balance - $dto->amount;
-        $this->client->request('PUT', "https://polygon-application.andersenlab.dev/cards_service/{$email}/cards/{$dto->cardNumber}", [
+        $this->client->request('PUT', self::GO_URL."cards_service/{$email}/cards/{$dto->cardNumber}", [
             'headers' => [
                 'Authorization' => $dto->token,
             ],
