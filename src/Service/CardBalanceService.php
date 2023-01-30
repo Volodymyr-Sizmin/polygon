@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Currency;
 use App\Entity\ExternalAccount;
 use App\Entity\ExternalUsers;
+use App\Entity\FastPayments;
 use App\Entity\Payment;
 use App\Entity\PaymentType;
 use Carbon\Carbon;
@@ -156,6 +157,21 @@ class CardBalanceService
             $payment->setStatusId(1);
             $em->persist($payment);
             $em->flush($payment);
+
+            if($data['name_of_payment']){
+                $fastPayment = new FastPayments();
+                $fastPayment->setUserEmail($matchEmail);
+                $fastPayment->setName($data['name_of_payment']);
+                $fastPayment->setCardNumber($data['card_number']);
+                $fastPayment->setPaymentReason($data['payment_reason']);
+                $fastPayment->setAmount($data['payment_amount']);
+                $fastPayment->setAccountNumber($data['account_number']);
+                $fastPayment->setAddress($data['address']);
+                $fastPayment->setRecepientName('John Connor');
+                $em->persist($fastPayment);
+                $em->flush($fastPayment);
+            }
+
 
         } catch (Exception $e) {
             echo $e->getMessage();
