@@ -15,7 +15,7 @@ class FastPaymentService
     protected TokenService $tokenService;
     protected ManagerRegistry $doctrine;
     protected HttpClientInterface $client;
-    const GO_URL = 'https://polygon-application.andersenlab.dev/';
+    const POLYGON_APPLICATION_GO = 'https://polygon-application.andersenlab.dev/';
 
     public function __construct(HttpClientInterface $client, TokenService $tokenService, ManagerRegistry $doctrine)
     {
@@ -88,7 +88,7 @@ class FastPaymentService
 
     public function updateBalance(FastPaymentDTO $dto, string $email):bool
     {
-        $response = $this->client->request('GET', self::GO_URL."cards_service/$email/cards/$dto->cardNumber", [
+        $response = $this->client->request('GET', self::POLYGON_APPLICATION_GO."cards_service/$email/cards/$dto->cardNumber", [
             'headers' => [
                 'Authorization' => $dto->token,
             ]
@@ -101,7 +101,7 @@ class FastPaymentService
         }
 
         $newBalance = $balance - $dto->amount;
-        $this->client->request('PUT', self::GO_URL."cards_service/{$email}/cards/{$dto->cardNumber}", [
+        $this->client->request('PUT', self::POLYGON_APPLICATION_GO."cards_service/{$email}/cards/{$dto->cardNumber}", [
             'headers' => [
                 'Authorization' => $dto->token,
             ],
