@@ -47,7 +47,7 @@ class Autopayments
     private $customer_number;
 
     /**
-     * @ORM\Column(type="string", length=55)
+     * @ORM\Column(type="integer")
      */
     private $amount;
 
@@ -65,6 +65,11 @@ class Autopayments
      * @ORM\Column(type="boolean")
      */
     private $auto_charge_off;
+
+    /**
+     * @ORM\Column(type="string", length=55)
+     */
+    private $card_debit_number;
 
     public function __construct()
     {
@@ -185,15 +190,13 @@ class Autopayments
         return $this;
     }
 
-//    public function getCreatedAt(): ?\DateTimeInterface
-//    {
-//        return $this->created_at;
-//    }
-//
-//    public function setCreatedAt($created_at): self
-//    {
-//        $this->created_at = $created_at;
-//
-//        return $this;
-//    }
+    public function getCardDebitNumber()
+    {
+        return $this->card_debit_number;
+    }
+
+    public function setCardDebitNumber($card_debit_number): void
+    {
+        $this->card_debit_number = $card_debit_number;
+    }
 }

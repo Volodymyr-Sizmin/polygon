@@ -6,6 +6,7 @@ use App\Entity\Autopayments;
 use App\Entity\CellPhoneOperators;
 use App\Entity\User;
 use App\Entity\UtilityServices;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -81,9 +82,5 @@ class AutopaymentService
         return new JsonResponse(
             ['message' => 'Autopayment has been created successfully'],
             Response::HTTP_OK);
-    }
-
-    public function submitAutopayment() {
-
     }
 }
