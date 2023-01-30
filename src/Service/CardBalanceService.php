@@ -7,6 +7,7 @@ use App\Entity\ExternalAccount;
 use App\Entity\ExternalUsers;
 use App\Entity\Payment;
 use App\Entity\PaymentType;
+use Carbon\Carbon;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,12 +20,14 @@ class CardBalanceService
     public HttpClientInterface $client;
     public TokenService $tokenService;
     public UserService $userService;
+    public ManagerRegistry $doctrine;
 
-    public function __construct(HttpClientInterface $client, TokenService $tokenService, UserService $userService)
+    public function __construct(HttpClientInterface $client, TokenService $tokenService, UserService $userService, ManagerRegistry $doctrine)
     {
         $this->client = $client;
         $this->tokenService = $tokenService;
         $this->userService = $userService;
+        $this->doctrine = $doctrine;
     }
 
     public function showCards($request)
@@ -92,7 +95,6 @@ class CardBalanceService
         $token = $this->tokenService->getToken($request);
         $data = json_decode($request->getContent(), true);
         $decodedToken = $this->tokenService->decodeToken(substr($token, 7));
-//        $userId = $this->userService->getUserID($token);
         $matchEmail = $decodedToken->data->email;
 
         $cardNumber = $data['card_number'];
@@ -165,5 +167,56 @@ class CardBalanceService
             ],
             Response::HTTP_OK
         );
+    }
+
+
+    public function processAutopayment($autopayment)
+    {
+        $em = $this->doctrine->getManager();
+        $email = $autopayment['email'];
+        $token = $this->tokenService->createToken($email);
+        $paymentAmount = $autopayment['payment_amount'];
+        $cardNumber = $autopayment['card'];
+        $cardDebitNumber = $autopayment['card_debit_number'];
+        $paymentReason = $autopayment['name_of_payment'];
+        $paymentType = $autopayment['payment_category'];
+        $timestamp = new \DateTimeImmutable(strtotime(Carbon::now()));
+        $currencyID = $this->doctrine->getRepository(Currency::class)->findOneBy(['name' => 'GBP']);
+
+        $response = $this->client->request('GET', "https://polygon-application.andersenlab.dev/cards_service/$email/cards/$cardNumber", [
+            'headers' => [
+                'Authorization' => $token
+            ]
+        ]);
+
+        $content = json_decode($response->getContent());
+        $balance = $content->balance;
+
+        if ($balance > $paymentAmount) {
+            try {
+                $newBalance = $balance - $paymentAmount;
+                $this->client->request('PUT', "https://polygon-application.andersenlab.dev/cards_service/{$email}/cards/{$cardNumber}", [
+                    'headers' => [
+                        'Authorization' => $token,
+                    ],
+                    'json' => ['balance' => $newBalance]
+                ]);
+
+                $payment = new Payment();
+                $payment->setUserId($email);
+                $payment->setAmount($paymentAmount);
+                $payment->setAccountCreditId($cardNumber);
+                $payment->setAccountDebitId($cardDebitNumber);
+                $payment->setSubject($paymentReason);
+                $payment->setCurrencyId($currencyID->getId());
+                $payment->setTypeId($paymentType->getId());
+                $payment->setCreatedAt($timestamp);
+                $payment->setStatusId(1);
+                $em->persist($payment);
+                $em->flush($payment);
+            } catch (Exception $e) {
+                echo $e->getMessage();
+            }
+        }
     }
 }

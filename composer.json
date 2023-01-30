@@ -52,7 +52,8 @@
         "symfony/translation": "5.3.*",
         "symfony/twig-bundle": "5.3.*",
         "symfony/validator": "5.3.*",
-        "symfony/yaml": "5.3.*"
+        "symfony/yaml": "5.3.*",
+        "zenstruck/schedule-bundle": "^1.5"
     },
     "config": {
         "optimize-autoloader": true,
