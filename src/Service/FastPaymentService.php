@@ -86,9 +86,13 @@ class FastPaymentService
             'message' => 'Payment template was successfully deleted']];
     }
 
-    public function updateBalance(FastPaymentDTO $dto, string $email):bool
+    public function updateBalance(FastPaymentDTO $dto, object $fastPayment):bool
     {
-        $response = $this->client->request('GET', self::POLYGON_APPLICATION_GO."cards_service/$email/cards/$dto->cardNumber", [
+        $email = $fastPayment->getUserEmail();
+        $cardNumber = $fastPayment->getCardNumber();
+        $amount = $fastPayment->getAmount();
+
+        $response = $this->client->request('GET', self::POLYGON_APPLICATION_GO."cards_service/$email/cards/$cardNumber", [
             'headers' => [
                 'Authorization' => $dto->token,
             ]
@@ -100,8 +104,8 @@ class FastPaymentService
             throw new \DomainException("You don't have enough money on your card", 200);
         }
 
-        $newBalance = $balance - $dto->amount;
-        $this->client->request('PUT', self::POLYGON_APPLICATION_GO."cards_service/{$email}/cards/{$dto->cardNumber}", [
+        $newBalance = $balance - $amount;
+        $this->client->request('PUT', self::POLYGON_APPLICATION_GO."cards_service/{$email}/cards/{$cardNumber}", [
             'headers' => [
                 'Authorization' => $dto->token,
             ],

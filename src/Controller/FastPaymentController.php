@@ -131,10 +131,7 @@ class FastPaymentController extends AbstractController
         try{
             $dto = FastPaymentTransformerDTO::transformerDTO($request, $id);
             $fastPayment = $this->fastPaymentService->getFastPaymentInfo($dto);
-            $dto->amount = $fastPayment->getAmount();
-            $dto->cardNumber = $fastPayment->getCardNumber();
-            $email = $fastPayment->getUserEmail();
-            $this->fastPaymentService->updateBalance($dto, $email);
+            $this->fastPaymentService->updateBalance($dto, $fastPayment);
 
             return new JsonResponse(
                 [
