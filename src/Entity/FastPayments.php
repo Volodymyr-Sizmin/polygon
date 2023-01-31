@@ -4,12 +4,12 @@ namespace App\Entity;
 
 use App\Repository\FastPaymentsRepository;
 use Doctrine\ORM\Mapping as ORM;
-
 /**
  * @ORM\Entity(repositoryClass=FastPaymentsRepository::class)
  */
 class FastPayments
 {
+//    use Timestamps;
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -56,6 +56,11 @@ class FastPayments
      * @ORM\Column(type="string", length=255)
      */
     private $account_number;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $created_at;
 
 
     public function getId(): ?int
@@ -156,6 +161,18 @@ class FastPayments
     public function setAccountNumber(string $account_number): self
     {
         $this->account_number = $account_number;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $created_at): self
+    {
+        $this->created_at = $created_at;
 
         return $this;
     }
