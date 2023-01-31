@@ -21,7 +21,7 @@ class MoneyTransferService implements Interfaces\MoneyTransfer
         $this->putMoneyOnAccount($receiver, $amount, $token);
     }
 
-    private function takeMoneyFromAccount(Account $account, float $amount, string $token): void
+    public function takeMoneyFromAccount(Account $account, float $amount, string $token): void
     {
         $accountCardNumber = $account->getCardNumber();
         $balance = $this->cardGatewayAdapter->getCardBalance($account->getUserId(), $accountCardNumber, $token);
@@ -38,7 +38,7 @@ class MoneyTransferService implements Interfaces\MoneyTransfer
         $this->assertAccountOperationSuccessful($updateBalanceResponse);
     }
 
-    private function putMoneyOnAccount(Account $account, float $amount, string $token): void
+    public function putMoneyOnAccount(Account $account, float $amount, string $token): void
     {
         $balance = $this->cardGatewayAdapter->getCardBalance($account->getUserId(), $account->getCardNumber(), $token);
         $resultingAmount = ($balance * 100 + $amount * 100) / 100;

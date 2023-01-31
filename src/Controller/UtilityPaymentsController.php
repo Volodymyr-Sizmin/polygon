@@ -45,6 +45,6 @@ class UtilityPaymentsController extends AbstractController
         $this->validator->validateDto($dto);
         $this->utilityPayment->pay($dto, $token);
 
-        return $this->json(['sucess' => 'true']);
+        return $this->json(['success' => 'true']);
     }
 }

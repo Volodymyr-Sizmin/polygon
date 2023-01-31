@@ -21,7 +21,7 @@ class UtilityPaymentService implements UtilityPayment
 
     private EntityManagerInterface $entityManager;
     private MoneyTransfer $moneyTransfer;
-    private $paymentService;
+    private CreatePayment $paymentService;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -63,8 +63,15 @@ class UtilityPaymentService implements UtilityPayment
         UtilityPaymentDTO $utilityPaymentDTO,
         AccountRepository $accountRepository
     ): ?Account {
-        $utilityProvider = $this->entityManager->find(UtilitiesProvider::class, $utilityPaymentDTO->utilityProviderId);
-        $utilityProviderAccount = $accountRepository->find($utilityProvider->getAccount());
+        try {
+            $utilityProvider = $this->entityManager->find(
+                UtilitiesProvider::class,
+                $utilityPaymentDTO->utilityProviderId
+            );
+            $utilityProviderAccount = $accountRepository->find($utilityProvider->getAccount());
+        } catch (\Throwable $e) {
+            throw new \DomainException('No provider account found', Response::HTTP_NOT_ACCEPTABLE);
+        }
 
         return $utilityProviderAccount;
     }
