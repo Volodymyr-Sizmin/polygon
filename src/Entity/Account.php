@@ -43,6 +43,11 @@ class Account
      */
     private $cardNumber;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $balance;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -104,6 +109,18 @@ class Account
     public function setCardNumber(?string $CardNumber): self
     {
         $this->cardNumber = $CardNumber;
+
+        return $this;
+    }
+
+    public function getBalance(): ?int
+    {
+        return $this->balance;
+    }
+
+    public function setBalance(?int $balance): self
+    {
+        $this->balance = $balance;
 
         return $this;
     }
