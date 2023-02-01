@@ -43,7 +43,6 @@ class PaymentByCardNumberController extends AbstractController
             $strForDTO['name'] = NAME;
             $strForDTO['headersAuth'] = $authorizationHeader;
             $strForDTO['account_credit'] = $account_credit;
-
             $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
             $result = $this->paymentService->paymentService($email, $resultDTO);
         } catch (\Exception $exception) {
