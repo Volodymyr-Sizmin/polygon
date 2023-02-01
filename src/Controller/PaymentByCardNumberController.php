@@ -27,22 +27,22 @@ class PaymentByCardNumberController extends AbstractController
 
     /**
      * @Route("/service/payments/{email}/bycardnumber", name="bycardnumber", methods={"POST"})
-     * @param $params {'cardNumber', 'amount','cardNumberRecipient'}
+     * @param $request {'cardNumber', 'amount','cardNumberRecipient', 'subject'}
      * @return JsonResponse
      */
 
     public function paymentBetweenCards(string $email, Request $request, EntityManagerInterface $em): JsonResponse
     {
-        define("App\Controller\SUBJECT", 'By card number');
+        define("App\Controller\NAME", 'By card number');
 
         try {
             $authorizationHeader = $request->headers->get('Authorization');
             $strForDTO = json_decode($request->getContent(), true);
             $cardNumber = $strForDTO['cardNumber'];
-            $account_debit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber])->getNumber();
-            $strForDTO['subject'] = SUBJECT;
+            $account_credit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber])->getNumber();
+            $strForDTO['name'] = NAME;
             $strForDTO['headersAuth'] = $authorizationHeader;
-            $strForDTO['account_debit'] = $account_debit;
+            $strForDTO['account_credit'] = $account_credit;
 
             $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
             $result = $this->paymentService->paymentService($email, $resultDTO);

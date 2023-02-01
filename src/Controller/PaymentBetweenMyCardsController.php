@@ -30,25 +30,23 @@ class PaymentBetweenMyCardsController extends AbstractController
 
     /**
      * @Route("/service/payments/{email}/betweenmycards", name="betweenmycards", methods={"POST"})
-     * @param $params {'cardNumber', 'amount','cardNumberRecipient'}
+     * @param $request {'cardNumber', 'amount','cardNumberRecipient', 'subject'}
      * @return JsonResponse
      */
     public function paymentBetweenMyCards(string $email, Request $request, EntityManagerInterface $em): JsonResponse
     {
-
-        define("App\Controller\SUBJECT", 'Between My Cards');
+        define("App\Controller\NAME", 'Between My Cards');
 
         try {
             $authorizationHeader = $request->headers->get('Authorization');
             $this->checkAuth->checkAuthentication($email, $authorizationHeader);
-
             $strForDTO = json_decode($request->getContent(), true);
             $cardNumber = $strForDTO['cardNumber'];
-            $account_debit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber])->getNumber();
+            $account_credit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber])->getNumber();
             $cardNumberRecipient = $strForDTO['cardNumberRecipient'];
-            $account_credit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumberRecipient])->getNumber();
+            $account_debit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumberRecipient])->getNumber();
 
-            $strForDTO['subject'] = SUBJECT;
+            $strForDTO['name'] = NAME;
             $strForDTO['headersAuth'] = $authorizationHeader;
             $strForDTO['account_debit'] = $account_debit;
             $strForDTO['account_credit'] = $account_credit;

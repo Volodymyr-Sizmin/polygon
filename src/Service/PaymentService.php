@@ -8,7 +8,6 @@ use App\Entity\Payment;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use function PHPUnit\Framework\throwException;
 
 class PaymentService
 {
@@ -39,46 +38,30 @@ class PaymentService
         $statusId = 1;
         $typeId = 1;
 
-
         $timestamp = new DateTimeImmutable(date('d.m.Y H:i:s'));
 
-
         try {
-
-            $oneCardInfoResponse = $this->oneCardInfo->getCardsInfo($email, $cardNumber);
-            $oldBalance = $oneCardInfoResponse['balance'];
-
-            if ($oldBalance > $amount) {
-
-                $newBalance = ($oldBalance * 100 - $amount * 100) / 100;
-
-                $this->em->getConnection()->beginTransaction();
-                $payment = new Payment();
-                $payment->setAmount($amount);
-                $payment->setSubject($subject);
-                $payment->setAccountCreditId($account_credit);
-                $payment->setAccountDebitId($account_debit);
-                $payment->setUserId($email);
-                $payment->setCurrencyId($currencyId);
-                $payment->setCreatedAt($timestamp);
-                $payment->setStatusId($statusId);
-                $payment->setTypeId($typeId);
-                $payment->setName($name);
-                $this->em->persist($payment);
-                $this->em->flush($payment);
-
-                $this->balanceIncrease($account_debit, $amount);
-                $this->balanceDecrease($account_credit, $amount);
-
-                $this->em->getConnection()->commit();
-            }
+            $this->em->getConnection()->beginTransaction();
+            $payment = new Payment();
+            $payment->setAmount($amount);
+            $payment->setSubject($subject);
+            $payment->setAccountCreditId($account_credit);
+            $payment->setAccountDebitId($account_debit);
+            $payment->setUserId($email);
+            $payment->setCurrencyId($currencyId);
+            $payment->setCreatedAt($timestamp);
+            $payment->setStatusId($statusId);
+            $payment->setTypeId($typeId);
+            $payment->setName($name);
+            $this->em->persist($payment);
+            $this->em->flush($payment);
+            $this->balanceIncrease($account_debit, $amount);
+            $this->balanceDecrease($account_credit, $amount);
+            $this->em->getConnection()->commit();
 
         } catch (\Exception $exception) {
             $this->em->rollback();
-            $newBalance = $oldBalance;
             throw new \DomainException('Transaction failed', 400);
-        } finally {
-            $this->curlBalanceUpd->curlBalanceUpd($email, $cardNumber, $newBalance);
         }
 
         return ['success' => 'true'];
@@ -117,9 +100,11 @@ class PaymentService
         $workAccount = $this->em->getRepository(Account::class)->findOneBy(['number' => $number]);
         $currentBalance = $workAccount->getBalance();
 
-        $checkBalance = (strcmp($sign, '+') ? ($oldBalance * 100 + $amount * 100) / 100 : ($oldBalance * 100 - $amount * 100) / 100);
+        $checkBalance = (strcmp($sign, '+') == 0 ? ($oldBalance * 100 + $amount * 100) / 100 : ($oldBalance * 100 - $amount * 100) / 100);
 
         if ($checkBalance <> $currentBalance) {
+            echo "checkBalance " . $checkBalance;
+            echo "currentBalance " . $currentBalance;
             throw new \DomainException("Balance isn't correct");
         }
     }

@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\DTO\RequestPaymentDTO;
+use App\Entity\Account;
 use App\Entity\CellPhoneOperators;
 use App\Service\PaymentService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,20 +29,45 @@ class TopUpPhoneController extends AbstractController
 
     /**
      * @Route("/service/payments/{email}/topupphone", name="topupphone", methods={"POST"}, defaults={"subject":"Top Up Phone"})
-     * @param $request{'phone_number', 'id_operator', 'amount','cardNumber'}
+     * @param $request{'phone_number', 'id_operator', 'amount','cardNumber', 'subject'}
      * @return JsonResponse
      */
 
-    public function phonePayment(string $email, Request $request) : JsonResponse
+    public function phonePayment(string $email, Request $request, EntityManagerInterface $em) : JsonResponse
     {
-        $authorizationHeader = $request->headers->get('Authorization');
-        $strForDTO = json_decode($request->getContent(), true);
-        $cellPhoneOperators = $this->em->getRepository(CellPhoneOperators::class)->find($strForDTO['id_operator']);
-        $strForDTO['subject'] = 'Top Up Phone';
-        $strForDTO['headersAuth'] = $authorizationHeader;
-        $strForDTO['account_debit'] = $cellPhoneOperators->getAccount();
-        $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
-        $result = $this->paymentService->paymentService($email, $resultDTO);
+        define("App\Controller\NAME", 'Top Up Phone');
+
+        try {
+            $authorizationHeader = $request->headers->get('Authorization');
+            $strForDTO = json_decode($request->getContent(), true);
+            $cardNumber = $strForDTO['cardNumber'];
+            $account_credit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber])->getNumber();
+            $cellPhoneOperators = $this->em->getRepository(CellPhoneOperators::class)->find($strForDTO['id_operator']);
+            $strForDTO['account_debit'] = $cellPhoneOperators->getAccount();
+            $strForDTO['name'] = NAME;
+            $strForDTO['headersAuth'] = $authorizationHeader;
+            $strForDTO['account_credit'] = $account_credit;
+
+            $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
+            $result = $this->paymentService->paymentService($email, $resultDTO);
+        } catch (\Exception $exception) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'exception' => get_class($exception),
+                        'message' => $exception->getMessage(),
+                        'status' => $exception->getCode(),
+                        'line' => $exception->getLine(),
+                        'file' => $exception->getFile(),
+                    ],
+                ],
+                $exception->getCode());
+        }
+
+
+
+
 
         return new JsonResponse($result,Response::HTTP_OK);
     }
