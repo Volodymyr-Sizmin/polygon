@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\DTO\RequestPaymentDTO;
 use App\Entity\Account;
+use App\Service\CheckAuthService;
 use App\Service\PaymentService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,36 +14,44 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-class PaymentByCardNumberController extends AbstractController
+class PaymentBetweenMyCardsController extends AbstractController
 {
     public Request $request;
-    private PaymentService $paymentService;
-    private SerializerInterface $serializer;
+    protected PaymentService $paymentService;
+    protected SerializerInterface $serializer;
+    protected CheckAuthService $checkAuth;
 
-    public function __construct(PaymentService $paymentService, SerializerInterface $serializer)
+    public function __construct(PaymentService $paymentService, SerializerInterface $serializer, CheckAuthService $checkAuth)
     {
         $this->paymentService = $paymentService;
         $this->serializer = $serializer;
+        $this->checkAuth = $checkAuth;
     }
 
     /**
-     * @Route("/service/payments/{email}/bycardnumber", name="bycardnumber", methods={"POST"})
+     * @Route("/service/payments/{email}/betweenmycards", name="betweenmycards", methods={"POST"})
      * @param $params {'cardNumber', 'amount','cardNumberRecipient'}
      * @return JsonResponse
      */
-
-    public function paymentBetweenCards(string $email, Request $request, EntityManagerInterface $em): JsonResponse
+    public function paymentBetweenMyCards(string $email, Request $request, EntityManagerInterface $em): JsonResponse
     {
-        define("App\Controller\SUBJECT", 'By card number');
+
+        define("App\Controller\SUBJECT", 'Between My Cards');
 
         try {
             $authorizationHeader = $request->headers->get('Authorization');
+            $this->checkAuth->checkAuthentication($email, $authorizationHeader);
+
             $strForDTO = json_decode($request->getContent(), true);
             $cardNumber = $strForDTO['cardNumber'];
             $account_debit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber])->getNumber();
+            $cardNumberRecipient = $strForDTO['cardNumberRecipient'];
+            $account_credit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumberRecipient])->getNumber();
+
             $strForDTO['subject'] = SUBJECT;
             $strForDTO['headersAuth'] = $authorizationHeader;
             $strForDTO['account_debit'] = $account_debit;
+            $strForDTO['account_credit'] = $account_credit;
 
             $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
             $result = $this->paymentService->paymentService($email, $resultDTO);
@@ -60,6 +69,7 @@ class PaymentByCardNumberController extends AbstractController
                 ],
                 $exception->getCode());
         }
+
         return new JsonResponse($result, Response::HTTP_OK);
     }
 }

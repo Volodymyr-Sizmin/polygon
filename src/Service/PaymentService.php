@@ -31,11 +31,11 @@ class PaymentService
     {
         $amount = $params->getAmount();
         $cardNumber = $params->getCardNumber();
-        $account_debit = $params->getAccountDebit() ?? 'mock-1111-1111-1111';;
+        $account_debit = $params->getAccountDebit() ?? 'mock-1111-1111-1111';
+        $account_credit = $params->getAccountCredit() ?? 'mock-1111-1111-1111';
         $subject = $params->getSubject() ?? 'Subject is not specified';
-        $token = $params->getHeadersAuth() ?? '';
         $currencyId = $params->getCurrency() ?? 1;
-        $name= $params->getName() ?? 'NoName';
+        $name = $params->getName() ?? 'NoName';
         $statusId = 1;
         $typeId = 1;
 
@@ -44,31 +44,35 @@ class PaymentService
 
 
         try {
-            $checkAuthResponse = $this->checkAuth->checkAuthentication($email, $token);
 
-            if ($checkAuthResponse['success'] == 'true') {
-                $oneCardInfoResponse = $this->oneCardInfo->getCardsInfo($email, $cardNumber);
-                $oldBalance = $oneCardInfoResponse['balance'];
-                $cardNumber = $oneCardInfoResponse['cardNumber'];
+            $oneCardInfoResponse = $this->oneCardInfo->getCardsInfo($email, $cardNumber);
+            $oldBalance = $oneCardInfoResponse['balance'];
 
-                if ($oldBalance > $amount) {
-                    $newBalance = ($oldBalance * 100 - $amount * 100) / 100;
-                    $this->em->getConnection()->beginTransaction();
-                    $payment = new Payment();
-                    $payment->setAmount($amount);
-                    $payment->setSubject($subject);
-                    $payment->setAccountCreditId($oneCardInfoResponse['id']);
-                    $payment->setAccountDebitId($account_debit);
-                    $payment->setUserId($email);
-                    $payment->setCurrencyId($currencyId);
-                    $payment->setCreatedAt($timestamp);
-                    $payment->setStatusId($statusId);
-                    $payment->setTypeId($typeId);
-                    $this->em->persist($payment);
-                    $this->em->flush($payment);
-                    $this->em->getConnection()->commit();
-                }
+            if ($oldBalance > $amount) {
+
+                $newBalance = ($oldBalance * 100 - $amount * 100) / 100;
+
+                $this->em->getConnection()->beginTransaction();
+                $payment = new Payment();
+                $payment->setAmount($amount);
+                $payment->setSubject($subject);
+                $payment->setAccountCreditId($account_credit);
+                $payment->setAccountDebitId($account_debit);
+                $payment->setUserId($email);
+                $payment->setCurrencyId($currencyId);
+                $payment->setCreatedAt($timestamp);
+                $payment->setStatusId($statusId);
+                $payment->setTypeId($typeId);
+                $payment->setName($name);
+                $this->em->persist($payment);
+                $this->em->flush($payment);
+
+                $this->balanceIncrease($account_debit, $amount);
+                $this->balanceDecrease($account_credit, $amount);
+
+                $this->em->getConnection()->commit();
             }
+
         } catch (\Exception $exception) {
             $this->em->rollback();
             $newBalance = $oldBalance;
@@ -77,6 +81,46 @@ class PaymentService
             $this->curlBalanceUpd->curlBalanceUpd($email, $cardNumber, $newBalance);
         }
 
-        return ['success'=>'true'];
+        return ['success' => 'true'];
+    }
+
+    public function balanceIncrease(string $number, int $amount): void
+    {
+        $workAccount = $this->em->getRepository(Account::class)->findOneBy(['number' => $number]);
+
+        if ($workAccount) {
+            $oldBalance = $workAccount->getBalance();
+            $newBalance = ($oldBalance * 100 + $amount * 100) / 100;
+            $workAccount->setBalance($newBalance);
+            $this->em->persist($workAccount);
+            $this->em->flush($workAccount);
+            $this->checkCorrectBalance($number, $oldBalance, $amount, '+');
+        }
+    }
+
+    public function balanceDecrease(string $number, int $amount): void
+    {
+        $workAccount = $this->em->getRepository(Account::class)->findOneBy(['number' => $number]);
+
+        if ($workAccount) {
+            $oldBalance = $workAccount->getBalance();
+            $newBalance = ($oldBalance * 100 - $amount * 100) / 100;
+            $workAccount->setBalance($newBalance);
+            $this->em->persist($workAccount);
+            $this->em->flush($workAccount);
+            $this->checkCorrectBalance($number, $oldBalance, $amount);
+        }
+    }
+
+    public function checkCorrectBalance(string $number, int $oldBalance, int $amount, string $sign = '-')
+    {
+        $workAccount = $this->em->getRepository(Account::class)->findOneBy(['number' => $number]);
+        $currentBalance = $workAccount->getBalance();
+
+        $checkBalance = (strcmp($sign, '+') ? ($oldBalance * 100 + $amount * 100) / 100 : ($oldBalance * 100 - $amount * 100) / 100);
+
+        if ($checkBalance <> $currentBalance) {
+            throw new \DomainException("Balance isn't correct");
+        }
     }
 }
