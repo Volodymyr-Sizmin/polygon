@@ -55,4 +55,12 @@ class AccountsControllerTest extends WebTestCase
         $this->assertSame($newAccount->getNumber(), $accountNumber);
         $this->assertSame($newAccount->getUserId(), $testEmail);
     }
+
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        $this->entityManager->close();
+        $this->entityManager = null;
+    }
 }
