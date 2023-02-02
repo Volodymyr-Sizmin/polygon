@@ -47,7 +47,6 @@ class TopUpPhoneController extends AbstractController
             $strForDTO['name'] = NAME;
             $strForDTO['headersAuth'] = $authorizationHeader;
             $strForDTO['account_credit'] = $account_credit;
-
             $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
             $result = $this->paymentService->paymentService($email, $resultDTO);
         } catch (\Exception $exception) {
@@ -64,11 +63,6 @@ class TopUpPhoneController extends AbstractController
                 ],
                 $exception->getCode());
         }
-
-
-
-
-
-        return new JsonResponse($result,Response::HTTP_OK);
+    return new JsonResponse($result,Response::HTTP_OK);
     }
 }
