@@ -37,7 +37,7 @@ class PaymentHistoryService
             payments.user_id = :email
         ORDER BY 
             payments.created_at DESC
-        LIMIT 1";
+        LIMIT 10";
 
         $connection = $doctrine->getConnection("default");
         return $connection
@@ -85,7 +85,7 @@ class PaymentHistoryService
         WHERE 
             payments.user_id = :email
         ORDER BY " . $orderString . "
-        LIMIT 1";
+        LIMIT 10";
 
         $connection = $doctrine->getConnection("default");
         return $connection
