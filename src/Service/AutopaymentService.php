@@ -116,12 +116,13 @@ class AutopaymentService
         );
     }
 
-    public function showAutopayment($id, $doctrine): JsonResponse
+    public function showAutopayment($id, $request, $doctrine): JsonResponse
     {
         $autopayment = $doctrine->getRepository(Autopayments::class)->find($id);
-        if (!$autopayment) { //TODO When we will received specification - can make handle exceptions
+
+        if (!$autopayment || !$this->checkAuthUser($request, $autopayment->getUserEmail())) {
             return new JsonResponse(
-                [],
+                ["message" => "You do not have such a autopayment"],
                 Response::HTTP_OK
             );
         }
@@ -140,14 +141,13 @@ class AutopaymentService
         );
     }
 
-    public function pauseAutopayment($id, $doctrine): JsonResponse
+    public function pauseAutopayment($id, $request, $doctrine): JsonResponse
     {
         $autopayment = $doctrine->getRepository(Autopayments::class)->find($id);
-        if (!$autopayment) { //TODO When we will received specification - can make handle exceptions
+
+        if (!$autopayment || !$this->checkAuthUser($request, $autopayment->getUserEmail())) {
             return new JsonResponse(
-                [
-                    "message" => "Such autopayment does not exist"
-                ],
+                ["message" => "You do not have such a autopayment"],
                 Response::HTTP_OK
             );
         }
@@ -170,5 +170,13 @@ class AutopaymentService
             $response,
             Response::HTTP_OK
         );
+    }
+
+    private function checkAuthUser($request, $autopaymentUserEmail): bool
+    {
+        $authorizationHeader = $this->tokenService->getToken($request);
+        $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
+        $email = $token->data->email;
+        return $email === $autopaymentUserEmail;
     }
 }

@@ -51,16 +51,16 @@ class AutopaymentsController extends AbstractController
     /**
      * @Route ("/payments_and_transfers/autopayment/show/{id}", name="autopayment_show", methods={"GET"})
      */
-    public function showAutopayment($id, ManagerRegistry $doctrine)
+    public function showAutopayment($id, Request $request, ManagerRegistry $doctrine)
     {
-        return $this->autopaymentService->showAutopayment($id, $doctrine);
+        return $this->autopaymentService->showAutopayment($id, $request, $doctrine);
     }
 
     /**
      * @Route ("/payments_and_transfers/autopayment/pause/{id}", name="autopayment_pause", methods={"PUT"})
      */
-    public function pauseAutopayment($id, ManagerRegistry $doctrine)
+    public function pauseAutopayment($id, Request $request, ManagerRegistry $doctrine)
     {
-        return $this->autopaymentService->pauseAutopayment($id, $doctrine);
+        return $this->autopaymentService->pauseAutopayment($id, $request, $doctrine);
     }
 }
