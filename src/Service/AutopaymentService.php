@@ -6,6 +6,7 @@ use App\Entity\Autopayments;
 use App\Entity\CellPhoneOperators;
 use App\Entity\User;
 use App\Entity\UtilityServices;
+use App\Repository\AutopaymentsRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -80,7 +81,8 @@ class AutopaymentService
         $em->flush();
         return new JsonResponse(
             ['message' => 'Autopayment has been created successfully'],
-            Response::HTTP_OK);
+            Response::HTTP_OK
+        );
     }
 
     public function listOfAutopayments($request, $doctrine): JsonResponse
@@ -104,11 +106,69 @@ class AutopaymentService
         if (empty($autopayment)) {
             return new JsonResponse(
                 [],
-                Response::HTTP_OK);
+                Response::HTTP_OK
+            );
         }
 
         return new JsonResponse(
             $autopayment,
-            Response::HTTP_OK);
+            Response::HTTP_OK
+        );
+    }
+
+    public function showAutopayment($id, $doctrine): JsonResponse
+    {
+        $autopayment = $doctrine->getRepository(Autopayments::class)->find($id);
+        if (!$autopayment) { //TODO When we will received specification - can make handle exceptions
+            return new JsonResponse(
+                [],
+                Response::HTTP_OK
+            );
+        }
+
+        $response = [
+            'id' => $autopayment->getId(),
+            'name_of_payment' => $autopayment->getNameOfPayment(),
+            'payment_category' => $autopayment->getPaymentCategory(),
+            'created_at' => $autopayment->getCreatedAt(),
+            'autoChargeStatus' => $autopayment->getAutoChargeOff()
+        ];
+
+        return  new JsonResponse(
+            $response,
+            Response::HTTP_OK
+        );
+    }
+
+    public function pauseAutopayment($id, $doctrine): JsonResponse
+    {
+        $autopayment = $doctrine->getRepository(Autopayments::class)->find($id);
+        if (!$autopayment) { //TODO When we will received specification - can make handle exceptions
+            return new JsonResponse(
+                [
+                    "message" => "Such autopayment does not exist"
+                ],
+                Response::HTTP_OK
+            );
+        }
+
+        if (!$autopayment->getAutoChargeOff()) {
+            return new JsonResponse(
+                [
+                    "message" => "This auto payment has already been stopped"
+                ],
+                Response::HTTP_OK
+            );
+        }
+
+        $autopayment->setAutoChargeOff(false);
+        $doctrine->getManager()->flush();
+
+        $response = ['message' => 'Autopayment has been paused successfully'];
+
+        return  new JsonResponse(
+            $response,
+            Response::HTTP_OK
+        );
     }
 }
