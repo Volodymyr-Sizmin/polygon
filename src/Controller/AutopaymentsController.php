@@ -57,10 +57,10 @@ class AutopaymentsController extends AbstractController
     }
 
     /**
-     * @Route ("/payments_and_transfers/autopayment/pause/{id}", name="autopayment_pause", methods={"PUT"})
+     * @Route ("/payments_and_transfers/autopayment/pause/{id}", name="autopayment_pause_switcher", methods={"PUT"})
      */
     public function pauseAutopayment($id, Request $request, ManagerRegistry $doctrine)
     {
-        return $this->autopaymentService->pauseAutopayment($id, $request, $doctrine);
+        return $this->autopaymentService->pauseSwitcherAutopayment($id, $request, $doctrine);
     }
 }

@@ -122,7 +122,7 @@ class AutopaymentService
 
         if (!$autopayment || !$this->checkAuthUser($request, $autopayment->getUserEmail())) {
             return new JsonResponse(
-                ["message" => "You do not have such a autopayment"],
+                [], //"message" => "You do not have such autopayment"
                 Response::HTTP_OK
             );
         }
@@ -141,30 +141,30 @@ class AutopaymentService
         );
     }
 
-    public function pauseAutopayment($id, $request, $doctrine): JsonResponse
+    public function pauseSwitcherAutopayment($id, $request, $doctrine): JsonResponse
     {
         $autopayment = $doctrine->getRepository(Autopayments::class)->find($id);
+        $data = json_decode($request->getContent(), true);
+        $autopaymentStatusRequest = $data['auto_charge_off'];
 
         if (!$autopayment || !$this->checkAuthUser($request, $autopayment->getUserEmail())) {
             return new JsonResponse(
-                ["message" => "You do not have such a autopayment"],
+                [], //"message" => "You do not have such autopayment"
                 Response::HTTP_OK
             );
         }
 
-        if (!$autopayment->getAutoChargeOff()) {
+        if ($autopayment->getAutoChargeOff() == $autopaymentStatusRequest) {
             return new JsonResponse(
-                [
-                    "message" => "This auto payment has already been stopped"
-                ],
+                ["message" => "This autopayment status has already been enabled"],
                 Response::HTTP_OK
             );
         }
 
-        $autopayment->setAutoChargeOff(false);
+        $autopayment->setAutoChargeOff($autopaymentStatusRequest);
         $doctrine->getManager()->flush();
 
-        $response = ['message' => 'Autopayment has been paused successfully'];
+        $response = ['message' => 'Autopayment status has been changed successfully'];
 
         return  new JsonResponse(
             $response,
