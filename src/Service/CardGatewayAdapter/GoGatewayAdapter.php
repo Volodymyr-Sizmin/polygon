@@ -55,7 +55,7 @@ class GoGatewayAdapter implements Interfaces\CardGatewayAdapter
     private function apiClient(string $method, string $endpoint, string $token, array $jsonBody = []): string
     {
         $fullToken = $this->tokenService->getFullToken($token);
-        $parameters = $this->setUpApiClientParameters($token, $jsonBody);
+        $parameters = $this->setUpApiClientParameters($fullToken, $jsonBody);
 
         try {
             $fullEndpointUrl = self::GO_API_ENDPOINT . $endpoint;
