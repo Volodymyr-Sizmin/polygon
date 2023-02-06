@@ -7,7 +7,9 @@ use App\Entity\CellPhoneOperators;
 use App\Entity\User;
 use App\Entity\UtilityServices;
 use App\Repository\AutopaymentsRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class AutopaymentService
@@ -116,7 +118,7 @@ class AutopaymentService
         );
     }
 
-    public function showAutopayment(int $id, object $request, object $doctrine): JsonResponse
+    public function showAutopayment(int $id, Request $request, ManagerRegistry $doctrine): JsonResponse
     {
         $autopayment = $doctrine->getRepository(Autopayments::class)->find($id);
 
@@ -141,7 +143,7 @@ class AutopaymentService
         );
     }
 
-    public function pauseSwitcherAutopayment(int $id, object $request, object $doctrine): JsonResponse
+    public function pauseSwitcherAutopayment(int $id, Request $request, ManagerRegistry $doctrine): JsonResponse
     {
         $autopayment = $doctrine->getRepository(Autopayments::class)->find($id);
         $data = json_decode($request->getContent(), true);
@@ -172,7 +174,7 @@ class AutopaymentService
         );
     }
 
-    private function checkAuthUser(object $request, string $autopaymentUserEmail): bool
+    private function checkAuthUser(Request $request, string $autopaymentUserEmail): bool
     {
         $authorizationHeader = $this->tokenService->getToken($request);
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
