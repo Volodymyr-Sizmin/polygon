@@ -8,10 +8,10 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GoGatewayAdapter implements Interfaces\CardGatewayAdapter
 {
-    private const GO_API_ENDPOINT = 'https://polygon-application.andersenlab.dev/cards_service/';
-    private const HTTP_METHOD_GET = 'GET';
-    private const HTTP_METHOD_POST = 'POST';
-    private const HTTP_METHOD_PUT = 'PUT';
+    public const GO_API_ENDPOINT = 'https://polygon-application.andersenlab.dev/cards_service/';
+    public const HTTP_METHOD_GET = 'GET';
+    public const HTTP_METHOD_POST = 'POST';
+    public const HTTP_METHOD_PUT = 'PUT';
 
     private HttpClientInterface $httpClient;
     private TokenService $tokenService;
@@ -56,7 +56,6 @@ class GoGatewayAdapter implements Interfaces\CardGatewayAdapter
     {
         $fullToken = $this->tokenService->getFullToken($token);
         $parameters = $this->setUpApiClientParameters($fullToken, $jsonBody);
-
         try {
             $fullEndpointUrl = self::GO_API_ENDPOINT . $endpoint;
             $response = $this->httpClient
