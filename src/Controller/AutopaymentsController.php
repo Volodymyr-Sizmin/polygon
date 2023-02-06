@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\AutopaymentsRepository;
 use App\Service\AutopaymentService;
 use App\Service\CardsInfoService;
 use App\Service\TokenService;
@@ -9,7 +10,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
 
 class AutopaymentsController extends AbstractController
 {
@@ -37,7 +37,7 @@ class AutopaymentsController extends AbstractController
      */
     public function createAutopayment(Request $request, ManagerRegistry $doctrine)
     {
-       return $this->autopaymentService->createAutopayment($request, $doctrine);
+        return $this->autopaymentService->createAutopayment($request, $doctrine);
     }
 
     /**
@@ -46,5 +46,21 @@ class AutopaymentsController extends AbstractController
     public function listOfAutopayments(Request $request, ManagerRegistry $doctrine)
     {
         return $this->autopaymentService->listOfAutopayments($request, $doctrine);
+    }
+
+    /**
+     * @Route ("/payments_and_transfers/autopayment/show/{id}", name="autopayment_show", methods={"GET"})
+     */
+    public function showAutopayment($id, Request $request, ManagerRegistry $doctrine)
+    {
+        return $this->autopaymentService->showAutopayment($id, $request, $doctrine);
+    }
+
+    /**
+     * @Route ("/payments_and_transfers/autopayment/pause/{id}", name="autopayment_pause_switcher", methods={"PUT"})
+     */
+    public function pauseAutopayment($id, Request $request, ManagerRegistry $doctrine)
+    {
+        return $this->autopaymentService->pauseSwitcherAutopayment($id, $request, $doctrine);
     }
 }

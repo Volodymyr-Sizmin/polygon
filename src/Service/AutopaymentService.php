@@ -6,7 +6,10 @@ use App\Entity\Autopayments;
 use App\Entity\CellPhoneOperators;
 use App\Entity\User;
 use App\Entity\UtilityServices;
+use App\Repository\AutopaymentsRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class AutopaymentService
@@ -80,7 +83,8 @@ class AutopaymentService
         $em->flush();
         return new JsonResponse(
             ['message' => 'Autopayment has been created successfully'],
-            Response::HTTP_OK);
+            Response::HTTP_OK
+        );
     }
 
     public function listOfAutopayments($request, $doctrine): JsonResponse
@@ -104,11 +108,78 @@ class AutopaymentService
         if (empty($autopayment)) {
             return new JsonResponse(
                 [],
-                Response::HTTP_OK);
+                Response::HTTP_OK
+            );
         }
 
         return new JsonResponse(
             $autopayment,
-            Response::HTTP_OK);
+            Response::HTTP_OK
+        );
+    }
+
+    public function showAutopayment(int $id, Request $request, ManagerRegistry $doctrine): JsonResponse
+    {
+        $autopayment = $doctrine->getRepository(Autopayments::class)->find($id);
+
+        if (!$autopayment || !$this->checkAuthUser($request, $autopayment->getUserEmail())) {
+            return new JsonResponse(
+                [], //"message" => "You do not have such autopayment"
+                Response::HTTP_OK
+            );
+        }
+
+        $response = [
+            'id' => $autopayment->getId(),
+            'name_of_payment' => $autopayment->getNameOfPayment(),
+            'payment_category' => $autopayment->getPaymentCategory(),
+            'created_at' => $autopayment->getCreatedAt(),
+            'autoChargeStatus' => $autopayment->getAutoChargeOff()
+        ];
+
+        return  new JsonResponse(
+            $response,
+            Response::HTTP_OK
+        );
+    }
+
+    public function pauseSwitcherAutopayment(int $id, Request $request, ManagerRegistry $doctrine): JsonResponse
+    {
+        $autopayment = $doctrine->getRepository(Autopayments::class)->find($id);
+        $data = json_decode($request->getContent(), true);
+        $autopaymentStatusRequest = $data['auto_charge_off'];
+
+        if (!$autopayment || !$this->checkAuthUser($request, $autopayment->getUserEmail())) {
+            return new JsonResponse(
+                [], //"message" => "You do not have such autopayment"
+                Response::HTTP_OK
+            );
+        }
+
+        if ($autopayment->getAutoChargeOff() == $autopaymentStatusRequest) {
+            return new JsonResponse(
+                ["message" => "This autopayment status has already been enabled"],
+                Response::HTTP_OK
+            );
+        }
+
+        $autopayment->setAutoChargeOff($autopaymentStatusRequest);
+        $doctrine->getManager()->flush();
+
+        $response = ['message' => 'Autopayment status has been changed successfully'];
+
+        return  new JsonResponse(
+            $response,
+            Response::HTTP_OK
+        );
+    }
+
+    private function checkAuthUser(Request $request, string $autopaymentUserEmail): bool
+    {
+        $authorizationHeader = $this->tokenService->getToken($request);
+        $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
+        $email = $token->data->email;
+
+        return $email === $autopaymentUserEmail;
     }
 }
