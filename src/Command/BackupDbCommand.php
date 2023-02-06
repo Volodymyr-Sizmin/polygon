@@ -19,7 +19,7 @@ class BackupDbCommand extends Command
     private const ARCHIVE_DAYS = 3;
 
     protected static $defaultName = 'backup:db';
-    protected static $defaultDescription = 'Add a short description for your command';
+    protected static $defaultDescription = 'Backups all db by dbname and cleans obsolete backups';
 
     protected function configure(): void
     {
@@ -57,7 +57,7 @@ class BackupDbCommand extends Command
 
     private function purgeOldBackups(): void
     {
-        $purgeCommandTemplate = 'find %s -mtime +%s -delete';
+        $purgeCommandTemplate = 'find %s -name "*.sql" -mtime +%s -delete';
         $purgeCommand = sprintf(
             $purgeCommandTemplate,
             self::BACKUP_FOLDER,
