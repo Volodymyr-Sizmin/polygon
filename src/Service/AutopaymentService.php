@@ -116,7 +116,7 @@ class AutopaymentService
         );
     }
 
-    public function showAutopayment($id, $request, $doctrine): JsonResponse
+    public function showAutopayment(int $id, object $request, object $doctrine): JsonResponse
     {
         $autopayment = $doctrine->getRepository(Autopayments::class)->find($id);
 
@@ -141,7 +141,7 @@ class AutopaymentService
         );
     }
 
-    public function pauseSwitcherAutopayment($id, $request, $doctrine): JsonResponse
+    public function pauseSwitcherAutopayment(int $id, object $request, object $doctrine): JsonResponse
     {
         $autopayment = $doctrine->getRepository(Autopayments::class)->find($id);
         $data = json_decode($request->getContent(), true);
@@ -172,11 +172,12 @@ class AutopaymentService
         );
     }
 
-    private function checkAuthUser($request, $autopaymentUserEmail): bool
+    private function checkAuthUser(object $request, string $autopaymentUserEmail): bool
     {
         $authorizationHeader = $this->tokenService->getToken($request);
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
         $email = $token->data->email;
+
         return $email === $autopaymentUserEmail;
     }
 }
