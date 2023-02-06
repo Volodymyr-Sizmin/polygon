@@ -3,10 +3,12 @@
 namespace App\Service;
 
 use App\Entity\Payment;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
 
 class PaymentHistoryService
 {
-    public function getFilteredHistoryOfPayments($decodedToken, $request, $doctrine):array
+    public function getFilteredHistoryOfPayments(\stdClass $decodedToken, Request $request, ManagerRegistry $doctrine):array
     {
         $matchEmail = $decodedToken->data->email;
         $data = json_decode($request->getContent(), true);
@@ -15,7 +17,7 @@ class PaymentHistoryService
         return $doctrine->getRepository(Payment::class)->findBy($data);
     }
 
-    public function getHistoryOfPayments($decodedToken, $doctrine):array
+    public function getHistoryOfPayments(\stdClass $decodedToken, ManagerRegistry $doctrine):array
     {
         $matchEmail = $decodedToken->data->email;
 
@@ -46,7 +48,7 @@ class PaymentHistoryService
             ->fetchAllAssociative();
     }
 
-    public function getSortedHistoryOfPayments($decodedToken, $request, $doctrine):array
+    public function getSortedHistoryOfPayments(\stdClass $decodedToken, Request $request, ManagerRegistry $doctrine):array
     {
         $matchEmail = $decodedToken->data->email;
         $data = json_decode($request->getContent(), true);
