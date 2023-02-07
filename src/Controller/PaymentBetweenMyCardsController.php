@@ -42,7 +42,11 @@ class PaymentBetweenMyCardsController extends AbstractController
             $this->checkAuth->checkAuthentication($email, $authorizationHeader);
             $strForDTO = json_decode($request->getContent(), true);
             $cardNumber = $strForDTO['cardNumber'];
-            $account_credit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber])->getNumber();
+            $account_credit_obj = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber]);
+            if($account_credit_obj == null) {
+                throw new \DomainException("Card ".$cardNumber." not found", 404);
+            }
+            $account_credit = $account_credit_obj->getNumber();
             $cardNumberRecipient = $strForDTO['cardNumberRecipient'];
             $account_debit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumberRecipient])->getNumber();
 
