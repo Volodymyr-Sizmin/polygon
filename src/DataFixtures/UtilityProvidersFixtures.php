@@ -39,6 +39,8 @@ class UtilityProvidersFixtures extends Fixture
             $currency = new Currency();
             $currency->setName('GBP');
             $currency->setFullName('British pound sterling');
+            $manager->persist($currency);
+            $manager->flush();
         }
     }
 }

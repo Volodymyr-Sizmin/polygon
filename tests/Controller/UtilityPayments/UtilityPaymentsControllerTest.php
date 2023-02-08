@@ -10,6 +10,7 @@ use App\Tests\Controller\UtilityPayments\AbstractUtilityTest;
 use Faker\Generator;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class UtilityPaymentsControllerTest extends AbstractUtilityTest
 {
@@ -38,6 +39,102 @@ class UtilityPaymentsControllerTest extends AbstractUtilityTest
         $this->client->getContainer()->set(MoneyTransferService::class, $moneyTransferServiceMock);
         $token = "Bearer " . $this->tokenService->createToken(["email" => $this->payerAccount->getId()]);
         $requestBody = [
+            "payerAccountNumber" => '',
+            "payerCardNumber" => $this->payerAccount->getCardNumber(),
+            "utilityProviderId" => $this->gasUtilityProvider->getId(),
+            "currency" => "GBP",
+            "paymentAmount" => $this->faker->randomFloat(2),
+            "subject" => "Test Payment",
+        ];
+        $response = $this->client->jsonRequest(
+            Request::METHOD_POST,
+            '/utilities/pay',
+            $requestBody,
+            [
+                'HTTP_Authorization' => $token,
+            ],
+        );
+        $response = $this->client->getResponse();
+        $this->assertJson($response->getContent());
+        $this->assertResponseIsSuccessful();
+        $responseObj = json_decode($response->getContent(), false);
+        $this->assertEquals($responseObj->success, true);
+    }
+    public function testPayByAccount(): void
+    {
+        $moneyTransferServiceMock = $this->createMock(MoneyTransferService::class);
+        $moneyTransferServiceMock->expects($this->once())
+            ->method('transferBetweenAccounts')
+            ->with($this->payerAccount, $this->gasUtilityProviderAccount);
+        $this->client->getContainer()->set(MoneyTransferService::class, $moneyTransferServiceMock);
+        $token = "Bearer " . $this->tokenService->createToken(["email" => $this->payerAccount->getId()]);
+        $requestBody = [
+            "payerAccountNumber" => $this->payerAccount->getNumber(),
+            "payerCardNumber" => '',
+            "utilityProviderId" => $this->gasUtilityProvider->getId(),
+            "currency" => "GBP",
+            "paymentAmount" => $this->faker->randomFloat(2),
+            "subject" => "Test Payment",
+        ];
+        $response = $this->client->jsonRequest(
+            Request::METHOD_POST,
+            '/utilities/pay',
+            $requestBody,
+            [
+                'HTTP_Authorization' => $token,
+            ],
+        );
+        $response = $this->client->getResponse();
+        $this->assertJson($response->getContent());
+        $this->assertResponseIsSuccessful();
+        $responseObj = json_decode($response->getContent(), false);
+        $this->assertEquals($responseObj->success, true);
+    }
+
+    public function testValidationFail(): void
+    {
+        $moneyTransferServiceMock = $this->createMock(MoneyTransferService::class);
+        $moneyTransferServiceMock
+            ->method('transferBetweenAccounts')
+            ->with($this->payerAccount, $this->gasUtilityProviderAccount);
+        $this->client->getContainer()->set(MoneyTransferService::class, $moneyTransferServiceMock);
+        $token = "Bearer " . $this->tokenService->createToken(["email" => $this->payerAccount->getId()]);
+        $requestBody = [
+            "payerAccountNumber" => '',
+            "payerCardNumber" => '',
+            "utilityProviderId" => $this->gasUtilityProvider->getId(),
+            "currency" => "GBP",
+            "paymentAmount" => $this->faker->randomFloat(2),
+            "subject" => "Test Payment",
+        ];
+        $response = $this->client->jsonRequest(
+            Request::METHOD_POST,
+            '/utilities/pay',
+            $requestBody,
+            [
+                'HTTP_Authorization' => $token,
+            ],
+        );
+        $response = $this->client->getResponse();
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $this->assertJson($response->getContent());
+        $responseObj = json_decode($response->getContent(), false);
+        $this->assertEquals(false, $responseObj->success);
+    }
+
+    public function testInsufficientFunds(): void
+    {
+        $errorMessage = "Insufficient funds on card {$this->payerAccount->getCardNumber()}";
+        $moneyTransferServiceMock = $this->createMock(MoneyTransferService::class);
+        $moneyTransferServiceMock
+            ->method('transferBetweenAccounts')
+            ->with($this->payerAccount, $this->gasUtilityProviderAccount)
+            ->willThrowException(
+                new \DomainException($errorMessage, Response::HTTP_ACCEPTED)
+            );
+        $this->client->getContainer()->set(MoneyTransferService::class, $moneyTransferServiceMock);
+        $token = "Bearer " . $this->tokenService->createToken(["email" => $this->payerAccount->getId()]);
+        $requestBody = [
             "payerAccountNumber" => $this->payerAccount->getNumber(),
             "payerCardNumber" => $this->payerAccount->getCardNumber(),
             "utilityProviderId" => $this->gasUtilityProvider->getId(),
@@ -53,12 +150,9 @@ class UtilityPaymentsControllerTest extends AbstractUtilityTest
                 'HTTP_Authorization' => $token,
             ],
         );
-        $this->assertResponseIsSuccessful();
-
-        //dd($response->getStatusCode());
-
-
-
-
+        $response = $this->client->getResponse();
+        $this->assertJson($response->getContent());
+        $responseObj = json_decode($response->getContent(), false);
+        $this->assertEquals(false, $responseObj->success);
     }
 }
