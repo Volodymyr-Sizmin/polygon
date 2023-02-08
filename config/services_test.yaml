@@ -3,4 +3,5 @@ services:
     resource: "%kernel.project_dir%/src/DataFixtures/RegistrationFixtures.php"
     tags:
       - {"name": "doctrine.fixture.orm"}
-
+  App\Service\MoneyTransferService:
+    public: TRUE

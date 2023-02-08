@@ -31,7 +31,7 @@ class UtilityPaymentsController extends AbstractController
         $this->validator = $validator;
     }
     /**
-     * @Route("/utilities/pay", name="utility_payments_pay")
+     * @Route("/utilities/pay", name="utility_payments_pay", methods={"POST"})
      */
     public function pay(Request $request): Response
     {
