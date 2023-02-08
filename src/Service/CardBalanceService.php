@@ -168,6 +168,7 @@ class CardBalanceService
                 $fastPayment->setAccountNumber($data['account_number']);
                 $fastPayment->setAddress($data['address']);
                 $fastPayment->setRecepientName('John Connor');
+                $fastPayment->setCreatedAt($timestamp);
                 $em->persist($fastPayment);
                 $em->flush($fastPayment);
             }
