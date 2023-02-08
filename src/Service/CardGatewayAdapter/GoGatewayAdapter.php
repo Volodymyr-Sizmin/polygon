@@ -3,15 +3,13 @@
 namespace App\Service\CardGatewayAdapter;
 
 use App\Service\TokenService;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GoGatewayAdapter implements Interfaces\CardGatewayAdapter
 {
     public const GO_API_ENDPOINT = 'https://polygon-application.andersenlab.dev/cards_service/';
-    public const HTTP_METHOD_GET = 'GET';
-    public const HTTP_METHOD_POST = 'POST';
-    public const HTTP_METHOD_PUT = 'PUT';
 
     private HttpClientInterface $httpClient;
     private TokenService $tokenService;
@@ -25,7 +23,7 @@ class GoGatewayAdapter implements Interfaces\CardGatewayAdapter
     public function getAllCardsForEmail(string $email, string $token): object
     {
         $endpoint = $email . '/cards';
-        $responseBody = $this->apiClient(self::HTTP_METHOD_GET, $endpoint, $token);
+        $responseBody = $this->apiClient(Request::METHOD_GET, $endpoint, $token);
 
         return json_decode($responseBody, false);
     }
@@ -33,7 +31,7 @@ class GoGatewayAdapter implements Interfaces\CardGatewayAdapter
     public function getCardDataByNumber(string $email, string $cardNumber, string $token): object
     {
         $endpoint = $email . '/cards/' . $cardNumber;
-        $responseBody = $this->apiClient(self::HTTP_METHOD_GET, $endpoint, $token);
+        $responseBody = $this->apiClient(Request::METHOD_GET, $endpoint, $token);
 
         return json_decode($responseBody, false);
     }
@@ -47,7 +45,7 @@ class GoGatewayAdapter implements Interfaces\CardGatewayAdapter
     {
         $endpoint = $email . '/cards/' . $cardNumber;
         $jsonBody = ['balance' => $newBalance];
-        $responseBody = $this->apiClient(self::HTTP_METHOD_PUT, $endpoint, $token, $jsonBody);
+        $responseBody = $this->apiClient(Request::METHOD_PUT, $endpoint, $token, $jsonBody);
 
         return json_decode($responseBody, false);
     }

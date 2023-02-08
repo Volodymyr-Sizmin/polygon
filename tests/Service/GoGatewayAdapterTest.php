@@ -6,8 +6,8 @@ use App\Service\CardGatewayAdapter\GoGatewayAdapter;
 use App\Service\TokenService;
 use Faker\Factory;
 use Faker\Generator;
-use SebastianBergmann\Type\GenericObjectType;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -36,8 +36,8 @@ class GoGatewayAdapterTest extends KernelTestCase
     public function testGetAllCardsForEmail(): void
     {
         $fullGoEndpointUrl = GoGatewayAdapter::GO_API_ENDPOINT
-            . $this->randomEmail
-            . '/cards';
+            .$this->randomEmail
+            .'/cards';
         $this->tokenServiceMock->expects($this->once())
             ->method('getFullToken')
             ->with($this->equalTo($this->randomToken))
@@ -48,11 +48,10 @@ class GoGatewayAdapterTest extends KernelTestCase
         $this->httpClientMock->expects($this->once())
             ->method('request')
             ->with(
-                $this->equalTo(GoGatewayAdapter::HTTP_METHOD_GET),
+                $this->equalTo(Request::METHOD_GET),
                 $this->equalTo($fullGoEndpointUrl),
                 $this->equalTo([
-                    'headers' =>
-                        ['Authorization' => $this->randomToken],
+                    'headers' => ['Authorization' => $this->randomToken],
                 ])
             )
         ->willReturn($this->responseMock);
@@ -67,9 +66,9 @@ class GoGatewayAdapterTest extends KernelTestCase
     public function testGetCardDataByNumber(): void
     {
         $fullGoEndpointUrlForCard = GoGatewayAdapter::GO_API_ENDPOINT
-            . $this->randomEmail
-            . '/cards/'
-            . $this->randomCardNumber;
+            .$this->randomEmail
+            .'/cards/'
+            .$this->randomCardNumber;
         $this->tokenServiceMock->expects($this->once())
             ->method('getFullToken')
             ->with($this->equalTo($this->randomToken))
@@ -80,11 +79,10 @@ class GoGatewayAdapterTest extends KernelTestCase
         $this->httpClientMock->expects($this->once())
             ->method('request')
             ->with(
-                $this->equalTo(GoGatewayAdapter::HTTP_METHOD_GET),
+                $this->equalTo(Request::METHOD_GET),
                 $this->equalTo($fullGoEndpointUrlForCard),
                 $this->equalTo([
-                    'headers' =>
-                        ['Authorization' => $this->randomToken],
+                    'headers' => ['Authorization' => $this->randomToken],
                 ])
             )
             ->willReturn($this->responseMock);
@@ -100,9 +98,9 @@ class GoGatewayAdapterTest extends KernelTestCase
     {
         $randomBalance = $this->faker->randomFloat(2);
         $fullGoEndpointUrlForCard = GoGatewayAdapter::GO_API_ENDPOINT
-            . $this->randomEmail
-            . '/cards/'
-            . $this->randomCardNumber;
+            .$this->randomEmail
+            .'/cards/'
+            .$this->randomCardNumber;
         $this->tokenServiceMock->expects($this->once())
             ->method('getFullToken')
             ->with($this->equalTo($this->randomToken))
@@ -113,11 +111,10 @@ class GoGatewayAdapterTest extends KernelTestCase
         $this->httpClientMock->expects($this->once())
             ->method('request')
             ->with(
-                $this->equalTo(GoGatewayAdapter::HTTP_METHOD_GET),
+                $this->equalTo(Request::METHOD_GET),
                 $this->equalTo($fullGoEndpointUrlForCard),
                 $this->equalTo([
-                    'headers' =>
-                        ['Authorization' => $this->randomToken],
+                    'headers' => ['Authorization' => $this->randomToken],
                 ])
             )
             ->willReturn($this->responseMock);
@@ -133,9 +130,9 @@ class GoGatewayAdapterTest extends KernelTestCase
     {
         $newBalance = $this->faker->randomFloat(2);
         $fullGoEndpointUrlForCard = GoGatewayAdapter::GO_API_ENDPOINT
-            . $this->randomEmail
-            . '/cards/'
-            . $this->randomCardNumber;
+            .$this->randomEmail
+            .'/cards/'
+            .$this->randomCardNumber;
         $updatedBalanceBody = ['balance' => $newBalance];
 
         $this->tokenServiceMock->expects($this->once())
@@ -148,11 +145,10 @@ class GoGatewayAdapterTest extends KernelTestCase
         $this->httpClientMock->expects($this->once())
             ->method('request')
             ->with(
-                $this->equalTo(GoGatewayAdapter::HTTP_METHOD_PUT),
+                $this->equalTo(Request::METHOD_PUT),
                 $this->equalTo($fullGoEndpointUrlForCard),
                 $this->equalTo([
-                    'headers' =>
-                        ['Authorization' => $this->randomToken],
+                    'headers' => ['Authorization' => $this->randomToken],
                     'json' => $updatedBalanceBody,
                 ])
             )
