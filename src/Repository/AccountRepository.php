@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Account;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -47,5 +48,33 @@ class AccountRepository extends ServiceEntityRepository
         if ($flush) {
             $this->_em->flush();
         }
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findByAccountNumber(string $accountNumber): ?Account
+    {
+        return $this->createQueryBuilder('accounts')
+            ->andWhere('accounts.number = :val')
+            ->setParameter('val', $accountNumber)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
+
+    /**
+     * @param string $cardNumber
+     * @return Account|null
+     * @throws NonUniqueResultException
+     */
+    public function findByCardNumber(string $cardNumber): ?Account
+    {
+        return $this->createQueryBuilder('accounts')
+            ->andWhere('accounts.cardNumber = :val')
+            ->setParameter('val', $cardNumber)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
     }
 }

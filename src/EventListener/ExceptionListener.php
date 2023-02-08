@@ -7,6 +7,7 @@ namespace App\EventListener;
 use DomainException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ExceptionListener
@@ -35,7 +36,10 @@ class ExceptionListener
         if ('json' !== $request->getContentType()) {
             return;
         }
-        if ($exception instanceof DomainException) {
+        if (
+            $exception instanceof DomainException
+            || $exception instanceof BadRequestHttpException
+        ) {
             $event->setResponse(
                 new JsonResponse(
                     [

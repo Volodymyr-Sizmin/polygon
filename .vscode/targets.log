@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Mon Jan 23 14:37:43 2023
+# Make data base, printed on Tue Jan 31 16:58:51 2023
 
 # Variables
 
@@ -77,7 +77,7 @@ LESSOPEN = | /usr/bin/lesspipe %s
 # environment
 MFLAGS = -pqrR
 # environment
-SSH_AUTH_SOCK = /tmp/ssh-XXXXXXCAx1Dr/agent.1427
+SSH_AUTH_SOCK = /tmp/ssh-XXXXXXwV4QWH/agent.1431
 # default
 .SHELLFLAGS := -c
 # environment
@@ -95,7 +95,7 @@ MAKEFILE_LIST := Makefile
 # automatic
 @F = $(notdir $@)
 # environment
-VSCODE_PID = 14008
+VSCODE_PID = 12763
 # environment
 HISTIGNORE = &:[ ]*:exit:ls:bg:fg:history:clear
 # environment
@@ -103,7 +103,7 @@ XDG_SESSION_TYPE = x11
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/ya-ASUS-EXPERTBOOK-L1500CDAY-L1500CDA:@/tmp/.ICE-unix/1740,unix/ya-ASUS-EXPERTBOOK-L1500CDAY-L1500CDA:/tmp/.ICE-unix/1740
+SESSION_MANAGER = local/ya-ASUS-EXPERTBOOK-L1500CDAY-L1500CDA:@/tmp/.ICE-unix/1738,unix/ya-ASUS-EXPERTBOOK-L1500CDAY-L1500CDA:/tmp/.ICE-unix/1738
 # automatic
 *F = $(notdir $*)
 # environment
@@ -184,7 +184,7 @@ XDG_VTNR = 1
 # makefile
 .DEFAULT_GOAL := tests
 # environment
-SYSTEMD_EXEC_PID = 1413
+SYSTEMD_EXEC_PID = 1420
 # environment
 DISPLAY = :0
 # environment
@@ -198,7 +198,7 @@ MAKE_VERSION := 4.3
 # environment
 LC_MEASUREMENT = uk_UA.UTF-8
 # environment
-SSH_AGENT_PID = 1507
+SSH_AGENT_PID = 1509
 # environment
 PAGER = less
 # environment
@@ -256,7 +256,7 @@ LC_IDENTIFICATION = uk_UA.UTF-8
 
 # Directories
 
-# . (device 2054, inode 521502): 36 files, no impossibilities.
+# . (device 2054, inode 7163): 36 files, no impossibilities.
 
 # 36 files, no impossibilities in 1 directories.
 
@@ -269,7 +269,7 @@ LC_IDENTIFICATION = uk_UA.UTF-8
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2023-01-18 09:55:04.234727556
+#  Last modified 2023-01-30 19:25:23.73971298
 #  File has been updated.
 #  Successfully updated.
 
@@ -322,6 +322,6 @@ all:
 # strcache performance: lookups = 52 / hit rate = 19%
 # hash-table stats:
 # Load=42/8192=1%, Rehash=0, Collisions=0/52=0%
-# Finished Make data base on Mon Jan 23 14:37:43 2023
+# Finished Make data base on Tue Jan 31 16:58:51 2023
 
  
