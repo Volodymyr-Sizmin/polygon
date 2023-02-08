@@ -15,7 +15,7 @@ class CurlBalanceUpdate
         $this->client = $client;
     }
 
-    public function curlBalanceUpd(string $email, string $cardNumber, int $balance)
+    public function curlBalanceUpd(string $email, string $cardNumber, int $balance): void
     {
 
         $dataEmail = ['email' => $email];

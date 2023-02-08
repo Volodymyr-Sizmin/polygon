@@ -16,7 +16,7 @@ class CheckAuthService
         $this->client = $client;
     }
 
-    public function checkAuthentication(string $email, $strToken)
+    public function checkAuthentication(string $email, $strToken): array
     {
 
         $token = $this->tokenService->decodeTokenHS256(trim(substr($strToken, 7)));
@@ -24,7 +24,7 @@ class CheckAuthService
         $tokenEmail = $token->aud;
 
         if ($tokenEmail !== $email) {
-            return  ["success" => "false", "message" => "you are not authorized"];
+            throw new \DomainException("You are not authorize ", 404);
         }
 
         return ["success" => "true", "message" => "you pass Authentication"];

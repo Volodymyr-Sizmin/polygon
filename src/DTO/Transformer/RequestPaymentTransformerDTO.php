@@ -19,6 +19,7 @@ class RequestPaymentTransformerDTO
         $dto->setCardNumberRecipient($request->get('cardNumberRecipient'));
         $dto->setCurrency($request->get('currency'));
         $dto->setSubject($request->get('subject'));
+        $dto->setName($request->get('name'));
 
         return $dto;
     }

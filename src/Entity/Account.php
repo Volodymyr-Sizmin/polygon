@@ -38,6 +38,16 @@ class Account
      */
     private $created_at;
 
+    /**
+     * @ORM\Column(type="string", length=16, nullable=true)
+     */
+    private $cardNumber;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $balance;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -87,6 +97,30 @@ class Account
     public function setCreatedAt(\DateTimeImmutable $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getCardNumber(): ?string
+    {
+        return $this->cardNumber;
+    }
+
+    public function setCardNumber(?string $CardNumber): self
+    {
+        $this->cardNumber = $CardNumber;
+
+        return $this;
+    }
+
+    public function getBalance(): ?int
+    {
+        return $this->balance;
+    }
+
+    public function setBalance(?int $balance): self
+    {
+        $this->balance = $balance;
 
         return $this;
     }

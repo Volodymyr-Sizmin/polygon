@@ -1,8 +1,11 @@
 <?php
+
 namespace App\Controller;
 
 use App\DTO\RequestPaymentDTO;
+use App\Entity\Account;
 use App\Service\PaymentService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,20 +27,38 @@ class PaymentByCardNumberController extends AbstractController
 
     /**
      * @Route("/service/payments/{email}/bycardnumber", name="bycardnumber", methods={"POST"})
-     * @param $params{'cardNumber', 'amount','cardNumberRecipient'}
+     * @param $request {'cardNumber', 'amount','cardNumberRecipient', 'subject'}
      * @return JsonResponse
      */
 
-    public function phonePayment(string $email, Request $request) : JsonResponse
+    public function paymentBetweenCards(string $email, Request $request, EntityManagerInterface $em): JsonResponse
     {
-        $authorizationHeader = $request->headers->get('Authorization');
-        $strForDTO = json_decode($request->getContent(), true);
-        $strForDTO['subject'] = 'By card number';
-        $strForDTO['headersAuth'] = $authorizationHeader;
+        define("App\Controller\NAME", 'By card number');
 
-        $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
-        $result = $this->paymentService->paymentService($email, $resultDTO);
-
+        try {
+            $authorizationHeader = $request->headers->get('Authorization');
+            $strForDTO = json_decode($request->getContent(), true);
+            $cardNumber = $strForDTO['cardNumber'];
+            $account_credit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber])->getNumber();
+            $strForDTO['name'] = NAME;
+            $strForDTO['headersAuth'] = $authorizationHeader;
+            $strForDTO['account_credit'] = $account_credit;
+            $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
+            $result = $this->paymentService->paymentService($email, $resultDTO);
+        } catch (\Exception $exception) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'exception' => get_class($exception),
+                        'message' => $exception->getMessage(),
+                        'status' => $exception->getCode(),
+                        'line' => $exception->getLine(),
+                        'file' => $exception->getFile(),
+                    ],
+                ],
+                $exception->getCode());
+        }
         return new JsonResponse($result, Response::HTTP_OK);
     }
 }

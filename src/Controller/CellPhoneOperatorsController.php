@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class CellPhoneOperatorsController extends AbstractController
 {
@@ -23,27 +24,11 @@ class CellPhoneOperatorsController extends AbstractController
      * @return JsonResponse
      */
 
-  public function cellPhoneOperatorsList(): JsonResponse
+  public function cellPhoneOperatorsList(SerializerInterface $serializer): JsonResponse
   {
         $cellPhoneOperatorsList = $this->entityManager->getRepository(CellPhoneOperators::class)->findAll();
+        $result = $serializer->serialize($cellPhoneOperatorsList, 'json');
 
-        $forResponseArr = [];
-
-        if (count($cellPhoneOperatorsList) > 0) {
-
-           foreach ($cellPhoneOperatorsList as $item)
-           {
-               $forResponse =[
-                   'id' => $item->getId(),
-                   'name' => $item->getName()
-               ];
-
-           array_push($forResponseArr,$forResponse );
-           }
-
-            return new JsonResponse($forResponseArr, Response::HTTP_OK);
-        } else {
-            return new JsonResponse($forResponseArr, Response::HTTP_NO_CONTENT);
-        }
+        return new JsonResponse(json_decode($result), Response::HTTP_OK);
   }
 }

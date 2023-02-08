@@ -63,6 +63,21 @@ class Payment
      */
     private $type_id;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name;
+
+    /**
+     * @ORM\Column(type="string", length=16)
+     */
+    private $card_debit_number;
+
+    /**
+     * @ORM\Column(type="string", length=16)
+     */
+    private $card_credit_number;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -172,6 +187,42 @@ class Payment
     public function setTypeId(int $type_id): self
     {
         $this->type_id = $type_id;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getCardDebitNumber(): ?string
+    {
+        return $this->card_debit_number;
+    }
+
+    public function setCardDebitNumber(string $card_debit_number): self
+    {
+        $this->card_debit_number = $card_debit_number;
+
+        return $this;
+    }
+
+    public function getCardCreditNumber(): ?string
+    {
+        return $this->card_credit_number;
+    }
+
+    public function setCardCreditNumber(string $card_credit_number): self
+    {
+        $this->card_credit_number = $card_credit_number;
 
         return $this;
     }
