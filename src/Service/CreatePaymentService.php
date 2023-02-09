@@ -19,12 +19,15 @@ class CreatePaymentService implements Interfaces\CreatePayment
         $payment->setUserId($dto->getUserId());
         $payment->setAccountCreditId($dto->getAccountCreditId());
         $payment->setAccountDebitId($dto->getAccountDebitId());
+        $payment->setCardCreditNumber($dto->getCardCreditNumber());
+        $payment->setCardDebitNumber($dto->getCardDebitNumber());
         $payment->setAmount($dto->getAmount());
         $payment->setCurrencyId($dto->getCurrencyId());
         $payment->setSubject($dto->getSubject());
         $payment->setTypeId($dto->getTypeId());
         $payment->setStatusId($dto->getStatusId());
         $payment->setCreatedAt(new \DateTimeImmutable());
+        $payment->setName($dto->getName());
 
         $this->entityManager->persist($payment);
         $this->entityManager->flush();

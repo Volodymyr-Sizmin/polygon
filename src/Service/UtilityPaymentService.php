@@ -111,6 +111,7 @@ class UtilityPaymentService implements UtilityPayment
         $paymentDTO->setCardDebitNumber($payerAccount->getCardNumber());
         $paymentDTO->setCardCreditNumber($providerAccount->getCardNumber());
         $paymentDTO->setStatusId(self::UTILITY_PAYMENT_STATUS_ID);
+        $paymentDTO->setName('Utility Payment');
 
         $this->paymentService->createFromDto($paymentDTO);
     }

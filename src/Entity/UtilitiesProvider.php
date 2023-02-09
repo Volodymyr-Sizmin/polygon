@@ -56,7 +56,7 @@ class UtilitiesProvider
 
     public function setUtility(string $utility): self
     {
-        $this->utility = $utility;
+        $this->utility = mb_strtoupper($utility);
 
         return $this;
     }

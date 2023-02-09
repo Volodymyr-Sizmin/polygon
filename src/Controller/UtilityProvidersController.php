@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UtilitiyProvidersController extends AbstractController
+class UtilityProvidersController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
 
@@ -25,7 +25,7 @@ class UtilitiyProvidersController extends AbstractController
     public function getAll(): JsonResponse
     {
         $utilitiesProviderRepository = $this->entityManager->getRepository(UtilitiesProvider::class);
-        $providers = $utilitiesProviderRepository->$this->utilitiesProviderRepository->findAll();
+        $providers = $utilitiesProviderRepository->findAll();
 
         return $this->json($providers, Response::HTTP_OK);
     }
