@@ -55,6 +55,7 @@ class TopUpPhoneController extends AbstractController
             $strForDTO['account_credit'] = $account_credit;
             $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
             $result = $this->paymentService->paymentService($email, $resultDTO);
+
         } catch (\Exception $exception) {
             return new JsonResponse(
                 [

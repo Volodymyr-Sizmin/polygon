@@ -38,6 +38,7 @@ class PaymentByCardNumberController extends AbstractController
             $strForDTO = json_decode($request->getContent(), true);
             $cardNumber = $strForDTO['cardNumber'];
             $account_credit_obj = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber]);
+
             if($account_credit_obj == null){
                 throw new \DomainException('Card '.$cardNumber." didn't find", 404);
             }
