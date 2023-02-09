@@ -18,7 +18,7 @@ class PaymentByCardNumberController extends AbstractController
     public Request $request;
     private PaymentService $paymentService;
     private SerializerInterface $serializer;
-
+    const NAME_BY_CARD_NUMBER = 'By card number';
     public function __construct(PaymentService $paymentService, SerializerInterface $serializer)
     {
         $this->paymentService = $paymentService;
@@ -33,14 +33,16 @@ class PaymentByCardNumberController extends AbstractController
 
     public function paymentBetweenCards(string $email, Request $request, EntityManagerInterface $em): JsonResponse
     {
-        define("App\Controller\NAME", 'By card number');
-
         try {
             $authorizationHeader = $request->headers->get('Authorization');
             $strForDTO = json_decode($request->getContent(), true);
             $cardNumber = $strForDTO['cardNumber'];
-            $account_credit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber])->getNumber();
-            $strForDTO['name'] = NAME;
+            $account_credit_obj = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber]);
+            if($account_credit_obj == null){
+                throw new \DomainException('Card '.$cardNumber." didn't find", 404);
+            }
+            $account_credit = $account_credit_obj->getNumber();
+            $strForDTO['name'] = self::NAME_BY_CARD_NUMBER;
             $strForDTO['headersAuth'] = $authorizationHeader;
             $strForDTO['account_credit'] = $account_credit;
             $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
