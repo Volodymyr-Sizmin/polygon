@@ -6,7 +6,6 @@ use App\Entity\Autopayments;
 use App\Entity\CellPhoneOperators;
 use App\Entity\User;
 use App\Entity\UtilityServices;
-use App\Repository\AutopaymentsRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,8 +17,11 @@ class AutopaymentService
     public CardsInfoService $cardsInfoService;
     public CardBalanceService $cardBalanceService;
 
-    public function __construct(TokenService $tokenService, CardsInfoService $cardsInfoService, CardBalanceService $cardBalanceService)
-    {
+    public function __construct(
+        TokenService $tokenService,
+        CardsInfoService $cardsInfoService,
+        CardBalanceService $cardBalanceService
+    ) {
         $this->tokenService = $tokenService;
         $this->cardsInfoService = $cardsInfoService;
         $this->cardBalanceService = $cardBalanceService;
@@ -60,8 +62,7 @@ class AutopaymentService
         $data = json_decode($request->getContent(), true);
         $token = $this->tokenService->decodeToken(substr($authorizationHeader, 7));
         $em = $doctrine->getManager();
-        $matchEmail = $token->data->email;
-        $user = $em->getRepository(User::class)->findOneBy(['email' => $matchEmail]);
+        $authUserEmail = $token->data->email;
 
         $autopayment = new Autopayments();
 
@@ -71,7 +72,7 @@ class AutopaymentService
             $autopayment->setCellPhoneOperators('NULL');
         }
 
-        $autopayment->setUserEmail($user->getEmail())
+        $autopayment->setUserEmail($authUserEmail)
             ->setNameOfPayment($data['name_of_payment'])
             ->setPaymentCategory($data['payment_category'])
             ->setCustomerNumber($data['customer_number'])
@@ -81,6 +82,7 @@ class AutopaymentService
             ->setAutoChargeOff($data['auto_charge_off']);
         $em->persist($autopayment);
         $em->flush();
+
         return new JsonResponse(
             ['message' => 'Autopayment has been created successfully'],
             Response::HTTP_OK
@@ -137,7 +139,7 @@ class AutopaymentService
             'autoChargeStatus' => $autopayment->getAutoChargeOff()
         ];
 
-        return  new JsonResponse(
+        return new JsonResponse(
             $response,
             Response::HTTP_OK
         );
@@ -168,7 +170,7 @@ class AutopaymentService
 
         $response = ['message' => 'Autopayment status has been changed successfully'];
 
-        return  new JsonResponse(
+        return new JsonResponse(
             $response,
             Response::HTTP_OK
         );
