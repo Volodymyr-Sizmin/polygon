@@ -19,6 +19,7 @@ class TopUpPhoneController extends AbstractController
     protected PaymentService $paymentService;
     protected SerializerInterface $serializer;
     protected $em;
+    const NAME_TOP_UP_PHONE = 'Top Up Phone';
 
     public function __construct(PaymentService $paymentService, SerializerInterface $serializer, EntityManagerInterface $em)
     {
@@ -35,16 +36,21 @@ class TopUpPhoneController extends AbstractController
 
     public function phonePayment(string $email, Request $request, EntityManagerInterface $em) : JsonResponse
     {
-        define("App\Controller\NAME", 'Top Up Phone');
 
         try {
             $authorizationHeader = $request->headers->get('Authorization');
             $strForDTO = json_decode($request->getContent(), true);
             $cardNumber = $strForDTO['cardNumber'];
-            $account_credit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber])->getNumber();
+            $account_credit_obj = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber]);
+
+            if($account_credit_obj == null){
+                throw new \DomainException('Card '.$cardNumber." didn't find",404);
+            }
+
+            $account_credit = $account_credit_obj->getNumber();
             $cellPhoneOperators = $this->em->getRepository(CellPhoneOperators::class)->find($strForDTO['id_operator']);
             $strForDTO['account_debit'] = $cellPhoneOperators->getAccount();
-            $strForDTO['name'] = NAME;
+            $strForDTO['name'] = self::NAME_TOP_UP_PHONE;
             $strForDTO['headersAuth'] = $authorizationHeader;
             $strForDTO['account_credit'] = $account_credit;
             $resultDTO = $this->serializer->deserialize(json_encode($strForDTO), RequestPaymentDTO::class, 'json');
