@@ -20,6 +20,7 @@ class PaymentBetweenMyCardsController extends AbstractController
     protected PaymentService $paymentService;
     protected SerializerInterface $serializer;
     protected CheckAuthService $checkAuth;
+    const NAME = 'Between My Cards';
 
     public function __construct(PaymentService $paymentService, SerializerInterface $serializer, CheckAuthService $checkAuth)
     {
@@ -35,14 +36,16 @@ class PaymentBetweenMyCardsController extends AbstractController
      */
     public function paymentBetweenMyCards(string $email, Request $request, EntityManagerInterface $em): JsonResponse
     {
-        define("App\Controller\NAME", 'Between My Cards');
-
         try {
             $authorizationHeader = $request->headers->get('Authorization');
             $this->checkAuth->checkAuthentication($email, $authorizationHeader);
             $strForDTO = json_decode($request->getContent(), true);
             $cardNumber = $strForDTO['cardNumber'];
-            $account_credit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber])->getNumber();
+            $account_credit_obj = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumber]);
+            if ($account_credit_obj == null) {
+                throw new \DomainException("Card " . $cardNumber . " not found", 404);
+            }
+            $account_credit = $account_credit_obj->getNumber();
             $cardNumberRecipient = $strForDTO['cardNumberRecipient'];
             $account_debit = $em->getRepository(Account::class)->findOneBy(['cardNumber' => $cardNumberRecipient])->getNumber();
 
