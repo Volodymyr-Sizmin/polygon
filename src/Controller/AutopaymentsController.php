@@ -51,7 +51,7 @@ class AutopaymentsController extends AbstractController
     /**
      * @Route ("/payments_and_transfers/autopayment/show/{id}", name="autopayment_show", methods={"GET"})
      */
-    public function showAutopayment($id, Request $request, ManagerRegistry $doctrine)
+    public function showAutopayment(int $id, Request $request, ManagerRegistry $doctrine)
     {
         return $this->autopaymentService->showAutopayment($id, $request, $doctrine);
     }
@@ -59,8 +59,16 @@ class AutopaymentsController extends AbstractController
     /**
      * @Route ("/payments_and_transfers/autopayment/pause/{id}", name="autopayment_pause_switcher", methods={"PUT"})
      */
-    public function pauseAutopayment($id, Request $request, ManagerRegistry $doctrine)
+    public function pauseAutopayment(int $id, Request $request, ManagerRegistry $doctrine)
     {
         return $this->autopaymentService->pauseSwitcherAutopayment($id, $request, $doctrine);
+    }
+
+    /**
+     * @Route ("/payments_and_transfers/autopayment/delete/{id}", name="autopayment_delete", methods={"DELETE"})
+     */
+    public function deleteAutopayment(int $id, ManagerRegistry $doctrine)
+    {
+        return $this->autopaymentService->deleteAutopayment($id, $doctrine);
     }
 }

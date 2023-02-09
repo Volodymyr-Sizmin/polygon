@@ -73,7 +73,7 @@ class AutopaymentServiceTest extends WebTestCase
 
     public function test_create_autopayment(): void
     {
-        $this->markTestSkipped();
+       // $this->markTestSkipped();
 
         $testEmail = $this->faker->email();
         $token = "Bearer " . $this
