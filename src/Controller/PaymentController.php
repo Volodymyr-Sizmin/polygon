@@ -67,7 +67,7 @@ class PaymentController extends AbstractController
     }
 
     /**
-     * @Route("/payments_and_transfers/history_of_payments", name="history_of_payments", methods={"GET"})
+     * @Route("/payments_and_transfers/history_of_payments", name="history_of_payments", methods={"POST"})
      */
     public function paginationHistoryOfPayments(ManagerRegistry $doctrine, SerializerInterface $serializer, Request $request): JsonResponse
     {
