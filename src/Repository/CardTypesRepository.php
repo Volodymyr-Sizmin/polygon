@@ -47,32 +47,11 @@ class CardTypesRepository extends ServiceEntityRepository
         }
     }
 
-    // /**
-    //  * @return CardTypes[] Returns an array of CardTypes objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?CardTypes
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
+//    public function findAllByChosenField($fields)
+//    {
+//        $qb = $this->createQueryBuilder('c');
+//        $qb->select($fields);
+//
+//        return $qb->getQuery()->getResult();
+//    }
 }
