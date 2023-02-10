@@ -65,5 +65,19 @@ class PaymentController extends AbstractController
 
         return new JsonResponse($result, Response::HTTP_OK, [], true);
     }
+
+    /**
+     * @Route("/payments_and_transfers/history_of_payments", name="history_of_payments", methods={"GET"})
+     */
+    public function paginationHistoryOfPayments(ManagerRegistry $doctrine, SerializerInterface $serializer, Request $request): JsonResponse
+    {
+        $token = $this->tokenService->getToken($request);
+        $decodedToken = $this->tokenService->decodeToken(substr($token , 7));
+
+        $payments = $this->paymentHistoryService->getPaginatedHistoryOfPayments($decodedToken, $request, $doctrine);
+        $result = $serializer->serialize($payments, 'json');
+
+        return new JsonResponse($result, Response::HTTP_OK, [], true);
+    }
 }
 
