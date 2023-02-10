@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class CardTypes
 {
+    const CURRENCY = ['GBP' => ['GBP'], 'multi' => ['GBP', 'USD','EUR']];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -20,7 +22,7 @@ class CardTypes
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $card_type;
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=10)
@@ -62,19 +64,24 @@ class CardTypes
      */
     private $other_advantages;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $currency;
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getCardType(): ?string
+    public function getName(): ?string
     {
-        return $this->card_type;
+        return $this->name;
     }
 
-    public function setCardType(string $card_type): self
+    public function setName(string $name): self
     {
-        $this->card_type = $card_type;
+        $this->name = $name;
 
         return $this;
     }
@@ -171,6 +178,18 @@ class CardTypes
     public function setOtherAdvantages(?string $other_advantages): self
     {
         $this->other_advantages = $other_advantages;
+
+        return $this;
+    }
+
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency(array  $currency)
+    {
+        $this->currency = $currency;
 
         return $this;
     }
