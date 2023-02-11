@@ -67,7 +67,7 @@ class Autopayments
     private $auto_charge_off;
 
     /**
-     * @ORM\Column(type="string", length=55)
+     * @ORM\Column(type="string", length=55, nullable=true)
      */
     private $card_debit_number;
 
