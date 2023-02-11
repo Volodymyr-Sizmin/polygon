@@ -19,7 +19,7 @@ class Account
     private $id;
 
     /**
-     * @ORM\Column(type="bigint")
+     * @ORM\Column(type="string", length=100)
      */
     private $user_id;
 
