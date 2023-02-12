@@ -110,12 +110,12 @@ class CardTypes
         return $this;
     }
 
-    public function getTransferFees(): ?string
+    public function getTransferFees()
     {
         return $this->transfer_fees;
     }
 
-    public function setTransferFees(?string $transfer_fees): self
+    public function setTransferFees($transfer_fees): self
     {
         $this->transfer_fees = $transfer_fees;
 
