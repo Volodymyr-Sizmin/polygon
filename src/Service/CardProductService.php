@@ -2,10 +2,14 @@
 
 namespace App\Service;
 
+use App\DTO\CardProductDTO;
 use App\DTO\FastPaymentDTO;
+use App\Entity\Card;
 use App\Entity\CardTypes;
 use App\Entity\Currency;
 use App\Entity\FastPayments;
+use Carbon\Carbon;
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -42,7 +46,7 @@ class CardProductService
         return $cardProduct;
     }
 
-    public function getCardProduct(string $token, $id):array
+    public function getCardProduct(string $token, $id):object
     {
         $this->tokenService->getEmailFromToken($token);
 
