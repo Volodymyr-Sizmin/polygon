@@ -14,10 +14,10 @@ class PaymentHistoryService
         $data = json_decode($request->getContent(), true);
 
         //parameters data : amount, created_at, currency, status, payment_type
-        $paramsData = $data['params'];
-
         if(!array_key_exists('params', $data)) {
             $paramsData = [];
+        } else {
+            $paramsData = $data['params'];
         }
 
         $arrayParamsSize = count($paramsData);
@@ -69,7 +69,7 @@ class PaymentHistoryService
             }
         }
 
-        $paramsString = $paramsString . " AND payments.user_id = :email";
+        $paramsString = ($paramsString) ? $paramsString . " AND payments.user_id = :email" : $paramsString . " payments.user_id = :email";
         $parameters['email'] = $matchEmail;
 
         $query ="  
@@ -198,10 +198,10 @@ class PaymentHistoryService
         }
 
         //parameters data : amount, created_at, currency, status, payment_type
-        $paramsData = $data['params'];
-
         if(!array_key_exists('params', $data)) {
             $paramsData = [];
+        } else {
+            $paramsData = $data['params'];
         }
 
         $arrayParamsSize = count($paramsData);
@@ -252,8 +252,8 @@ class PaymentHistoryService
                     $paramsString . $tableName . $paramNameLeft . $params['sign'] . ":" . $paramNameRight . " AND ";
             }
         }
-
-        $paramsString = $paramsString . " AND payments.user_id = :email";
+        //dd($paramsString);
+        $paramsString = ($paramsString) ? $paramsString . " AND payments.user_id = :email" : $paramsString . " payments.user_id = :email";
         $parameters['email'] = $matchEmail;
 
         //offset and limit  data
