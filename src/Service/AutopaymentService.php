@@ -179,12 +179,14 @@ class AutopaymentService
     public function deleteAutopayment(int $id, Request $request, ManagerRegistry $doctrine): JsonResponse
     {
         $autopayment = $doctrine->getRepository(Autopayments::class)->find($id);
+
         if (!$autopayment || !$this->checkAuthUser($request, $autopayment->getUserEmail())) {
             return new JsonResponse(
                 [],
                 Response::HTTP_OK
             );
         }
+
         $doctrine->getManager()->remove($autopayment);
         $doctrine->getManager()->flush();
 
