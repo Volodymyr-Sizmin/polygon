@@ -67,8 +67,8 @@ class AutopaymentsController extends AbstractController
     /**
      * @Route ("/payments_and_transfers/autopayment/delete/{id}", name="autopayment_delete", methods={"DELETE"})
      */
-    public function deleteAutopayment(int $id, ManagerRegistry $doctrine)
+    public function deleteAutopayment(int $id, Request $request, ManagerRegistry $doctrine)
     {
-        return $this->autopaymentService->deleteAutopayment($id, $doctrine);
+        return $this->autopaymentService->deleteAutopayment($id, $request, $doctrine);
     }
 }
