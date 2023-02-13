@@ -19,7 +19,7 @@ class CheckAuthService
     public function checkAuthentication(string $email, $strToken): array
     {
 
-        $token = $this->tokenService->decodeTokenHS256(trim(substr($strToken, 7)));
+        $token = $this->tokenService->decodeToken(trim(substr($strToken, 7)));
 
         $tokenEmail = $token->aud;
 
