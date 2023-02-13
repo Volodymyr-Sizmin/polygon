@@ -64,6 +64,18 @@ class TokenService
         return  $decodedToken->data->email;
     }
 
+    public function getEmailFromGoToken(string $token): string
+    {
+        if (!$token) {
+            throw new \DomainException('Not authenticated', 401);
+        }
+
+        $decodedToken  = $this->decodeTokenHS256($this->getShortifiedToken($token));
+
+        return  $decodedToken->aud;
+
+    }
+
     public function getFullToken(string $token): string
     {
         return mb_stripos($token, 'bearer') === false

@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -57,5 +58,37 @@ class UserService
         }
 
         return $passport_id;
+    }
+
+    public function assertSecretAnswerValid(string $answer, string $token): void
+    {
+        $userDataObj = $this->getUserInfoByToken($token);
+
+        if ($userDataObj->answer !== $answer) {
+            throw new \DomainException('Wrong Secret question answer', Response::HTTP_UNAUTHORIZED);
+        }
+    }
+
+    public function getUserInfoByToken(string $token): object
+    {
+        $email = $this->tokenService->getEmailFromGoToken($token);
+        $fullToken = $this->tokenService->getFullToken($token);
+        $apiUrl = 'https://polygon-application.andersenlab.dev/registration_service/' . $email;
+        try {
+            $response = $this->client->request(
+                Request::METHOD_GET,
+                $apiUrl,
+                [
+                    'headers' => [
+                        'Authorization' => $fullToken
+                    ],
+                ]
+            );
+            $responseContent = $response->getContent();
+        } catch (\Throwable $e) {
+            throw new \DomainException('Go api error:' . $e->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
+
+        return json_decode($responseContent, false);
     }
 }
