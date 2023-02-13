@@ -176,6 +176,26 @@ class AutopaymentService
         );
     }
 
+    public function deleteAutopayment(int $id, Request $request, ManagerRegistry $doctrine): JsonResponse
+    {
+        $autopayment = $doctrine->getRepository(Autopayments::class)->find($id);
+        if (!$autopayment || !$this->checkAuthUser($request, $autopayment->getUserEmail())) {
+            return new JsonResponse(
+                [], //"message" => "You do not have such autopayment"
+                Response::HTTP_OK
+            );
+        }
+        $doctrine->getManager()->remove($autopayment);
+        $doctrine->getManager()->flush();
+
+        $response = ['message' => 'Autopayment  has been deleted successfully'];
+
+        return new JsonResponse(
+            $response,
+            Response::HTTP_OK
+        );
+    }
+
     private function checkAuthUser(Request $request, string $autopaymentUserEmail): bool
     {
         $authorizationHeader = $this->tokenService->getToken($request);
