@@ -153,7 +153,7 @@ class AutopaymentService
 
         if (!$autopayment || !$this->checkAuthUser($request, $autopayment->getUserEmail())) {
             return new JsonResponse(
-                [], //"message" => "You do not have such autopayment"
+                [],
                 Response::HTTP_OK
             );
         }
@@ -181,7 +181,7 @@ class AutopaymentService
         $autopayment = $doctrine->getRepository(Autopayments::class)->find($id);
         if (!$autopayment || !$this->checkAuthUser($request, $autopayment->getUserEmail())) {
             return new JsonResponse(
-                [], //"message" => "You do not have such autopayment"
+                [],
                 Response::HTTP_OK
             );
         }
