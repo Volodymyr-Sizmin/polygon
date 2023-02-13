@@ -25,7 +25,7 @@ class Card
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $name;
+    private $name = 'Universal';
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -60,17 +60,17 @@ class Card
     /**
      * @ORM\Column(type="string", length=20)
      */
-    private $status;
+    private $status = 'active';
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
-    private $pin_code;
+    private $pin_code = '1234';
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
-    private $answer_attempts;
+    private $answer_attempts = 3;
 
     /**
      * @ORM\Column(type="datetime")
