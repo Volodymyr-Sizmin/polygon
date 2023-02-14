@@ -58,6 +58,6 @@ class CardsController extends AbstractController
         $userService->assertSecretAnswerValid($changePinDto->questionAnswer, $goToken);
         $cardsOperationsService->changePin($changePinDto, $goToken);
 
-        return $this->json(['status' => 'success']);
+        return $this->json(['success' => 'true']);
     }
 }

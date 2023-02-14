@@ -60,7 +60,7 @@ class CardsControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertJson($response->getContent());
-        $this->assertEquals('success', $responseObj->status);
+        $this->assertEquals(true, $responseObj->success);
         $this->assertEquals($this->fakeCard->getPinCode(), $newPin);
     }
 
