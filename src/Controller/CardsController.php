@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-
 class CardsController extends AbstractController
 {
     protected CardsInfoService $cardsInfoService;
@@ -33,14 +32,14 @@ class CardsController extends AbstractController
 
     /**
      * @Route("/payments_and_transfers/{email}/cards", name="cardslist", methods={"GET"})
-     * @param string $email
+     *
      * @return JsonResponse|void
      */
-    public function cardsList(string $email) : JsonResponse
+    public function cardsList(string $email): JsonResponse
     {
         $response = $this->cardsInfoService->getCardsInfo($email);
 
-        return (count($response)>0 ? new JsonResponse(['success' => true, 'cards' => $response], Response::HTTP_OK) : new JsonResponse(['success' => true], Response::HTTP_NO_CONTENT));
+        return count($response) > 0 ? new JsonResponse(['success' => true, 'cards' => $response], Response::HTTP_OK) : new JsonResponse(['success' => true], Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -54,11 +53,10 @@ class CardsController extends AbstractController
             ChangePinDTO::class,
             'json'
         );
-        /** @var ChangePinDTO $changePinDto */
+        /* @var ChangePinDTO $changePinDto */
         $this->validator->validateDto($changePinDto);
         $userService->assertSecretAnswerValid($changePinDto->questionAnswer, $goToken);
         $cardsOperationsService->changePin($changePinDto, $goToken);
-
 
         return $this->json(['status' => 'success']);
     }

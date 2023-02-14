@@ -26,25 +26,14 @@ class CardsOperationsService implements Interfaces\CardsOperations
         $cardsRepository = $this->entityManager->getRepository(Card::class);
         /** @var Card $card */
         $card = $cardsRepository->findByCardNumber($cardNumber);
-        $this->assertCardOperationPossible($card, $token);
+        $emailFromToken = $this->tokenService->getEmailFromGoToken($token);
+
+        if (!$card || $card->getUserId() !== $emailFromToken) {
+            throw new \DomainException('Wrong data provided', Response::HTTP_BAD_REQUEST);
+        }
+
         $card->setPinCode($newPin);
         $this->entityManager->persist($card);
         $this->entityManager->flush();
-    }
-
-    private function assertCardOperationPossible(?Card $card, string $token): void
-    {
-        if(!$card){
-            throw new \DomainException('No Card Found', Response::HTTP_NOT_FOUND);
-        }
-
-        $accountRepository = $this->entityManager->getRepository(Account::class);
-        /** @var Account $account */
-        $account = $accountRepository->findByCardNumber($card->getNumber());
-        $emailFromToken = $this->tokenService->getEmailFromGoToken($token);
-
-        if (!$account || $account->getUserId() !== $emailFromToken) {
-            throw new UnauthorizedHttpException("Incorrect Token", Response::HTTP_UNAUTHORIZED);
-        }
     }
 }

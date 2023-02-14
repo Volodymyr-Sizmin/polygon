@@ -18,7 +18,7 @@ class ChangePinDTO
     /**
      * @Assert\NotBlank()
      * @Assert\Regex(
-     *     pattern="/[0-9]{16}/ui",
+     *     pattern="/[0-9]{16}/i",
      *     message="Wrong card Number Format"
      * )
      */
