@@ -8,12 +8,12 @@ services:
 #    volumes:
 #      - /home/d.rusakov/symfony-api:/project-root
 
-  api-server-dev-new:
-    container_name: $API_SERVER_CONTAINER_NAME-$CI_COMMIT_BRANCH
+  api-server-dev:
+    container_name: $API_SERVER_CONTAINER_NAME
     image: $AND_DOCKER_REGISTRY_NAME/$CI_PROJECT_NAME:$CI_COMMIT_BRANCH
     ports:
-      - "1101:80"
-      - "9002:9001"
+      - "1100:80"
+      - "9001:9001"
     volumes:
         - /opt/prod/logs:/var/log/nginx
     networks:
@@ -22,7 +22,7 @@ services:
   symfony-api-dev-new:
     environment:
       - DOCKER_USER="a.fetissov"
-    container_name: $SYMFONY_CONTAINER_NAME-$CI_COMMIT_BRANCH
+    container_name: $SYMFONY_CONTAINER_NAME
     image: $AND_DOCKER_REGISTRY_NAME/$CI_PROJECT_NAME:symfony-$CI_COMMIT_BRANCH
     volumes:
       - /home/${DOCKER_USER}/.composer:/home/${DOCKER_USER}/.composer
