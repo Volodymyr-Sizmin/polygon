@@ -77,7 +77,7 @@ class Account
         return $this;
     }
 
-    public function getCurrencyName(): ?int
+    public function getCurrencyName(): ?string
     {
         return $this->currency_name;
     }
