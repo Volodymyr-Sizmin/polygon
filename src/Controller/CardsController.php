@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\CardDTO;
 use App\Service\CardsInfoService;
 use App\Service\CheckAuthService;
 use Doctrine\ORM\EntityManagerInterface;
