@@ -54,24 +54,35 @@ class CardsInfoService
             ->prepare($query)
             ->executeQuery(['user_id' => $userId])
             ->fetchAllAssociative();
+        if (!$query_result) {
+            throw new \DomainException('Cards for user '.$userId.' are not found', 404);
+        }
+
         $result = $this->cardTransformerDTO->transformCards($query_result);
         return $result;
     }
 
-    public function getOneCardWithBalance(string $userId, $id)
+    public function getOneCardWithBalance(string $userId, string $number)
     {
         $query = "
         SELECT card.*, accounts.balance, accounts.number as account_number
         FROM card
         LEFT JOIN accounts ON card.account_number = accounts.number
-        WHERE card.user_id LIKE :user_id AND card.user_id = :id
+        WHERE card.user_id LIKE :user_id AND card.number = :number
         ORDER BY card.created_at
         ";
 
-        return $this->em
+        $query_result = $this->em
             ->getConnection("default")
             ->prepare($query)
-            ->executeQuery(['user_id' => $userId, 'id' => $id])
-            ->fetchAllAssociative();
+            ->executeQuery(['user_id' => $userId, 'number' => $number])
+            ->fetchAssociative();
+
+        if (!$query_result) {
+            throw new \DomainException('Card '.$number.' is not found', 404);
+        }
+
+        $result = $this->cardTransformerDTO->transformOneCard($query_result);
+        return $result;
     }
 }
