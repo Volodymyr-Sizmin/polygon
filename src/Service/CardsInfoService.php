@@ -65,9 +65,10 @@ class CardsInfoService
     public function getOneCardWithBalance(string $userId, string $number)
     {
         $query = "
-        SELECT card.*, accounts.balance, accounts.number as account_number
+        SELECT card.*, accounts.balance, accounts.number as account_number, user.first_name, user.last_name 
         FROM card
         LEFT JOIN accounts ON card.account_number = accounts.number
+        LEFT JOIN user ON card.user_id = user.email
         WHERE card.user_id LIKE :user_id AND card.number = :number
         ORDER BY card.created_at
         ";
