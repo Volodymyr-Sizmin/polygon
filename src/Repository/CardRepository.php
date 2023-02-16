@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Card;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -45,6 +46,19 @@ class CardRepository extends ServiceEntityRepository
         if ($flush) {
             $this->_em->flush();
         }
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function findByCardNumber(string $cardNumber): ?Card
+    {
+        return $this->createQueryBuilder('cards')
+            ->andWhere('cards.number = :cardNumber')
+            ->setParameter('cardNumber', $cardNumber)
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
     }
 
     // /**

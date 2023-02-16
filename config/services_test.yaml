@@ -5,3 +5,5 @@ services:
       - {"name": "doctrine.fixture.orm"}
   App\Service\MoneyTransferService:
     public: TRUE
+  Symfony\Contracts\HttpClient\HttpClientInterface:
+    public: TRUE
