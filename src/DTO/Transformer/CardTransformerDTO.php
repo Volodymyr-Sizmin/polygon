@@ -42,17 +42,23 @@ class CardTransformerDTO
 
         $dto->setUpdatedAt($cardsArray['updated_at']);
 
+        if (isset($cardsArray['first_name']) && isset($cardsArray['last_name'])) {
+
+            $dto->setFirstName($cardsArray['first_name'] ?? 'null');
+
+            $dto->setLastName($cardsArray['last_name'] ?? 'null');
+        }
         return $dto;
     }
 
     public function transformCards(array $cardsArray): array
     {
-        $dto=[];
+        $array_dto = [];
 
-        foreach ($cardsArray as $card){
-            $dto[] = $this->transformOneCard($card);
+        foreach ($cardsArray as $card) {
+            $array_dto[] = $this->transformOneCard($card);
         }
 
-        return $dto;
+        return $array_dto;
     }
 }

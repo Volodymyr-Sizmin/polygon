@@ -36,11 +36,39 @@ class CardsController extends AbstractController
      */
     public function cardsList(string $email, Request $request): JsonResponse
     {
-
         try {
             $authorizationHeader = $request->headers->get('Authorization');
             $this->checkAuth->checkAuthentication($email, $authorizationHeader);
             $result = $this->cardsInfoService->getCardsWithBalance($email);
+
+            return new JsonResponse(['success' => true, 'cards' => $result], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'exception' => get_class($e),
+                        'message' => $e->getMessage(),
+                        'status' => $e->getCode(),
+                        'line' => $e->getLine(),
+                        'file' => $e->getFile(),
+                    ],
+                ],
+                $e->getCode());
+        }
+    }
+
+    /**
+     * @Route("/{email}/cards/{cardnumber}", name="oneUsersCard", methods={"GET"})
+     * @param string $email
+     * @return JsonResponse|void
+     */
+    public function oneUsersCard(string $email, Request $request, string $cardnumber):JsonResponse
+    {
+        try {
+            $authorizationHeader = $request->headers->get('Authorization');
+            $this->checkAuth->checkAuthentication($email, $authorizationHeader);
+            $result = $this->cardsInfoService->getOneCardWithBalance($email, $cardnumber);
 
             return new JsonResponse(['success' => true, 'cards' => $result], Response::HTTP_OK);
         } catch (\Exception $e) {
