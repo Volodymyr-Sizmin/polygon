@@ -53,12 +53,12 @@ class CardTransformerDTO
 
     public function transformCards(array $cardsArray): array
     {
-        $dto = [];
+        $array_dto = [];
 
         foreach ($cardsArray as $card) {
-            $dto[] = $this->transformOneCard($card);
+            $array_dto[] = $this->transformOneCard($card);
         }
 
-        return $dto;
+        return $array_dto;
     }
 }
