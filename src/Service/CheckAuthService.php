@@ -23,7 +23,12 @@ class CheckAuthService
         } catch (\Throwable $e) {
             throw new \DomainException("SomeWrong token", 401);
         }
+
         $tokenEmail = $token->aud;
+
+        if ($tokenEmail !== $email) {
+            throw new \DomainException("You are not authorize ", 404);
+        }
 
         return ["success" => "true", "message" => "you pass Authentication"];
     }
