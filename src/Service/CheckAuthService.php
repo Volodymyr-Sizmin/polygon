@@ -18,8 +18,11 @@ class CheckAuthService
 
     public function checkAuthentication(string $email, $strToken): array
     {
-
-        $token = $this->tokenService->decodeToken(trim(substr($strToken, 7)));
+        try {
+            $token = $this->tokenService->decodeToken(trim(substr($strToken, 7))) ?? false;
+        } catch (\Throwable $e) {
+            throw new \DomainException("SomeWrong token", 401);
+        }
 
         $tokenEmail = $token->aud;
 
