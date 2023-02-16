@@ -10,6 +10,7 @@ use Faker\Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -44,7 +45,7 @@ class CardsControllerTest extends WebTestCase
         $requestBody = [
             'newPin' => $newPin,
             'cardNumber' => $this->fakeCard->getNumber(),
-            'questionAnswer' => $fakeAnswer
+            'questionAnswer' => $fakeAnswer,
         ];
         $token = $this->tokenService->createGoToken(['email' => $this->fakeCard->getUserId()]);
         $this->client->JsonRequest(
@@ -64,6 +65,42 @@ class CardsControllerTest extends WebTestCase
         $this->assertEquals($this->fakeCard->getPinCode(), $newPin);
     }
 
+    public function testWrongSecretQuestionAnswer(): void
+    {
+        $httpClientMock = $this->createMock(HttpClientInterface::class);
+        $responseMock = $this->createMock(ResponseInterface::class);
+        $wrongAnswer = $this->faker->lexify('???????');
+        $httpClientMock->expects($this->once())
+            ->method('request')
+            ->willReturn($responseMock);
+        $responseMock->expects($this->once())
+            ->method('getContent')
+            ->willReturn(json_encode(['answer' => 'someRightAnswer']));
+        static::getContainer()->set(HttpClientInterface::class, $httpClientMock);
+        $newPin = $this->faker->numerify('####');
+        $requestBody = [
+            'newPin' => $newPin,
+            'cardNumber' => $this->fakeCard->getNumber(),
+            'questionAnswer' => $wrongAnswer,
+        ];
+        $token = $this->tokenService->createGoToken(['email' => $this->fakeCard->getUserId()]);
+        $this->client->JsonRequest(
+            Request::METHOD_PUT,
+            '/cards/change-pin',
+            $requestBody,
+            [
+                'HTTP_Authorization' => $token,
+            ],
+        );
+        $response = $this->client->getResponse();
+        $responseObj = json_decode($response->getContent(), false);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
+        $this->assertJson($response->getContent());
+        $this->assertEquals(false, $responseObj->success);
+        $this->assertNotEquals($this->fakeCard->getPinCode(), $newPin);
+    }
+
     private function setUpServices(): void
     {
         $this->faker = Factory::create();
@@ -71,7 +108,6 @@ class CardsControllerTest extends WebTestCase
         $container = static::getContainer();
         $this->entityManager = $container->get(EntityManagerInterface::class);
         $this->tokenService = $container->get(TokenService::class);
-
     }
 
     private function setUpCardEntity(): void
