@@ -14,10 +14,10 @@ class PaymentHistoryService
         $data = json_decode($request->getContent(), true);
 
         //parameters data : amount, created_at, currency, status, payment_type
-        $paramsData = $data['params'];
-
         if(!array_key_exists('params', $data)) {
             $paramsData = [];
+        } else {
+            $paramsData = $data['params'];
         }
 
         $arrayParamsSize = count($paramsData);
@@ -69,7 +69,7 @@ class PaymentHistoryService
             }
         }
 
-        $paramsString = $paramsString . " AND payments.user_id = :email";
+        $paramsString = ($paramsString) ? $paramsString . " AND payments.user_id = :email" : $paramsString . " payments.user_id = :email";
         $parameters['email'] = $matchEmail;
 
         $query ="  
@@ -99,7 +99,7 @@ class PaymentHistoryService
     {
         $matchEmail = $decodedToken->data->email;
 
-        $query = " 
+        $query = "
         SELECT 
             payments.*,
             currencies.name as currency,   
@@ -180,30 +180,28 @@ class PaymentHistoryService
         $data = json_decode($request->getContent(), true);
 
         //sort data : subject, created_at, amount
-        $sortData = $data['sort'];
+        $orderString = "payments.created_at desc ";
 
-        if(!array_key_exists('sort', $data)) {
-            $sortData = [];
-        }
+        if(array_key_exists('sort', $data)) {
+            $sortData = $data['sort'];
+            if(count($sortData) > 0) {
 
-        $arraySortSize = count($sortData[0]);
-        $orderString = "";
-        $iterator = 0;
+                $arraySortSize = count($sortData[0]);
+                $orderString = "";
+                $iterator = 0;
 
-        foreach ($sortData[0] as $key => $value) {
-            $iterator++;
-            $orderString = ($iterator == $arraySortSize) ? $orderString . "payments." . $key . " " . $value . " " : $orderString . "payments." . $key . " " . $value . ", ";
-        }
-
-        if($orderString === "") {
-            $orderString = "payments.created_at desc ";
+                foreach ($sortData[0] as $key => $value) {
+                    $iterator++;
+                    $orderString = ($iterator == $arraySortSize) ? $orderString . "payments." . $key . " " . $value . " " : $orderString . "payments." . $key . " " . $value . ", ";
+                }
+            }
         }
 
         //parameters data : amount, created_at, currency, status, payment_type
-        $paramsData = $data['params'];
-
         if(!array_key_exists('params', $data)) {
             $paramsData = [];
+        } else {
+            $paramsData = $data['params'];
         }
 
         $arrayParamsSize = count($paramsData);
@@ -254,8 +252,8 @@ class PaymentHistoryService
                     $paramsString . $tableName . $paramNameLeft . $params['sign'] . ":" . $paramNameRight . " AND ";
             }
         }
-
-        $paramsString = $paramsString . " AND payments.user_id = :email";
+        //dd($paramsString);
+        $paramsString = ($paramsString) ? $paramsString . " AND payments.user_id = :email" : $paramsString . " payments.user_id = :email";
         $parameters['email'] = $matchEmail;
 
         //offset and limit  data

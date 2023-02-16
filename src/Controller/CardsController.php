@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\DTO\CardDTO;
 use App\Service\CardsInfoService;
 use App\Service\CheckAuthService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,7 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-
 
 class CardsController extends AbstractController
 {
@@ -31,7 +29,7 @@ class CardsController extends AbstractController
 
     /**
      * @Route("/{email}/cards", name="usersCardslist", methods={"GET"})
-     * @param string $email
+     *
      * @return JsonResponse|void
      */
     public function cardsList(string $email, Request $request): JsonResponse
@@ -60,10 +58,10 @@ class CardsController extends AbstractController
 
     /**
      * @Route("/{email}/cards/{cardnumber}", name="oneUsersCard", methods={"GET"})
-     * @param string $email
+     *
      * @return JsonResponse|void
      */
-    public function oneUsersCard(string $email, Request $request, string $cardnumber):JsonResponse
+    public function oneUsersCard(string $email, Request $request, string $cardnumber): JsonResponse
     {
         try {
             $authorizationHeader = $request->headers->get('Authorization');

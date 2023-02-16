@@ -78,6 +78,31 @@ class CardProductController extends AbstractController
                 ],
                 $e->getCode());
         }
+    }
 
+    /**
+     * @Route("/card_products/{id}", name="apply_card",  methods={"PUT"})
+     */
+    public function applyCard(Request $request, $id):JsonResponse
+    {
+        try{
+            $token = $request->headers->get('Authorization');
+            $body = json_decode($request->getContent());
+            $newCard = $this->cardProductService->applyCard($token, $id, $body);
+            $result = $this->serializer->serialize($newCard, 'json');
+            return new JsonResponse($result, Response::HTTP_OK, [], true );
+
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'body' => [
+                        'exception' => get_class($e),
+                        'message' => $e->getMessage(),
+                        'status' => $e->getCode(),
+                    ],
+                ],
+                $e->getCode());
+        }
     }
 }
