@@ -9,8 +9,8 @@ services:
 #      - /home/d.rusakov/symfony-api:/project-root
 
   api-server-dev:
-    container_name: tools-api-server
-    image: nexus-docker.andersenlab.dev/polygon-backend:dev
+    container_name: $API_SERVER_CONTAINER_NAME
+    image: $AND_DOCKER_REGISTRY_NAME/$CI_PROJECT_NAME:$CI_COMMIT_BRANCH
     ports:
       - "1100:80"
       - "9001:9001"
@@ -19,11 +19,11 @@ services:
     networks:
       - backend
 
-  symfony-api-dev:
+  symfony-api-dev-new:
     environment:
       - DOCKER_USER="a.fetissov"
-    container_name: symfony-api
-    image: nexus-docker.andersenlab.dev/polygon-backend:symfony-dev
+    container_name: $SYMFONY_CONTAINER_NAME
+    image: $AND_DOCKER_REGISTRY_NAME/$CI_PROJECT_NAME:symfony-$CI_COMMIT_BRANCH
     volumes:
       - /home/${DOCKER_USER}/.composer:/home/${DOCKER_USER}/.composer
     networks:

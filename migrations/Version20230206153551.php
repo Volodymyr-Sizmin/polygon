@@ -21,13 +21,14 @@ final class  Version20230206153551 extends AbstractMigration
     {
         $this->addSql("CREATE TABLE card_types (id INT AUTO_INCREMENT NOT NULL,
         card_type ENUM ('Mastercard maestro', 'Mastercard Standard', 'Mastercard World Elite', 'Visa Classic', 'Visa Gold', 'Visa Platinum') NOT NULL,
-        type  ENUM('debit', 'credit')  DEFAULT 'debit',
-        free_service_from_turnover INT,
+        type  ENUM('debit', 'credit')  DEFAULT 'NULL',
+        free_service_from_turnover INT DEFAULT 'NULL',
         transfer_fees VARCHAR(255),
-        withdrawal_terms VARCHAR(255) DEFAULT 'For free in PolyBank ATM',
-        cashback_terms VARCHAR(255) DEFAULT 'Not applicable',
+        withdrawal_terms VARCHAR(255) DEFAULT \'For free in PolyBank ATM\',
+        cashback_terms VARCHAR(255) DEFAULT \'Not applicable\',
         card_validity_years ENUM('2','3','4','5')  NOT NULL ,
         interest_percent FLOAT,
+        currency VARCHAR(255) DEFAULT \'GBP\'
         other_advantages VARCHAR(255),
      
         PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB");

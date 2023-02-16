@@ -19,7 +19,7 @@ class Account
     private $id;
 
     /**
-     * @ORM\Column(type="bigint")
+     * @ORM\Column(type="string", length=100)
      */
     private $user_id;
 
@@ -29,9 +29,9 @@ class Account
     private $number;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=255))
      */
-    private $currency_id;
+    private $currency_name = 'GBP';
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -46,7 +46,7 @@ class Account
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $balance;
+    private $balance = 0;
 
     public function getId(): ?int
     {
@@ -77,14 +77,14 @@ class Account
         return $this;
     }
 
-    public function getCurrencyId(): ?int
+    public function getCurrencyName(): ?string
     {
-        return $this->currency_id;
+        return $this->currency_name;
     }
 
-    public function setCurrencyId(int $currency_id): self
+    public function setCurrencyName(string $currency_name): self
     {
-        $this->currency_id = $currency_id;
+        $this->currency_name = $currency_name;
 
         return $this;
     }
