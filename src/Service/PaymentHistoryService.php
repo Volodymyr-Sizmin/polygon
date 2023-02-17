@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Entity\Payment;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -13,61 +12,10 @@ class PaymentHistoryService
         $matchEmail = $decodedToken->data->email;
         $data = json_decode($request->getContent(), true);
 
-        //parameters data : amount, created_at, currency, status, payment_type
-        if(!array_key_exists('params', $data)) {
-            $paramsData = [];
-        } else {
-            $paramsData = $data['params'];
-        }
-
-        $arrayParamsSize = count($paramsData);
-        $paramsString = "";
-        $iterator = 0;
-        $parameters = [];
-
-        foreach ($paramsData as $params) {
-            $iterator++;
-
-            $tableName = "payments.";
-            $paramNameLeft = $params['name'];
-            $paramNameRight = $params['name'];
-
-            if($params['name'] == 'currency') {
-                $tableName = "currencies.name";
-                $paramNameLeft = "";
-                $paramNameRight = "currency";
-            } elseif ($params['name'] == 'status') {
-                $tableName = "payment_statuses.name";
-                $paramNameLeft = "";
-                $paramNameRight = "status";
-            } elseif ($params['name'] == 'payment_type') {
-                $tableName = "payment_types.name";
-                $paramNameLeft = "";
-                $paramNameRight = "payment_type";
-            }
-
-            if ($params['name'] == 'amountFrom' or $params['name'] == 'amountTo') {
-                $parameters[$params['name']] = (int) $params['value'];
-
-                if (array_key_exists('amountFrom', $parameters) and array_key_exists('amountTo', $parameters)) {
-                    $paramsString = ($iterator == $arrayParamsSize) ? $paramsString . $tableName . "amount" . " BETWEEN " . ':amountFrom' . " AND " . ':amountTo' :
-                        $paramsString . $tableName . "amount" . " BETWEEN " . ':amountFrom' . " AND " . ':amountTo' . " AND ";
-                }
-
-            } elseif ($params['name'] == 'createdFrom' or $params['name'] == 'createdTo') {
-                $parameters[$params['name']] = $params['value'];
-
-                if (array_key_exists('createdFrom', $parameters) and array_key_exists('createdTo', $parameters)) {
-                    $paramsString = ($iterator == $arrayParamsSize) ? $paramsString . $tableName . "created_at" . " BETWEEN " . ':createdFrom' . " AND " . ':createdTo' :
-                        $paramsString . $tableName . "created_at" . " BETWEEN " . ':createdFrom' . " AND " . ':createdTo' . " AND ";
-                }
-
-            } else {
-                $parameters[$params['name']] = $params['value'];
-                $paramsString = ($iterator == $arrayParamsSize) ? $paramsString . $tableName . $paramNameLeft . $params['sign'] . ":" . $paramNameRight :
-                    $paramsString . $tableName . $paramNameLeft . $params['sign'] . ":" . $paramNameRight . " AND ";
-            }
-        }
+        //parameters data: amount, created_at, currency, status, payment_type, name
+        $paramsArray = $this->getQueryParameters($data);
+        $paramsString = array_key_first($paramsArray);
+        $parameters = $paramsArray[$paramsString];
 
         $paramsString = ($paramsString) ? $paramsString . " AND payments.user_id = :email" : $paramsString . " payments.user_id = :email";
         $parameters['email'] = $matchEmail;
@@ -86,7 +34,7 @@ class PaymentHistoryService
             payment_statuses ON payments.status_id = payment_statuses.id
         LEFT JOIN 
             payment_types ON payments.type_id = payment_types.id
-        WHERE " . $paramsString ."";
+        WHERE " . $paramsString;
 
         return $doctrine
             ->getConnection("default")
@@ -197,62 +145,11 @@ class PaymentHistoryService
             }
         }
 
-        //parameters data : amount, created_at, currency, status, payment_type
-        if(!array_key_exists('params', $data)) {
-            $paramsData = [];
-        } else {
-            $paramsData = $data['params'];
-        }
+        //parameters data : amount, created_at, currency, status, payment_type, name
+        $paramsArray = $this->getQueryParameters($data);
+        $paramsString = array_key_first($paramsArray);
+        $parameters = $paramsArray[$paramsString];
 
-        $arrayParamsSize = count($paramsData);
-        $paramsString = "";
-        $iterator = 0;
-        $parameters = [];
-
-        foreach ($paramsData as $params) {
-            $iterator++;
-
-            $tableName = "payments.";
-            $paramNameLeft = $params['name'];
-            $paramNameRight = $params['name'];
-
-            if($params['name'] == 'currency') {
-                $tableName = "currencies.name";
-                $paramNameLeft = "";
-                $paramNameRight = "currency";
-            } elseif ($params['name'] == 'status') {
-                $tableName = "payment_statuses.name";
-                $paramNameLeft = "";
-                $paramNameRight = "status";
-            } elseif ($params['name'] == 'payment_type') {
-                $tableName = "payment_types.name";
-                $paramNameLeft = "";
-                $paramNameRight = "payment_type";
-            }
-
-            if ($params['name'] == 'amountFrom' or $params['name'] == 'amountTo') {
-                $parameters[$params['name']] = (int) $params['value'];
-
-                if (array_key_exists('amountFrom', $parameters) and array_key_exists('amountTo', $parameters)) {
-                    $paramsString = ($iterator == $arrayParamsSize) ? $paramsString . $tableName . "amount" . " BETWEEN " . ':amountFrom' . " AND " . ':amountTo' :
-                        $paramsString . $tableName . "amount" . " BETWEEN " . ':amountFrom' . " AND " . ':amountTo' . " AND ";
-                }
-
-            } elseif ($params['name'] == 'createdFrom' or $params['name'] == 'createdTo') {
-                $parameters[$params['name']] = $params['value'];
-
-                if (array_key_exists('createdFrom', $parameters) and array_key_exists('createdTo', $parameters)) {
-                    $paramsString = ($iterator == $arrayParamsSize) ? $paramsString . $tableName . "created_at" . " BETWEEN " . ':createdFrom' . " AND " . ':createdTo' :
-                        $paramsString . $tableName . "created_at" . " BETWEEN " . ':createdFrom' . " AND " . ':createdTo' . " AND ";
-                }
-
-            } else {
-                $parameters[$params['name']] = $params['value'];
-                $paramsString = ($iterator == $arrayParamsSize) ? $paramsString . $tableName . $paramNameLeft . $params['sign'] . ":" . $paramNameRight :
-                    $paramsString . $tableName . $paramNameLeft . $params['sign'] . ":" . $paramNameRight . " AND ";
-            }
-        }
-        //dd($paramsString);
         $paramsString = ($paramsString) ? $paramsString . " AND payments.user_id = :email" : $paramsString . " payments.user_id = :email";
         $parameters['email'] = $matchEmail;
 
@@ -295,7 +192,7 @@ class PaymentHistoryService
         LEFT JOIN 
             payment_types ON payments.type_id = payment_types.id
         WHERE " . $paramsString ." 
-        ORDER BY " . $orderString . $offsetLimitString ."";
+        ORDER BY " . $orderString . $offsetLimitString;
 
         $queryResult = $doctrine
             ->getConnection("default")
@@ -318,5 +215,51 @@ class PaymentHistoryService
         $result['empty'] = !$someValuesQty;
 
         return $result;
+    }
+
+    private function getQueryParameters(array $data):array
+    {
+        $paramsData = (array_key_exists('params', $data)) ? $data['params'] : [];
+        $arrayParamsSize = count($paramsData);
+        $paramsString = "";
+        $iterator = 0;
+        $parameters = [];
+
+        foreach ($paramsData as $params) {
+            $iterator++;
+            $tableName = "payments.";
+            $paramNameLeft = $params['name'];
+            $paramNameRight = $params['name'];
+
+            if($params['name'] == 'currency') {
+                $tableName = "currencies.name";
+                $paramNameLeft = "";
+                $paramNameRight = "currency";
+            } elseif ($params['name'] == 'status') {
+                $tableName = "payment_statuses.name";
+                $paramNameLeft = "";
+                $paramNameRight = "status";
+            } elseif ($params['name'] == 'payment_type') {
+                $tableName = "payment_types.name";
+                $paramNameLeft = "";
+                $paramNameRight = "payment_type";
+            }
+
+            if ($params['name'] == 'amountFrom' or $params['name'] == 'amountTo') {
+                $parameters[$params['name']] = (int) $params['value'];
+                $paramsString = $paramsString . $tableName . "amount" . " BETWEEN " . ':amountFrom' . " AND " . ':amountTo' . (($iterator == $arrayParamsSize) ? "" : " AND ");
+            } elseif ($params['name'] == 'createdFrom' or $params['name'] == 'createdTo') {
+                $parameters[$params['name']] = $params['value'];
+                $paramsString = $paramsString . $tableName . "created_at" . " BETWEEN " . ':createdFrom' . " AND " . ':createdTo' . (($iterator == $arrayParamsSize) ? "" : " AND ");
+            } elseif ($params['name'] == 'name') {
+                $parameters[$params['name']] = '%' . $params['value'] . '%';
+                $paramsString = $paramsString . $tableName . "name LIKE :name" . (($iterator == $arrayParamsSize) ? "" : " AND ");
+            } else {
+                $parameters[$params['name']] = $params['value'];
+                $paramsString = $paramsString . $tableName . $paramNameLeft . $params['sign'] . ":" . $paramNameRight . (($iterator == $arrayParamsSize) ? "" : " AND ");
+            }
+        }
+
+        return [$paramsString => $parameters];
     }
 }
