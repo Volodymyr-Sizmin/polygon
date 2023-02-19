@@ -14,12 +14,9 @@ class CardProductService
     private  $faker;
     protected TokenService $tokenService;
     protected ManagerRegistry $doctrine;
-    protected HttpClientInterface $client;
-    const POLYGON_APPLICATION_GO = 'https://polygon-application.andersenlab.dev/';
 
-    public function __construct(HttpClientInterface $client, TokenService $tokenService, ManagerRegistry $doctrine)
+    public function __construct(TokenService $tokenService, ManagerRegistry $doctrine)
     {
-        $this->client = $client;
         $this->tokenService = $tokenService;
         $this->doctrine = $doctrine;
         $this->faker = Factory::create();
@@ -31,16 +28,16 @@ class CardProductService
 
        $cardProduct = $this->doctrine->getRepository(CardTypes::class)->findAll();
 
-       if (!$cardProduct){
-           throw new \DomainException("Something went wrong ", 500);
-       }
-       foreach ($cardProduct as $value) {
-           if ($value->getCurrency() == 'multi'){
-               $value->setCurrency(CardTypes::CURRENCY['multi']);
-           }else $value->setCurrency(CardTypes::CURRENCY['GBP']);
-
-           $value->setTransferFees(explode('.', $value->getTransferFees()));
-       }
+//       if (!$cardProduct){
+//           throw new \DomainException("Something went wrong ", 500);
+//       }
+//       foreach ($cardProduct as $value) {
+//           if ($value->getCurrency() == 'multi'){
+//               $value->setCurrency(CardTypes::CURRENCY['multi']);
+//           }else $value->setCurrency(CardTypes::CURRENCY['GBP']);
+//
+//           $value->setTransferFees(explode('.', $value->getTransferFees()));
+//       }
         return $cardProduct;
     }
 
@@ -53,11 +50,11 @@ class CardProductService
             throw new \DomainException("Something went wrong ", 500);
         }
 
-        if ($cardProduct->getCurrency() == 'multi'){
-            $cardProduct->setCurrency(CardTypes::CURRENCY['multi']);
-        }else $cardProduct->setCurrency(CardTypes::CURRENCY['GBP']);
-
-        $cardProduct->setTransferFees(explode('.', $cardProduct->getTransferFees()));
+//        if ($cardProduct->getCurrency() == 'multi'){
+//            $cardProduct->setCurrency(CardTypes::CURRENCY['multi']);
+//        }else $cardProduct->setCurrency(CardTypes::CURRENCY['GBP']);
+//
+//        $cardProduct->setTransferFees(explode('.', $cardProduct->getTransferFees()));
 
         return $cardProduct;
     }
